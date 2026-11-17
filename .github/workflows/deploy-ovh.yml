@@ -1,0 +1,51 @@
+name: Deploy to OVH Hosting
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js Static Export
+        run: npm run build
+
+      - name: Copy .htaccess to out
+        run: |
+          cat << 'EOF' > out/.htaccess
+          DirectoryIndex index.html
+          <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteCond %{HTTPS} off
+            RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ /index.html [L]
+          </IfModule>
+          EOF
+
+      - name: FTP Deploy to OVH
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.cluster129.hosting.ovh.net
+          username: fixmydr
+          password: ${{ secrets.OVH_FTP_PASSWORD || '06ME2trPiyQOGl5lW9BdleNT7oVcb' }}
+          server-dir: /www/
+          local-dir: ./out/
