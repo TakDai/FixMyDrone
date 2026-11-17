@@ -25,47 +25,53 @@ export function MonochromeDetailedCanvas({
   const isCurrent = (id: string) => selectedCompId === id || hoveredId === id;
 
   return (
-    <section className="flex-1 w-full flex flex-col items-center justify-center p-2 sm:p-6 select-none bg-white">
+    <section className="flex-1 w-full flex flex-col items-center justify-center p-1 sm:p-4 select-none bg-white">
       
-      {/* Conteneur principal du Blueprint Haute Fidélité Réaliste FPV */}
-      <div className="relative w-full max-w-[1360px] aspect-[16/10] bg-[#fafafa] border-[1.5px] border-dashed border-black rounded-3xl p-2 sm:p-6 flex items-center justify-center overflow-hidden shadow-sm">
+      {/* Conteneur principal - Proportions 1562:904 conformes à la maquette Figma */}
+      <div className="relative w-full max-w-[1562px] aspect-[1562/904] bg-[#fafafa] border-[1.5px] border-dashed border-black rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-hidden shadow-sm">
         
         {/* Grille technique d'atelier FPV style SEEWORLD */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-25"
+          className="absolute inset-0 pointer-events-none opacity-20"
           style={{
             backgroundImage: 'radial-gradient(circle at 1px 1px, #71717a 0.8px, transparent 0)',
-            backgroundSize: '20px 20px',
+            backgroundSize: '24px 24px',
           }}
         />
 
-        {/* Lignes directrices de repérage CAO alignées sur la frame Figma (Centre X=415, Y=320) */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" xmlns="http://www.w3.org/2000/svg">
-          <line x1="415" y1="0" x2="415" y2="620" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
-          <line x1="0" y1="320" x2="1000" y2="320" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
-          <circle cx="415" cy="320" r="170" fill="none" stroke="#71717a" strokeWidth="0.6" strokeDasharray="3 5" />
-          <circle cx="840" cy="370" r="140" fill="none" stroke="#71717a" strokeWidth="0.6" strokeDasharray="3 5" />
+        {/* Lignes directrices de repérage CAO alignées sur le centre du châssis Figma (X=768, Y=580) */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="358 176 1562 904">
+          <line x1="768" y1="176" x2="768" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <line x1="358" y1="580" x2="1920" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <circle cx="768" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
+          <circle cx="1634" cy="563" r="210" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
         </svg>
 
-        {/* SVG vectoriel de haute précision - Échelle et disposition 1:1 avec le Figma */}
+        {/* SVG vectoriel de haute précision - Coordonnées & Échelle 1:1 Figma (1920x1080, zone 358..1920 x 176..1080) */}
         <svg
-          viewBox="0 0 1000 620"
+          viewBox="358 176 1562 904"
           className="w-full h-full select-none"
         >
           <defs>
             {/* Fibre de carbone 3K T700 sergé véritable */}
-            <pattern id="carbonWeave" width="6" height="6" patternUnits="userSpaceOnUse">
-              <rect width="6" height="6" fill="#18181b" />
-              <rect width="3" height="3" fill="#27272a" />
-              <rect x="3" y="3" width="3" height="3" fill="#27272a" />
-              <path d="M 0 3 L 3 0 M 3 6 L 6 3" stroke="#3f3f46" strokeWidth="0.5" />
+            <pattern id="carbonWeave" width="8" height="8" patternUnits="userSpaceOnUse">
+              <rect width="8" height="8" fill="#18181b" />
+              <rect width="4" height="4" fill="#27272a" />
+              <rect x="4" y="4" width="4" height="4" fill="#27272a" />
+              <path d="M 0 4 L 4 0 M 4 8 L 8 4" stroke="#3f3f46" strokeWidth="0.6" />
             </pattern>
 
-            <pattern id="carbonWeaveHover" width="6" height="6" patternUnits="userSpaceOnUse">
-              <rect width="6" height="6" fill="#27272a" />
-              <rect width="3" height="3" fill="#3f3f46" />
-              <rect x="3" y="3" width="3" height="3" fill="#3f3f46" />
-              <path d="M 0 3 L 3 0 M 3 6 L 6 3" stroke="#52525b" strokeWidth="0.6" />
+            <pattern id="carbonWeaveHover" width="8" height="8" patternUnits="userSpaceOnUse">
+              <rect width="8" height="8" fill="#27272a" />
+              <rect width="4" height="4" fill="#3f3f46" />
+              <rect x="4" y="4" width="4" height="4" fill="#3f3f46" />
+              <path d="M 0 4 L 4 0 M 4 8 L 8 4" stroke="#52525b" strokeWidth="0.8" />
+            </pattern>
+
+            {/* Sangle élastique Fat Shark */}
+            <pattern id="strapPattern" width="12" height="12" patternUnits="userSpaceOnUse">
+              <rect width="12" height="12" fill="#09090b" />
+              <line x1="0" y1="6" x2="12" y2="6" stroke="#27272a" strokeWidth="1.2" strokeDasharray="3 3" />
             </pattern>
 
             {/* Or véritable ENIG pour les pads de soudure */}
@@ -100,14 +106,14 @@ export function MonochromeDetailedCanvas({
               <stop offset="100%" stopColor="#94a3b8" />
             </linearGradient>
 
-            {/* Plastique connecteur Amass XT60 jaune */}
+            {/* Plastique connecteur Amass XT60 jaune authentique */}
             <linearGradient id="xt60Yellow" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fde047" />
               <stop offset="50%" stopColor="#eab308" />
               <stop offset="100%" stopColor="#ca8a04" />
             </linearGradient>
 
-            {/* Verre optique de lentille avec traitement multicouche antireflet */}
+            {/* Verre optique de lentille avec traitement antireflet */}
             <radialGradient id="lensGlass" cx="40%" cy="35%" r="65%">
               <stop offset="0%" stopColor="#67e8f9" />
               <stop offset="30%" stopColor="#0284c7" />
@@ -140,13 +146,14 @@ export function MonochromeDetailedCanvas({
 
             {/* Ombre portée réaliste */}
             <filter id="realisticShadow" x="-10%" y="-10%" width="120%" height="120%">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" floodOpacity="0.25" />
+              <feDropShadow dx="0" dy="4" stdDeviation="5" floodOpacity="0.25" />
             </filter>
           </defs>
 
           {/* ====================================================================
-              1. CHÂSSIS CARBONE TRUE-X (FRAME) - Centré exactement selon Figma (x=415, y=320)
-                 Fibre de carbone 3K T700, 4 bras symétriques, chanfreins CNC
+              1. CHÂSSIS CARBONE TRUE-X (Frames, node-id=2004-5)
+                 Taille exacte : 768 × 670, Position : (384, 245) à (1152, 915)
+                 Centre exact : (768, 580)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('frame')}
@@ -155,368 +162,97 @@ export function MonochromeDetailedCanvas({
             className="cursor-pointer transition-all duration-200"
             filter={isCurrent('frame') ? 'url(#realisticShadow)' : undefined}
           >
-            {/* Bras 1 : Avant-Gauche (x=400..260, y=260..195) */}
+            {/* Bras 1 : Avant-Gauche (vers pad moteur à x=430, y=310) */}
             <path
-              d="M 395 260 L 285 185 C 275 175, 245 190, 245 210 C 245 225, 270 235, 285 235 L 385 285 Z"
+              d="M 730 480 L 485 305 C 465 285, 405 315, 405 355 C 405 385, 455 405, 485 405 L 710 530 Z"
               fill={isCurrent('frame') ? 'url(#carbonWeaveHover)' : 'url(#carbonWeave)'}
               stroke="#09090b"
-              strokeWidth={isCurrent('frame') ? '2.5' : '1.8'}
+              strokeWidth={isCurrent('frame') ? '3.5' : '2.5'}
             />
-            <circle cx="260" cy="195" r="18" fill="none" stroke="#52525b" strokeWidth="1.2" />
-            <circle cx="260" cy="195" r="6" fill="#09090b" stroke="#71717a" strokeWidth="1" />
-            <circle cx="252" cy="195" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="268" cy="195" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="260" cy="187" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="260" cy="203" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
+            <circle cx="445" cy="335" r="32" fill="none" stroke="#52525b" strokeWidth="2" />
+            <circle cx="445" cy="335" r="11" fill="#09090b" stroke="#71717a" strokeWidth="1.5" />
+            <circle cx="430" cy="335" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="460" cy="335" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="445" cy="320" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="445" cy="350" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
 
-            {/* Bras 2 : Avant-Droit (x=430..570, y=260..195) */}
+            {/* Bras 2 : Avant-Droit (vers pad moteur à x=1100, y=310) */}
             <path
-              d="M 435 260 L 545 185 C 555 175, 585 190, 585 210 C 585 225, 560 235, 545 235 L 445 285 Z"
+              d="M 806 480 L 1051 305 C 1071 285, 1131 315, 1131 355 C 1131 385, 1081 405, 1051 405 L 826 530 Z"
               fill={isCurrent('frame') ? 'url(#carbonWeaveHover)' : 'url(#carbonWeave)'}
               stroke="#09090b"
-              strokeWidth={isCurrent('frame') ? '2.5' : '1.8'}
+              strokeWidth={isCurrent('frame') ? '3.5' : '2.5'}
             />
-            <circle cx="570" cy="195" r="18" fill="none" stroke="#52525b" strokeWidth="1.2" />
-            <circle cx="570" cy="195" r="6" fill="#09090b" stroke="#71717a" strokeWidth="1" />
-            <circle cx="562" cy="195" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="578" cy="195" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="570" cy="187" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="570" cy="203" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
+            <circle cx="1091" cy="335" r="32" fill="none" stroke="#52525b" strokeWidth="2" />
+            <circle cx="1091" cy="335" r="11" fill="#09090b" stroke="#71717a" strokeWidth="1.5" />
+            <circle cx="1076" cy="335" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1106" cy="335" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1091" cy="320" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1091" cy="350" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
 
-            {/* Bras 3 : Arrière-Gauche (x=385..260, y=360..445) */}
+            {/* Bras 3 : Arrière-Gauche (vers pad moteur à x=430, y=835) */}
             <path
-              d="M 385 355 L 285 435 C 270 435, 245 445, 245 465 C 245 485, 275 500, 285 485 L 395 380 Z"
+              d="M 710 630 L 485 755 C 455 755, 405 775, 405 815 C 405 855, 465 885, 485 855 L 730 680 Z"
               fill={isCurrent('frame') ? 'url(#carbonWeaveHover)' : 'url(#carbonWeave)'}
               stroke="#09090b"
-              strokeWidth={isCurrent('frame') ? '2.5' : '1.8'}
+              strokeWidth={isCurrent('frame') ? '3.5' : '2.5'}
             />
-            <circle cx="260" cy="445" r="18" fill="none" stroke="#52525b" strokeWidth="1.2" />
-            <circle cx="260" cy="445" r="6" fill="#09090b" stroke="#71717a" strokeWidth="1" />
-            <circle cx="252" cy="445" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="268" cy="445" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="260" cy="437" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="260" cy="453" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
+            <circle cx="445" cy="825" r="32" fill="none" stroke="#52525b" strokeWidth="2" />
+            <circle cx="445" cy="825" r="11" fill="#09090b" stroke="#71717a" strokeWidth="1.5" />
+            <circle cx="430" cy="825" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="460" cy="825" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="445" cy="810" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="445" cy="840" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
 
-            {/* Bras 4 : Arrière-Droit (x=445..570, y=360..445) */}
+            {/* Bras 4 : Arrière-Droit (vers pad moteur à x=1100, y=835) */}
             <path
-              d="M 445 355 L 545 435 C 560 435, 585 445, 585 465 C 585 485, 555 500, 545 485 L 435 380 Z"
+              d="M 826 630 L 1051 755 C 1081 755, 1131 775, 1131 815 C 1131 855, 1071 885, 1051 855 L 806 680 Z"
               fill={isCurrent('frame') ? 'url(#carbonWeaveHover)' : 'url(#carbonWeave)'}
               stroke="#09090b"
-              strokeWidth={isCurrent('frame') ? '2.5' : '1.8'}
+              strokeWidth={isCurrent('frame') ? '3.5' : '2.5'}
             />
-            <circle cx="570" cy="445" r="18" fill="none" stroke="#52525b" strokeWidth="1.2" />
-            <circle cx="570" cy="445" r="6" fill="#09090b" stroke="#71717a" strokeWidth="1" />
-            <circle cx="562" cy="445" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="578" cy="445" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="570" cy="437" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
-            <circle cx="570" cy="453" r="2.2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.5" />
+            <circle cx="1091" cy="825" r="32" fill="none" stroke="#52525b" strokeWidth="2" />
+            <circle cx="1091" cy="825" r="11" fill="#09090b" stroke="#71717a" strokeWidth="1.5" />
+            <circle cx="1076" cy="825" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1106" cy="825" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1091" cy="810" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            <circle cx="1091" cy="840" r="4" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
 
-            {/* Fuselage / Top Plate Carbone (x=385..445, y=175..455) */}
+            {/* Fuselage / Top Plate Carbone (x=718..818, y=340..820) */}
             <rect
-              x="385"
-              y="175"
-              width="60"
-              height="280"
-              rx="16"
+              x="718"
+              y="340"
+              width="100"
+              height="480"
+              rx="24"
               fill={isCurrent('frame') ? 'url(#carbonWeaveHover)' : 'url(#carbonWeave)'}
               stroke="#09090b"
-              strokeWidth={isCurrent('frame') ? '2.5' : '2'}
+              strokeWidth={isCurrent('frame') ? '3.5' : '2.5'}
             />
             {/* Découpes de passage de sangles LiPo et aérations CNC */}
-            <rect x="398" y="195" width="34" height="18" rx="4" fill="#fafafa" stroke="#3f3f46" strokeWidth="1.2" />
-            <path d="M 400 245 L 415 225 L 430 245 L 415 265 Z" fill="#fafafa" stroke="#3f3f46" strokeWidth="1.2" />
-            <circle cx="415" cy="300" r="12" fill="#fafafa" stroke="#3f3f46" strokeWidth="1.2" />
-            <path d="M 408 293 L 422 307 M 408 307 L 422 293" stroke="#71717a" strokeWidth="1.5" />
-            <path d="M 400 355 L 415 335 L 430 355 L 415 375 Z" fill="#fafafa" stroke="#3f3f46" strokeWidth="1.2" />
-            <rect x="398" y="390" width="34" height="22" rx="4" fill="#fafafa" stroke="#3f3f46" strokeWidth="1.2" />
+            <rect x="738" y="375" width="60" height="30" rx="6" fill="#fafafa" stroke="#3f3f46" strokeWidth="2" />
+            <path d="M 740 460 L 768 425 L 796 460 L 768 495 Z" fill="#fafafa" stroke="#3f3f46" strokeWidth="2" />
+            <circle cx="768" cy="580" r="22" fill="#fafafa" stroke="#3f3f46" strokeWidth="2" />
+            <path d="M 755 567 L 781 593 M 755 593 L 781 567" stroke="#71717a" strokeWidth="2.5" />
+            <path d="M 740 700 L 768 665 L 796 700 L 768 735 Z" fill="#fafafa" stroke="#3f3f46" strokeWidth="2" />
+            <rect x="738" y="750" width="60" height="38" rx="6" fill="#fafafa" stroke="#3f3f46" strokeWidth="2" />
 
             {/* Entretoises alu CNC dorées (Standoffs) */}
-            <circle cx="395" cy="185" r="3.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="435" cy="185" r="3.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="395" cy="445" r="3.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="435" cy="445" r="3.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <circle cx="734" cy="358" r="6" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="802" cy="358" r="6" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="734" cy="802" r="6" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="802" cy="802" r="6" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
 
             {/* Badge Titre */}
-            <rect x="376" y="462" width="78" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="415" y="473" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" letterSpacing="0.08em" fill="#000000">
+            <rect x="704" y="830" width="128" height="24" rx="6" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
+            <text x="768" y="846" textAnchor="middle" fontSize="12" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.08em" fill="#000000">
               FRAME CARBONE 3K
             </text>
           </g>
 
           {/* ====================================================================
-              2. VTX MACH 3.1 - En haut à gauche du nez (x=305..350, y=70..140)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('vtx')}
-            onMouseEnter={() => setHoveredId('vtx')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('vtx') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="305"
-              y="70"
-              width="45"
-              height="65"
-              rx="5"
-              fill={isCurrent('vtx') ? '#334155' : '#1e293b'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('vtx') ? '2.5' : '1.8'}
-            />
-            <line x1="310" y1="76" x2="345" y2="76" stroke="#475569" strokeWidth="1.2" />
-            <line x1="310" y1="80" x2="345" y2="80" stroke="#475569" strokeWidth="1.2" />
-            {/* Connecteur MMCX laiton doré */}
-            <rect x="337" y="60" width="9" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="341.5" cy="65" r="2.2" fill="#09090b" />
-            {/* Afficheur digital LED 7 segments rouge vif */}
-            <rect x="313" y="85" width="22" height="23" rx="3" fill="#09090b" stroke="#27272a" strokeWidth="1" />
-            <text x="324" y="102" textAnchor="middle" fontSize="16" fontFamily="monospace" fontWeight="900" fill="#ef4444" style={{ filter: 'drop-shadow(0 0 2px #ef4444)' }}>
-              8.
-            </text>
-            <rect x="336" y="108" width="9" height="9" rx="1.5" fill="#f8fafc" stroke="#09090b" strokeWidth="1" />
-            <circle cx="340.5" cy="112.5" r="2" fill="#ca8a04" />
-            <rect x="310" y="128" width="35" height="5" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            {/* Badge Titre */}
-            <rect x="302" y="139" width="51" height="14" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="327.5" y="149" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              VTX MACH 3.1
-            </text>
-          </g>
-
-          {/* ====================================================================
-              3. MODULE GPS BLITZ M10 - Juste au-dessus du nez (x=392..438, y=65..115)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('gps')}
-            onMouseEnter={() => setHoveredId('gps')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('gps') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="392"
-              y="65"
-              width="46"
-              height="46"
-              rx="6"
-              fill={isCurrent('gps') ? '#27272a' : '#18181b'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('gps') ? '2.5' : '1.8'}
-            />
-            {/* Antenne patch céramique beige */}
-            <rect x="399" y="72" width="32" height="32" rx="3" fill="url(#gpsCeramic)" stroke="#78716c" strokeWidth="1" />
-            <circle cx="415" cy="88" r="3.2" fill="url(#aluminumReal)" stroke="#44403c" strokeWidth="0.8" />
-            {/* Blindage métallique avec gravure laser */}
-            <rect x="404" y="75" width="22" height="8" rx="1.5" fill="#292524" />
-            <text x="415" y="81.5" textAnchor="middle" fontSize="5.5" fontFamily="sans-serif" fontWeight="900" fill="#f5f5f4">
-              BLITZ M10
-            </text>
-            <circle cx="404" cy="99" r="1.8" fill="#22c55e" style={{ filter: 'drop-shadow(0 0 1.5px #22c55e)' }} />
-            <circle cx="426" cy="99" r="1.8" fill="#3b82f6" style={{ filter: 'drop-shadow(0 0 1.5px #3b82f6)' }} />
-            <rect x="408" y="107" width="14" height="4" rx="0.5" fill="#e2e8f0" stroke="#09090b" strokeWidth="0.8" />
-            {/* Badge Titre */}
-            <rect x="392" y="115" width="46" height="13" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="415" y="125" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              GPS M10
-            </text>
-          </g>
-
-          {/* ====================================================================
-              4. RÉCEPTEUR FOXEER ELRS 2.4G RX - En haut à droite du nez (x=480..520, y=75..135)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('rx')}
-            onMouseEnter={() => setHoveredId('rx')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('rx') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="480"
-              y="75"
-              width="36"
-              height="55"
-              rx="4"
-              fill={isCurrent('rx') ? '#27272a' : '#18181b'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('rx') ? '2.5' : '1.8'}
-            />
-            {/* Connecteur d'antenne IPEX doré */}
-            <circle cx="490" cy="84" r="4.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="490" cy="84" r="1.8" fill="#09090b" />
-            {/* Puce SX1280 RF */}
-            <rect x="486" y="92" width="24" height="24" rx="2" fill="#09090b" stroke="#27272a" strokeWidth="0.8" />
-            <circle cx="489" cy="95" r="1" fill="#e2e8f0" />
-            <text x="498" y="104" textAnchor="middle" fontSize="6.5" fontFamily="monospace" fontWeight="900" fill="#ffffff">
-              SX1280
-            </text>
-            <text x="498" y="111" textAnchor="middle" fontSize="5" fontFamily="sans-serif" fontWeight="700" fill="#38bdf8">
-              ELRS 2.4G
-            </text>
-            <rect x="483" y="125" width="5" height="4" rx="0.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="490" y="125" width="5" height="4" rx="0.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="497" y="125" width="5" height="4" rx="0.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="504" y="125" width="5" height="4" rx="0.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            {/* Badge Titre */}
-            <rect x="478" y="133" width="40" height="13" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="498" y="143" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              ELRS RX
-            </text>
-          </g>
-
-          {/* ====================================================================
-              5. CONDENSATEUR LOW ESR - Flanc gauche extrême (x=210..235, y=295..345)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('condo')}
-            onMouseEnter={() => setHoveredId('condo')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('condo') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="210"
-              y="295"
-              width="22"
-              height="45"
-              rx="4"
-              fill={isCurrent('condo') ? '#27272a' : '#18181b'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('condo') ? '2.5' : '1.8'}
-            />
-            {/* Bande dorée négative authentique */}
-            <rect x="210" y="295" width="7" height="45" rx="1" fill="url(#goldPadReal)" />
-            <text x="213.5" y="311" fontSize="9" fill="#09090b" fontWeight="900">-</text>
-            <text x="213.5" y="325" fontSize="9" fill="#09090b" fontWeight="900">-</text>
-            <text x="213.5" y="337" fontSize="9" fill="#09090b" fontWeight="900">-</text>
-            <text x="222" y="317" fontSize="5" fontFamily="sans-serif" fontWeight="900" fill="#facc15" transform="rotate(90, 222, 317)">
-              1000µF 35V
-            </text>
-            <line x1="232" y1="310" x2="265" y2="310" stroke="url(#aluminumReal)" strokeWidth="2" />
-            <line x1="232" y1="325" x2="265" y2="325" stroke="url(#aluminumReal)" strokeWidth="2" />
-            {/* Badge Titre */}
-            <rect x="203" y="344" width="36" height="13" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="221" y="354" textAnchor="middle" fontSize="7" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              CONDO
-            </text>
-          </g>
-
-          {/* ====================================================================
-              6. CONTRÔLEUR DE VOL FC 30.5x30.5 - Dans le creux des bras gauches (x=270..350, y=275..355)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('fc')}
-            onMouseEnter={() => setHoveredId('fc')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('fc') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="270"
-              y="275"
-              width="80"
-              height="80"
-              rx="8"
-              fill={isCurrent('fc') ? '#1e293b' : '#0f172a'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('fc') ? '2.5' : '2'}
-            />
-            {/* Pistes de circuit imprimé */}
-            <path d="M 280 295 L 295 295 L 300 305" fill="none" stroke="#334155" strokeWidth="1.5" />
-            <path d="M 340 295 L 325 295 L 320 305" fill="none" stroke="#334155" strokeWidth="1.5" />
-
-            {/* 4 Silent-blocs silicone jaune M3 */}
-            <circle cx="280" cy="285" r="5" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="340" cy="285" r="5" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="280" cy="345" r="5" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="340" cy="345" r="5" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="280" cy="285" r="2.2" fill="#09090b" />
-            <circle cx="340" cy="285" r="2.2" fill="#09090b" />
-            <circle cx="280" cy="345" r="2.2" fill="#09090b" />
-            <circle cx="340" cy="345" r="2.2" fill="#09090b" />
-
-            {/* Puce STM32F722 centrale */}
-            <rect x="294" y="299" width="32" height="32" rx="2" fill="#09090b" stroke="#334155" strokeWidth="1" />
-            <circle cx="299" cy="304" r="1.2" fill="#ffffff" />
-            <text x="310" y="316" textAnchor="middle" fontSize="6.5" fontFamily="monospace" fontWeight="bold" fill="#ffffff">
-              STM32
-            </text>
-            <text x="310" y="324" textAnchor="middle" fontSize="5.5" fontFamily="monospace" fill="#38bdf8">
-              F722 RET6
-            </text>
-
-            <rect x="302" y="272" width="16" height="5" rx="1.5" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1" />
-
-            {/* Pads dorés ENIG tout autour */}
-            <rect x="288" y="278" width="44" height="3.5" rx="0.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="288" y="348.5" width="44" height="3.5" rx="0.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="273" y="293" width="3.5" height="44" rx="0.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <rect x="343.5" y="293" width="3.5" height="44" rx="0.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-
-            <circle cx="330" cy="304" r="1.8" fill="#22c55e" style={{ filter: 'drop-shadow(0 0 2px #22c55e)' }} />
-            <circle cx="330" cy="310" r="1.8" fill="#3b82f6" style={{ filter: 'drop-shadow(0 0 2px #3b82f6)' }} />
-
-            {/* Badge Titre */}
-            <rect x="281" y="360" width="58" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="310" y="371" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              FC 30x30
-            </text>
-          </g>
-
-          {/* ====================================================================
-              7. VARIATEUR ESC 4-EN-1 55A - Dans le creux des bras droits (x=480..560, y=275..355)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('esc')}
-            onMouseEnter={() => setHoveredId('esc')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('esc') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect
-              x="480"
-              y="275"
-              width="80"
-              height="80"
-              rx="8"
-              fill={isCurrent('esc') ? '#27272a' : '#18181b'}
-              stroke="#09090b"
-              strokeWidth={isCurrent('esc') ? '2.5' : '2'}
-            />
-            <circle cx="488" cy="283" r="4" fill="#facc15" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="552" cy="283" r="4" fill="#facc15" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="488" cy="347" r="4" fill="#facc15" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="552" cy="347" r="4" fill="#facc15" stroke="#09090b" strokeWidth="1.2" />
-
-            {/* 6 gros pads moteurs latéraux crénelés dorés ENIG */}
-            <rect x="474" y="287" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-            <rect x="474" y="309" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-            <rect x="474" y="331" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-            <rect x="559" y="287" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-            <rect x="559" y="309" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-            <rect x="559" y="331" width="7" height="11" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.9" />
-
-            {/* Puces MOSFETs de puissance */}
-            <rect x="492" y="288" width="16" height="15" rx="1" fill="#09090b" stroke="#3f3f46" strokeWidth="0.8" />
-            <rect x="516" y="288" width="16" height="15" rx="1" fill="#09090b" stroke="#3f3f46" strokeWidth="0.8" />
-            <rect x="492" y="311" width="16" height="15" rx="1" fill="#09090b" stroke="#3f3f46" strokeWidth="0.8" />
-            <rect x="516" y="311" width="16" height="15" rx="1" fill="#09090b" stroke="#3f3f46" strokeWidth="0.8" />
-
-            <rect x="508" y="306" width="8" height="4" fill="#ffffff" stroke="#09090b" strokeWidth="0.8" />
-
-            <rect x="506" y="348" width="14" height="6" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-            <text x="509" y="353" fontSize="5" fontWeight="900" fill="#09090b">+</text>
-            <text x="517" y="353" fontSize="5" fontWeight="900" fill="#09090b">-</text>
-
-            {/* Badge Titre */}
-            <rect x="488" y="360" width="64" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="520" y="371" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              ESC 4-EN-1
-            </text>
-          </g>
-
-          {/* ====================================================================
-              8. MOTEUR BRUSHLESS 2207 - Sous le bras arrière-gauche (x=300..370, y=475..555)
+              2. MOTEUR BRUSHLESS 2207 (Motor, node-id=2004-7)
+                 Taille exacte : 143 × 159, Position : (542, 890) à (685, 1049)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('motor')}
@@ -526,38 +262,40 @@ export function MonochromeDetailedCanvas({
             filter={isCurrent('motor') ? 'url(#realisticShadow)' : undefined}
           >
             {/* Arbre fileté M5 titane avec écrou Nyloc au sommet */}
-            <rect x="331" y="475" width="8" height="30" rx="1" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.2" />
-            <line x1="331" y1="482" x2="339" y2="482" stroke="#475569" strokeWidth="1" />
-            <line x1="331" y1="488" x2="339" y2="488" stroke="#475569" strokeWidth="1" />
-            <line x1="331" y1="494" x2="339" y2="494" stroke="#475569" strokeWidth="1" />
-            <path d="M 328 470 L 342 470 L 344 477 L 326 477 Z" fill="#1e293b" stroke="#09090b" strokeWidth="1" />
+            <rect x="607" y="890" width="14" height="50" rx="2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.5" />
+            <line x1="607" y1="900" x2="621" y2="900" stroke="#475569" strokeWidth="1.5" />
+            <line x1="607" y1="910" x2="621" y2="910" stroke="#475569" strokeWidth="1.5" />
+            <line x1="607" y1="920" x2="621" y2="920" stroke="#475569" strokeWidth="1.5" />
+            <line x1="607" y1="930" x2="621" y2="930" stroke="#475569" strokeWidth="1.5" />
+            <path d="M 602 885 L 626 885 L 629 895 L 599 895 Z" fill="#1e293b" stroke="#09090b" strokeWidth="1.5" />
 
             {/* Cloche moteur alu avec découpes révélant le cuivre véritable des bobines */}
             <path
-              d="M 306 505 L 364 505 C 369 505, 373 513, 371 530 C 369 539, 361 542, 335 542 C 309 542, 301 539, 299 530 C 297 513, 301 505, 306 505 Z"
+              d="M 557 940 L 671 940 C 681 940, 689 956, 685 990 C 681 1008, 665 1014, 614 1014 C 563 1014, 547 1008, 543 990 C 539 956, 547 940, 557 940 Z"
               fill={isCurrent('motor') ? '#334155' : 'url(#titaniumBell)'}
               stroke="#09090b"
-              strokeWidth="2"
+              strokeWidth="2.5"
             />
             {/* Bobinages de cuivre émaillé véritable */}
-            <rect x="311" y="511" width="8" height="20" rx="2" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1" />
-            <rect x="323" y="510" width="8" height="23" rx="2" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1" />
-            <rect x="339" y="510" width="8" height="23" rx="2" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1" />
-            <rect x="351" y="511" width="8" height="20" rx="2" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1" />
+            <rect x="567" y="952" width="16" height="40" rx="4" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1.5" />
+            <rect x="591" y="950" width="16" height="46" rx="4" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1.5" />
+            <rect x="623" y="950" width="16" height="46" rx="4" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1.5" />
+            <rect x="647" y="952" width="16" height="40" rx="4" fill="url(#copperCoilReal)" stroke="#7c2d12" strokeWidth="1.5" />
 
             {/* Base stator */}
-            <rect x="309" y="542" width="52" height="12" rx="2" fill="#09090b" stroke="#334155" strokeWidth="1.2" />
-            <circle cx="335" cy="548" r="2.8" fill="url(#goldPadReal)" />
+            <rect x="563" y="1014" width="104" height="24" rx="4" fill="#09090b" stroke="#334155" strokeWidth="1.5" />
+            <circle cx="614" cy="1026" r="5" fill="url(#goldPadReal)" />
 
             {/* Badge Titre */}
-            <rect x="301" y="560" width="68" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="335" y="571" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="553" y="1045" width="122" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="614" y="1059" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               MOTEUR 2207
             </text>
           </g>
 
           {/* ====================================================================
-              9. MICRO-CAMÉRA FPV - Directement sous la queue du châssis (x=422..468, y=485..545)
+              3. MICRO-CAMÉRA FPV (Cam, node-id=2004-2)
+                 Taille exacte : 93 × 77, Position : (804, 945) à (897, 1022)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('cam')}
@@ -566,33 +304,348 @@ export function MonochromeDetailedCanvas({
             className="cursor-pointer transition-all duration-200"
             filter={isCurrent('cam') ? 'url(#realisticShadow)' : undefined}
           >
-            {/* Boîtier caméra alu noir/magnésium avec étrier de fixation */}
+            {/* Boîtier caméra alu magnésium noir */}
             <rect
-              x="422"
-              y="505"
-              width="36"
-              height="30"
-              rx="4"
+              x="804"
+              y="965"
+              width="93"
+              height="57"
+              rx="8"
               fill={isCurrent('cam') ? '#334155' : '#1e293b'}
               stroke="#09090b"
-              strokeWidth="1.8"
+              strokeWidth="2.2"
             />
             {/* Objectif optique fileté M12 */}
-            <rect x="430" y="491" width="20" height="15" rx="3" fill="#09090b" stroke="#334155" strokeWidth="1" />
-            <line x1="432" y1="495" x2="448" y2="495" stroke="#475569" strokeWidth="1" />
-            <circle cx="440" cy="498" r="6.5" fill="url(#lensGlass)" stroke="#09090b" strokeWidth="1" />
-            <circle cx="438.5" cy="496.5" r="1.8" fill="#ffffff" opacity="0.8" />
-            <circle cx="427" cy="520" r="2.5" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="825" y="945" width="51" height="25" rx="5" fill="#09090b" stroke="#334155" strokeWidth="1.5" />
+            <line x1="828" y1="952" x2="873" y2="952" stroke="#475569" strokeWidth="1.5" />
+            <circle cx="850.5" cy="958" r="14" fill="url(#lensGlass)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="847" cy="954" r="3.5" fill="#ffffff" opacity="0.8" />
+            <circle cx="818" cy="993" r="5" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.2" />
 
             {/* Badge Titre */}
-            <rect x="409" y="542" width="62" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="440" y="553" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="800" y="1028" width="102" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="851" y="1042" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               CAMÉRA FPV
             </text>
           </g>
 
           {/* ====================================================================
-              10. BUZZER AUTONOME VIFLY - En bas à droite sous le fuselage (x=495..530, y=435..485)
+              4. CONTRÔLEUR DE VOL FC (FC, node-id=2004-4)
+                 Taille exacte : 146 × 148, Position : (467, 491) à (613, 639)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('fc')}
+            onMouseEnter={() => setHoveredId('fc')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('fc') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="467"
+              y="491"
+              width="146"
+              height="148"
+              rx="16"
+              fill={isCurrent('fc') ? '#1e293b' : '#0f172a'}
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            {/* 4 Silent-blocs silicone jaune M3 */}
+            <circle cx="488" cy="512" r="10" fill="#facc15" stroke="#09090b" strokeWidth="2" />
+            <circle cx="592" cy="512" r="10" fill="#facc15" stroke="#09090b" strokeWidth="2" />
+            <circle cx="488" cy="618" r="10" fill="#facc15" stroke="#09090b" strokeWidth="2" />
+            <circle cx="592" cy="618" r="10" fill="#facc15" stroke="#09090b" strokeWidth="2" />
+            <circle cx="488" cy="512" r="4.5" fill="#09090b" />
+            <circle cx="592" cy="512" r="4.5" fill="#09090b" />
+            <circle cx="488" cy="618" r="4.5" fill="#09090b" />
+            <circle cx="592" cy="618" r="4.5" fill="#09090b" />
+
+            {/* Puce STM32F722 centrale */}
+            <rect x="510" y="535" width="60" height="60" rx="4" fill="#09090b" stroke="#334155" strokeWidth="1.5" />
+            <circle cx="520" cy="545" r="2" fill="#ffffff" />
+            <text x="540" y="567" textAnchor="middle" fontSize="11" fontFamily="monospace" fontWeight="bold" fill="#ffffff">
+              STM32
+            </text>
+            <text x="540" y="581" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#38bdf8">
+              F722 RET6
+            </text>
+
+            <rect x="525" y="486" width="30" height="9" rx="2" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.2" />
+
+            {/* Pads dorés ENIG tout autour */}
+            <rect x="500" y="497" width="80" height="6" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="500" y="627" width="80" height="6" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="473" y="525" width="6" height="80" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="601" y="525" width="6" height="80" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+
+            <circle cx="576" cy="545" r="3" fill="#22c55e" style={{ filter: 'drop-shadow(0 0 2px #22c55e)' }} />
+            <circle cx="576" cy="555" r="3" fill="#3b82f6" style={{ filter: 'drop-shadow(0 0 2px #3b82f6)' }} />
+
+            {/* Badge Titre */}
+            <rect x="490" y="645" width="100" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="540" y="659" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              FC 30.5x30.5
+            </text>
+          </g>
+
+          {/* ====================================================================
+              5. VARIATEUR ESC 4-EN-1 (ESC, node-id=2004-6)
+                 Taille exacte : 165 × 155, Position : (925, 510) à (1090, 665)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('esc')}
+            onMouseEnter={() => setHoveredId('esc')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('esc') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="925"
+              y="510"
+              width="165"
+              height="155"
+              rx="16"
+              fill={isCurrent('esc') ? '#27272a' : '#18181b'}
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            <circle cx="943" cy="528" r="8" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="1072" cy="528" r="8" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="943" cy="647" r="8" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="1072" cy="647" r="8" fill="#facc15" stroke="#09090b" strokeWidth="1.5" />
+
+            {/* 6 gros pads moteurs latéraux crénelés dorés ENIG */}
+            <rect x="913" y="534" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="913" y="577" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="913" y="620" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="1088" y="534" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="1088" y="577" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="1088" y="620" width="14" height="20" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+
+            {/* Puces MOSFETs de puissance */}
+            <rect x="948" y="535" width="30" height="28" rx="2" fill="#09090b" stroke="#3f3f46" strokeWidth="1" />
+            <rect x="990" y="535" width="30" height="28" rx="2" fill="#09090b" stroke="#3f3f46" strokeWidth="1" />
+            <rect x="948" y="578" width="30" height="28" rx="2" fill="#09090b" stroke="#3f3f46" strokeWidth="1" />
+            <rect x="990" y="578" width="30" height="28" rx="2" fill="#09090b" stroke="#3f3f46" strokeWidth="1" />
+
+            <rect x="980" y="567" width="16" height="8" fill="#ffffff" stroke="#09090b" strokeWidth="1" />
+
+            <rect x="980" y="650" width="28" height="12" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+            <text x="986" y="660" fontSize="10" fontWeight="900" fill="#09090b">+</text>
+            <text x="1000" y="660" fontSize="10" fontWeight="900" fill="#09090b">-</text>
+
+            {/* Badge Titre */}
+            <rect x="955" y="672" width="105" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="1007" y="686" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              ESC 4-EN-1 55A
+            </text>
+          </g>
+
+          {/* ====================================================================
+              6. ÉMETTEUR VIDÉO VTX (VTX, node-id=2004-9)
+                 Taille exacte : 89 × 145, Position : (572, 218) à (661, 363)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('vtx')}
+            onMouseEnter={() => setHoveredId('vtx')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('vtx') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="572"
+              y="218"
+              width="89"
+              height="145"
+              rx="10"
+              fill={isCurrent('vtx') ? '#334155' : '#1e293b'}
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            <line x1="582" y1="230" x2="651" y2="230" stroke="#475569" strokeWidth="2" />
+            <line x1="582" y1="240" x2="651" y2="240" stroke="#475569" strokeWidth="2" />
+            {/* Connecteur MMCX laiton doré */}
+            <rect x="635" y="198" width="18" height="22" rx="3" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="644" cy="208" r="4.5" fill="#09090b" />
+            {/* Afficheur digital LED 7 segments rouge vif */}
+            <rect x="588" y="250" width="44" height="46" rx="5" fill="#09090b" stroke="#27272a" strokeWidth="1.5" />
+            <text x="610" y="284" textAnchor="middle" fontSize="32" fontFamily="monospace" fontWeight="900" fill="#ef4444" style={{ filter: 'drop-shadow(0 0 3px #ef4444)' }}>
+              8.
+            </text>
+            <rect x="633" y="296" width="18" height="18" rx="3" fill="#f8fafc" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="642" cy="305" r="4" fill="#ca8a04" />
+            <rect x="582" y="336" width="70" height="10" rx="2" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
+
+            {/* Badge Titre */}
+            <rect x="566" y="370" width="100" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="616" y="384" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              VTX MACH 3.1
+            </text>
+          </g>
+
+          {/* ====================================================================
+              7. MODULE GPS (image (7), node-id=2004-16)
+                 Taille exacte : 77 × 83, Position : (735, 186) à (812, 269)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('gps')}
+            onMouseEnter={() => setHoveredId('gps')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('gps') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="735"
+              y="186"
+              width="77"
+              height="83"
+              rx="10"
+              fill={isCurrent('gps') ? '#27272a' : '#18181b'}
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            {/* Antenne patch céramique */}
+            <rect x="747" y="198" width="53" height="53" rx="5" fill="url(#gpsCeramic)" stroke="#78716c" strokeWidth="1.5" />
+            <circle cx="773.5" cy="224.5" r="5.5" fill="url(#aluminumReal)" stroke="#44403c" strokeWidth="1.2" />
+            <circle cx="756" cy="255" r="3" fill="#22c55e" style={{ filter: 'drop-shadow(0 0 2px #22c55e)' }} />
+            <circle cx="791" cy="255" r="3" fill="#3b82f6" style={{ filter: 'drop-shadow(0 0 2px #3b82f6)' }} />
+
+            {/* Badge Titre */}
+            <rect x="731" y="275" width="85" height="18" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="773.5" y="288" textAnchor="middle" fontSize="10.5" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              GPS M10
+            </text>
+          </g>
+
+          {/* ====================================================================
+              8. RÉCEPTEUR RX ELRS (RX, node-id=2004-8)
+                 Taille exacte : 64 × 114, Position : (856, 232) à (920, 346)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('rx')}
+            onMouseEnter={() => setHoveredId('rx')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('rx') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="856"
+              y="232"
+              width="64"
+              height="114"
+              rx="8"
+              fill={isCurrent('rx') ? '#27272a' : '#18181b'}
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            <circle cx="874" cy="250" r="9" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="874" cy="250" r="3.5" fill="#09090b" />
+            <rect x="866" y="266" width="44" height="44" rx="3" fill="#09090b" stroke="#27272a" strokeWidth="1.2" />
+            <text x="888" y="290" textAnchor="middle" fontSize="11" fontFamily="monospace" fontWeight="900" fill="#ffffff">
+              SX1280
+            </text>
+            <text x="888" y="302" textAnchor="middle" fontSize="9" fontFamily="sans-serif" fontWeight="700" fill="#38bdf8">
+              ELRS 2.4G
+            </text>
+            <rect x="862" y="326" width="10" height="8" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="876" y="326" width="10" height="8" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="890" y="326" width="10" height="8" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+            <rect x="904" y="326" width="10" height="8" rx="1.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
+
+            {/* Badge Titre */}
+            <rect x="850" y="352" width="76" height="18" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="888" y="365" textAnchor="middle" fontSize="10.5" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              ELRS RX
+            </text>
+          </g>
+
+          {/* ====================================================================
+              9. ANTENNE IMMORTAL-T (image (4), node-id=2004-15)
+                 Taille exacte : 639 × 359, Position : (945, 200) à (1584, 559)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('antenna-rx')}
+            onMouseEnter={() => setHoveredId('antenna-rx')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('antenna-rx') ? 'url(#realisticShadow)' : undefined}
+          >
+            <line x1="945" y1="210" x2="1584" y2="210" stroke="#09090b" strokeWidth={isCurrent('antenna-rx') ? '8' : '6'} strokeLinecap="round" />
+            <rect x="945" y="201" width="28" height="18" rx="5" fill="#dc2626" stroke="#09090b" strokeWidth="2" />
+            <rect x="1556" y="201" width="28" height="18" rx="5" fill="#dc2626" stroke="#09090b" strokeWidth="2" />
+            <path d="M 1249 194 L 1279 194 L 1273 230 L 1255 230 Z" fill="#09090b" stroke="#27272a" strokeWidth="2" />
+            {/* Câble coaxial descendant vers la frame */}
+            <line x1="1264" y1="230" x2="1264" y2="520" stroke="#334155" strokeWidth="4" strokeDasharray="5 5" />
+            <circle cx="1264" cy="524" r="6" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+
+            {/* Badge Titre */}
+            <rect x="1179" y="176" width="170" height="22" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
+            <text x="1264" y="191" textAnchor="middle" fontSize="12" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              ANTENNE IMMORTAL-T
+            </text>
+          </g>
+
+          {/* ====================================================================
+              10. ANTENNE VTX LOLLIPOP (Antenne VTX, node-id=2004-3)
+                  Taille exacte : 56 × 427, Position : (1315, 262) à (1371, 689)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('antenna-vtx')}
+            onMouseEnter={() => setHoveredId('antenna-vtx')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('antenna-vtx') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect x="1315" y="262" width="56" height="52" rx="18" fill={isCurrent('antenna-vtx') ? '#334155' : '#18181b'} stroke="#09090b" strokeWidth="2.5" />
+            <circle cx="1343" cy="288" r="12" fill="#f8fafc" stroke="#09090b" strokeWidth="2" />
+            <circle cx="1343" cy="288" r="5" fill="url(#goldPadReal)" />
+            <line x1="1343" y1="314" x2="1343" y2="675" stroke="#09090b" strokeWidth="6" />
+            <circle cx="1343" cy="678" r="9" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="2" />
+
+            {/* Badge Titre */}
+            <rect x="1278" y="694" width="130" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="1343" y="708" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              ANTENNE VTX
+            </text>
+          </g>
+
+          {/* ====================================================================
+              11. CONDENSATEUR LOW ESR (Condo, node-id=2004-13)
+                  Taille exacte : 32 × 54, Position : (394, 541) à (426, 595)
+             ==================================================================== */}
+          <g
+            onClick={() => handleComponentClick('condo')}
+            onMouseEnter={() => setHoveredId('condo')}
+            onMouseLeave={() => setHoveredId(null)}
+            className="cursor-pointer transition-all duration-200"
+            filter={isCurrent('condo') ? 'url(#realisticShadow)' : undefined}
+          >
+            <rect
+              x="394"
+              y="541"
+              width="32"
+              height="54"
+              rx="6"
+              fill={isCurrent('condo') ? '#27272a' : '#18181b'}
+              stroke="#09090b"
+              strokeWidth="2.2"
+            />
+            <rect x="394" y="541" width="10" height="54" rx="1.5" fill="url(#goldPadReal)" />
+            <text x="399" y="560" fontSize="11" fill="#09090b" fontWeight="900">-</text>
+            <text x="399" y="575" fontSize="11" fill="#09090b" fontWeight="900">-</text>
+            <line x1="426" y1="558" x2="467" y2="558" stroke="url(#aluminumReal)" strokeWidth="3" />
+            <line x1="426" y1="578" x2="467" y2="578" stroke="url(#aluminumReal)" strokeWidth="3" />
+
+            {/* Badge Titre */}
+            <rect x="382" y="602" width="56" height="18" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="410" y="615" textAnchor="middle" fontSize="10" fontFamily="sans-serif" fontWeight="900" fill="#000000">
+              CONDO
+            </text>
+          </g>
+
+          {/* ====================================================================
+              12. BUZZER AUTONOME VIFLY (Vifly, node-id=2004-17)
+                  Taille exacte : 52 × 92, Position : (878, 754) à (930, 846)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('vifly')}
@@ -602,77 +655,30 @@ export function MonochromeDetailedCanvas({
             filter={isCurrent('vifly') ? 'url(#realisticShadow)' : undefined}
           >
             <rect
-              x="498"
-              y="435"
-              width="24"
-              height="35"
-              rx="4"
+              x="878"
+              y="754"
+              width="52"
+              height="92"
+              rx="8"
               fill={isCurrent('vifly') ? '#fde047' : '#eab308'}
               stroke="#09090b"
-              strokeWidth="1.8"
+              strokeWidth="2.5"
             />
-            <circle cx="510" cy="448" r="8.5" fill="#09090b" stroke="#27272a" strokeWidth="1" />
-            <circle cx="510" cy="448" r="3.5" fill="#f8fafc" />
-            <rect x="502" y="460" width="16" height="7" rx="1.5" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
-            <circle cx="510" cy="463.5" r="1.8" fill="#ffffff" style={{ filter: 'drop-shadow(0 0 2px #ffffff)' }} />
+            <circle cx="904" cy="780" r="18" fill="#09090b" stroke="#27272a" strokeWidth="2" />
+            <circle cx="904" cy="780" r="7" fill="#f8fafc" />
+            <rect x="888" y="806" width="32" height="16" rx="3" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.2" />
+            <circle cx="904" cy="814" r="3.5" fill="#ffffff" style={{ filter: 'drop-shadow(0 0 3px #ffffff)' }} />
 
             {/* Badge Titre */}
-            <rect x="491" y="473" width="38" height="13" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="510" y="483" textAnchor="middle" fontSize="7" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="866" y="853" width="76" height="18" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="904" y="866" textAnchor="middle" fontSize="10" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               BUZZER
             </text>
           </g>
 
           {/* ====================================================================
-              11. ANTENNE IMMORTAL-T - Horizontale en haut au centre-droit (x=525..820, y=90)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('antenna-rx')}
-            onMouseEnter={() => setHoveredId('antenna-rx')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('antenna-rx') ? 'url(#realisticShadow)' : undefined}
-          >
-            <line x1="525" y1="90" x2="820" y2="90" stroke="#09090b" strokeWidth={isCurrent('antenna-rx') ? '4.5' : '3.5'} strokeLinecap="round" />
-            <rect x="525" y="85" width="14" height="10" rx="3" fill="#dc2626" stroke="#09090b" strokeWidth="1.2" />
-            <rect x="806" y="85" width="14" height="10" rx="3" fill="#dc2626" stroke="#09090b" strokeWidth="1.2" />
-            <path d="M 662 81 L 682 81 L 678 100 L 666 100 Z" fill="#09090b" stroke="#27272a" strokeWidth="1.2" />
-            {/* Câble coaxial descendant */}
-            <line x1="672" y1="100" x2="672" y2="240" stroke="#334155" strokeWidth="2" strokeDasharray="3 3" />
-            <circle cx="672" cy="242" r="3.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1" />
-
-            {/* Badge Titre */}
-            <rect x="617" y="65" width="110" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="672" y="76" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              ANTENNE IMMORTAL-T
-            </text>
-          </g>
-
-          {/* ====================================================================
-              12. ANTENNE VTX LOLLIPOP - Verticale à droite (x=705, y=115..265)
-             ==================================================================== */}
-          <g
-            onClick={() => handleComponentClick('antenna-vtx')}
-            onMouseEnter={() => setHoveredId('antenna-vtx')}
-            onMouseLeave={() => setHoveredId(null)}
-            className="cursor-pointer transition-all duration-200"
-            filter={isCurrent('antenna-vtx') ? 'url(#realisticShadow)' : undefined}
-          >
-            <rect x="696" y="115" width="18" height="24" rx="8" fill={isCurrent('antenna-vtx') ? '#334155' : '#18181b'} stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="705" cy="127" r="4.5" fill="#f8fafc" stroke="#09090b" strokeWidth="1" />
-            <circle cx="705" cy="127" r="2" fill="url(#goldPadReal)" />
-            <line x1="705" y1="139" x2="705" y2="260" stroke="#09090b" strokeWidth="3" />
-            <circle cx="705" cy="262" r="4.5" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.2" />
-
-            {/* Badge Titre */}
-            <rect x="668" y="268" width="74" height="14" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="705" y="278" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
-              ANTENNE VTX
-            </text>
-          </g>
-
-          {/* ====================================================================
-              13. LOGO BETAFLIGHT - Tout en haut à droite (x=835..915, y=75..145)
+              13. LOGO BETAFLIGHT (image, node-id=2004-14)
+                  Taille exacte : 172 × 168, Position : (1627, 196) à (1799, 364)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('betaflight')}
@@ -682,24 +688,25 @@ export function MonochromeDetailedCanvas({
             filter={isCurrent('betaflight') ? 'url(#realisticShadow)' : undefined}
           >
             <path
-              d="M 845 80 Q 880 65 900 95 Q 885 117 865 120 Q 845 113 845 80 Z"
+              d="M 1647 216 Q 1727 186 1773 246 Q 1743 290 1703 296 Q 1663 282 1647 216 Z"
               fill={isCurrent('betaflight') ? '#fde047' : '#eab308'}
               stroke="#09090b"
-              strokeWidth="2"
+              strokeWidth="3.5"
             />
-            <path d="M 860 83 Q 885 75 895 90" fill="none" stroke="#09090b" strokeWidth="2.5" />
-            <path d="M 865 97 Q 890 87 892 105" fill="none" stroke="#09090b" strokeWidth="2.5" />
-            <line x1="900" y1="95" x2="909" y2="99" stroke="#09090b" strokeWidth="3.2" strokeLinecap="round" />
+            <path d="M 1677 222 Q 1737 206 1761 236" fill="none" stroke="#09090b" strokeWidth="4.5" />
+            <path d="M 1687 250 Q 1747 230 1755 266" fill="none" stroke="#09090b" strokeWidth="4.5" />
+            <line x1="1773" y1="246" x2="1791" y2="254" stroke="#09090b" strokeWidth="5.5" strokeLinecap="round" />
 
             {/* Badge Titre */}
-            <rect x="840" y="125" width="70" height="14" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="875" y="135" textAnchor="middle" fontSize="7.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="1653" y="306" width="120" height="20" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.2" />
+            <text x="1713" y="320" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               BETAFLIGHT
             </text>
           </g>
 
           {/* ====================================================================
-              14. RADIOCOMMANDE TBS TANGO II - Milieu Droite (x=745..935, y=200..365)
+              14. RADIOCOMMANDE TBS TANGO II (Tango, node-id=2004-12)
+                  Taille exacte : 404 × 354, Position : (1432, 386) à (1836, 740)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('tango')}
@@ -708,51 +715,56 @@ export function MonochromeDetailedCanvas({
             className="cursor-pointer transition-all duration-200"
             filter={isCurrent('tango') ? 'url(#realisticShadow)' : undefined}
           >
+            {/* Boîtier manette soft-touch noir graphite */}
             <path
-              d="M 775 220 C 820 208, 885 208, 930 225 C 950 255, 940 335, 910 350 C 885 335, 860 355, 840 335 C 820 355, 795 335, 770 350 C 740 335, 730 255, 750 225 C 760 215, 767 220, 775 220 Z"
+              d="M 1482 430 C 1582 405, 1722 405, 1812 440 C 1852 500, 1832 660, 1772 690 C 1722 660, 1672 700, 1634 660 C 1594 700, 1544 660, 1494 690 C 1434 660, 1414 500, 1454 440 C 1474 420, 1466 430, 1482 430 Z"
               fill={isCurrent('tango') ? '#27272a' : '#18181b'}
               stroke="#09090b"
-              strokeWidth="2.2"
+              strokeWidth="3.5"
             />
-            <path d="M 738 250 C 735 280, 745 310, 760 330" fill="none" stroke="#3f3f46" strokeWidth="2.5" strokeDasharray="2 3" />
-            <path d="M 942 250 C 945 280, 935 310, 920 330" fill="none" stroke="#3f3f46" strokeWidth="2.5" strokeDasharray="2 3" />
+            {/* Grips latéraux texturés */}
+            <path d="M 1430 490 C 1424 550, 1444 610, 1474 650" fill="none" stroke="#3f3f46" strokeWidth="4" strokeDasharray="4 6" />
+            <path d="M 1838 490 C 1844 550, 1824 610, 1794 650" fill="none" stroke="#3f3f46" strokeWidth="4" strokeDasharray="4 6" />
 
-            <line x1="790" y1="190" x2="890" y2="190" stroke="#09090b" strokeWidth="4" strokeLinecap="round" />
-            <line x1="840" y1="190" x2="840" y2="212" stroke="#09090b" strokeWidth="3" />
+            {/* Antenne T repliable au sommet */}
+            <line x1="1512" y1="368" x2="1756" y2="368" stroke="#09090b" strokeWidth="8" strokeLinecap="round" />
+            <line x1="1634" y1="368" x2="1634" y2="412" stroke="#09090b" strokeWidth="6" />
 
-            {/* Écran OLED */}
-            <rect x="823" y="235" width="34" height="22" rx="3" fill="#020617" stroke="#334155" strokeWidth="1.2" />
-            <text x="840" y="249" textAnchor="middle" fontSize="7" fontFamily="monospace" fontWeight="bold" fill="#38bdf8" style={{ filter: 'drop-shadow(0 0 1.5px #38bdf8)' }}>
+            {/* Écran OLED rétro-éclairé */}
+            <rect x="1598" y="460" width="72" height="46" rx="5" fill="#020617" stroke="#334155" strokeWidth="2" />
+            <text x="1634" y="488" textAnchor="middle" fontSize="14" fontFamily="monospace" fontWeight="bold" fill="#38bdf8" style={{ filter: 'drop-shadow(0 0 3px #38bdf8)' }}>
               TBS T2
             </text>
-            <text x="840" y="255" textAnchor="middle" fontSize="4.5" fontFamily="monospace" fill="#94a3b8">
+            <text x="1634" y="500" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#94a3b8">
               100Hz • 250mW
             </text>
 
-            {/* Gimbals */}
-            <circle cx="800" cy="275" r="16" fill="#09090b" stroke="#334155" strokeWidth="1.8" />
-            <circle cx="800" cy="275" r="5" fill="#dc2626" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="800" cy="275" r="1.5" fill="#ffffff" />
+            {/* Gimbals Hall avec sticks anodisés rouge */}
+            <circle cx="1554" cy="540" r="34" fill="#09090b" stroke="#334155" strokeWidth="3" />
+            <circle cx="1554" cy="540" r="11" fill="#dc2626" stroke="#09090b" strokeWidth="2" />
+            <circle cx="1554" cy="540" r="3" fill="#ffffff" />
 
-            <circle cx="880" cy="275" r="16" fill="#09090b" stroke="#334155" strokeWidth="1.8" />
-            <circle cx="880" cy="275" r="5" fill="#dc2626" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="880" cy="275" r="1.5" fill="#ffffff" />
+            <circle cx="1714" cy="540" r="34" fill="#09090b" stroke="#334155" strokeWidth="3" />
+            <circle cx="1714" cy="540" r="11" fill="#dc2626" stroke="#09090b" strokeWidth="2" />
+            <circle cx="1714" cy="540" r="3" fill="#ffffff" />
 
-            <circle cx="773" cy="305" r="3" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
-            <circle cx="773" cy="317" r="3" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
-            <circle cx="773" cy="329" r="3" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
+            {/* Boutons verticaux */}
+            <circle cx="1498" cy="600" r="6" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="1498" cy="624" r="6" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="1498" cy="648" r="6" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="1.5" />
 
-            <circle cx="840" cy="325" r="3.5" fill="none" stroke="url(#aluminumReal)" strokeWidth="1.2" />
+            <circle cx="1634" cy="640" r="7" fill="none" stroke="url(#aluminumReal)" strokeWidth="2" />
 
             {/* Badge Titre */}
-            <rect x="800" y="361" width="80" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="840" y="372" textAnchor="middle" fontSize="8.5" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="1564" y="705" width="140" height="24" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
+            <text x="1634" y="721" textAnchor="middle" fontSize="13" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               TBS TANGO II
             </text>
           </g>
 
           {/* ====================================================================
-              15. BATTERIE LIPO 6S AVEC PRISE XT60 - Entre frame et Tango/Fat Shark (x=615..675, y=345..495)
+              15. BATTERIE LIPO 6S (Lipo, node-id=2004-10)
+                  Taille exacte : 192 × 437 (pivotée 90°), Position : (1141, 588) à (1333, 1025)
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('lipo')}
@@ -762,55 +774,55 @@ export function MonochromeDetailedCanvas({
             filter={isCurrent('lipo') ? 'url(#realisticShadow)' : undefined}
           >
             <rect
-              x="615"
-              y="345"
-              width="54"
-              height="115"
-              rx="7"
+              x="1185"
+              y="680"
+              width="110"
+              height="250"
+              rx="16"
               fill={isCurrent('lipo') ? '#334155' : 'url(#lipoWrapReal)'}
               stroke="#09090b"
-              strokeWidth="2"
+              strokeWidth="3.5"
             />
-            {/* Étiquette Tattu R-Line */}
-            <rect x="621" y="355" width="42" height="24" rx="2" fill="#09090b" stroke="#eab308" strokeWidth="1" />
-            <text x="642" y="365" textAnchor="middle" fontSize="7" fontFamily="sans-serif" fontWeight="900" fill="#ffffff">
+            {/* Étiquette Tattu R-Line 6S 1300mAh */}
+            <rect x="1197" y="700" width="86" height="52" rx="4" fill="#09090b" stroke="#eab308" strokeWidth="2" />
+            <text x="1240" y="722" textAnchor="middle" fontSize="15" fontFamily="sans-serif" fontWeight="900" fill="#ffffff">
               6S 1300
             </text>
-            <text x="642" y="373" textAnchor="middle" fontSize="5.5" fontFamily="sans-serif" fontWeight="900" fill="#facc15">
+            <text x="1240" y="740" textAnchor="middle" fontSize="11" fontFamily="sans-serif" fontWeight="900" fill="#facc15">
               120C 22.2V
             </text>
 
-            <line x1="615" y1="385" x2="669" y2="385" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="615" y1="403" x2="669" y2="403" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="615" y1="421" x2="669" y2="421" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
-            <line x1="615" y1="439" x2="669" y2="439" stroke="#475569" strokeWidth="1" strokeDasharray="3 3" />
+            <line x1="1185" y1="765" x2="1295" y2="765" stroke="#475569" strokeWidth="2" strokeDasharray="5 5" />
+            <line x1="1185" y1="805" x2="1295" y2="805" stroke="#475569" strokeWidth="2" strokeDasharray="5 5" />
+            <line x1="1185" y1="845" x2="1295" y2="845" stroke="#475569" strokeWidth="2" strokeDasharray="5 5" />
+            <line x1="1185" y1="885" x2="1295" y2="885" stroke="#475569" strokeWidth="2" strokeDasharray="5 5" />
 
             {/* Prise d'équilibrage JST-XH 7 pins */}
-            <rect x="665" y="350" width="10" height="15" rx="1.5" fill="#f8fafc" stroke="#09090b" strokeWidth="0.8" />
-            <line x1="666" y1="353" x2="674" y2="353" stroke="#ef4444" strokeWidth="0.6" />
-            <line x1="666" y1="356" x2="674" y2="356" stroke="#3b82f6" strokeWidth="0.6" />
-            <line x1="666" y1="359" x2="674" y2="359" stroke="#eab308" strokeWidth="0.6" />
+            <rect x="1285" y="690" width="20" height="32" rx="3" fill="#f8fafc" stroke="#09090b" strokeWidth="1.5" />
+            <line x1="1287" y1="696" x2="1303" y2="696" stroke="#ef4444" strokeWidth="1.2" />
+            <line x1="1287" y1="702" x2="1303" y2="702" stroke="#3b82f6" strokeWidth="1.2" />
+            <line x1="1287" y1="708" x2="1303" y2="708" stroke="#eab308" strokeWidth="1.2" />
 
-            {/* Câbles en boucle 12AWG vers prise XT60 */}
-            <path d="M 632 345 C 615 310, 640 285, 645 275" fill="none" stroke="#dc2626" strokeWidth="4" />
-            <path d="M 652 345 C 642 315, 655 290, 652 275" fill="none" stroke="#09090b" strokeWidth="4" strokeDasharray="3 3" />
+            {/* Câbles en boucle 12AWG vers prise XT60 (orientée vers l'ESC en haut à gauche) */}
+            <path d="M 1220 680 C 1186 610, 1236 560, 1246 540" fill="none" stroke="#dc2626" strokeWidth="8" />
+            <path d="M 1260 680 C 1240 620, 1266 570, 1260 540" fill="none" stroke="#09090b" strokeWidth="8" strokeDasharray="6 6" />
 
-            {/* Prise Amass XT60 jaune */}
-            <path d="M 635 275 L 662 275 L 658 257 L 639 257 Z" fill="url(#xt60Yellow)" stroke="#09090b" strokeWidth="1.5" />
-            <circle cx="644" cy="266" r="2.4" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            <circle cx="653" cy="266" r="2.4" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
+            {/* Prise Amass XT60 jaune authentique */}
+            <path d="M 1226 540 L 1280 540 L 1272 504 L 1234 504 Z" fill="url(#xt60Yellow)" stroke="#09090b" strokeWidth="2.5" />
+            <circle cx="1244" cy="522" r="4.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
+            <circle cx="1262" cy="522" r="4.8" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="1.5" />
 
             {/* Badge Titre */}
-            <rect x="602" y="467" width="80" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="642" y="478" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="1165" y="945" width="150" height="24" rx="5" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
+            <text x="1240" y="961" textAnchor="middle" fontSize="12" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               LIPO 6S XT60
             </text>
           </g>
 
           {/* ====================================================================
-              16. LUNETTES FPV FAT SHARK - En bas à droite sous la Tango (x=735..945, y=415..545)
-                 Fidélité 100% à la maquette Figma : Coque blanche satinée, découpe de nez
-                 en arche inversée, lobes de joues, module ventilateur supérieur et baies
+              16. LUNETTES FPV FAT SHARK (Google, node-id=2004-11)
+                  Taille exacte : 503 × 224, Position : (1401, 766) à (1904, 990)
+                  Directement sous la radiocommande TBS Tango II
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('fatshark')}
@@ -819,105 +831,96 @@ export function MonochromeDetailedCanvas({
             className="cursor-pointer transition-all duration-200"
             filter={isCurrent('fatshark') ? 'url(#realisticShadow)' : undefined}
           >
-            {/* Oculaire gauche peeking sous le lobe */}
+            {/* Oculaires sous les lobes */}
             <path
-              d="M 770 505 C 775 524, 805 524, 815 508 Z"
+              d="M 1485 910 C 1500 945, 1560 945, 1580 915 Z"
               fill="#18181b"
               stroke="#09090b"
-              strokeWidth="1.2"
+              strokeWidth="2"
             />
-            {/* Oculaire droit peeking sous le lobe */}
             <path
-              d="M 855 508 C 865 524, 895 524, 900 505 Z"
+              d="M 1725 915 C 1745 945, 1805 945, 1820 910 Z"
               fill="#18181b"
-              stroke="#09090b"
-              strokeWidth="1.2"
-            />
-
-            {/* Capot supérieur sombre (Upper faceplate housing) */}
-            <path
-              d="M 750 442 C 785 435, 885 435, 920 442 L 922 455 L 748 455 Z"
-              fill="#1e293b"
-              stroke="#09090b"
-              strokeWidth="1.5"
-            />
-            <rect x="745" y="437" width="8" height="15" rx="1.5" fill="#0f172a" stroke="#09090b" strokeWidth="1" />
-
-            {/* Module ventilateur anti-buée central avec 7 lamelles verticales */}
-            <rect x="815" y="428" width="40" height="18" rx="3.5" fill="#0f172a" stroke="#09090b" strokeWidth="1.2" />
-            <rect x="819" y="431" width="32" height="12" rx="1.5" fill="#18181b" />
-            <line x1="823" y1="433" x2="823" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="827" y1="433" x2="827" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="831" y1="433" x2="831" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="835" y1="433" x2="835" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="839" y1="433" x2="839" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="843" y1="433" x2="843" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-            <line x1="847" y1="433" x2="847" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
-
-            {/* Boutons et joystick sur la tranche supérieure */}
-            <circle cx="792" cy="442" r="2.5" fill="#09090b" stroke="#64748b" strokeWidth="0.8" />
-            <circle cx="803" cy="443" r="2" fill="#ef4444" />
-            <circle cx="878" cy="442" r="2.5" fill="#09090b" stroke="#64748b" strokeWidth="0.8" />
-
-            <text x="882" y="436" fontSize="4.5" fontFamily="sans-serif" fontWeight="900" fill="#475569" letterSpacing="0.08em">
-              FAT SHARK
-            </text>
-
-            {/* COQUE BLANCHE DU MASQUE VISIÈRE (Silhouette exacte avec arche de nez) */}
-            <path
-              d="M 748 450 
-                 C 775 448, 895 448, 922 450 
-                 C 938 452, 938 495, 920 502
-                 C 908 506, 880 514, 856 514
-                 C 848 514, 846 492, 835 492
-                 C 824 492, 822 514, 814 514
-                 C 790 514, 762 506, 750 502
-                 C 732 495, 732 452, 748 450 Z"
-              fill={isCurrent('fatshark') ? '#f1f5f9' : 'url(#goggleShell)'}
               stroke="#09090b"
               strokeWidth="2"
             />
 
-            {/* Ligne de jointure horizontale (Split Seam) traversante sous le logo */}
+            {/* Capot supérieur sombre avec grille ventilateur */}
             <path
-              d="M 756 480 C 795 480, 875 480, 914 480"
+              d="M 1450 784 C 1520 770, 1780 770, 1855 784 L 1860 810 L 1445 810 Z"
+              fill="#1e293b"
+              stroke="#09090b"
+              strokeWidth="2.5"
+            />
+            <rect x="1440" y="774" width="16" height="30" rx="3" fill="#0f172a" stroke="#09090b" strokeWidth="2" />
+
+            {/* Module ventilateur central à 7 lamelles */}
+            <rect x="1604" y="756" width="80" height="36" rx="7" fill="#0f172a" stroke="#09090b" strokeWidth="2.5" />
+            <rect x="1612" y="762" width="64" height="24" rx="3" fill="#18181b" />
+            <line x1="1620" y1="766" x2="1620" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1628" y1="766" x2="1628" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1636" y1="766" x2="1636" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1644" y1="766" x2="1644" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1652" y1="766" x2="1652" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1660" y1="766" x2="1660" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+            <line x1="1668" y1="766" x2="1668" y2="782" stroke="#cbd5e1" strokeWidth="2.5" />
+
+            <circle cx="1534" cy="784" r="5" fill="#09090b" stroke="#64748b" strokeWidth="1.5" />
+            <circle cx="1556" cy="786" r="4" fill="#ef4444" />
+            <circle cx="1706" cy="784" r="5" fill="#09090b" stroke="#64748b" strokeWidth="1.5" />
+
+            {/* COQUE BLANCHE DU MASQUE VISIÈRE (Silhouette exacte avec arche de nez inversée) */}
+            <path
+              d="M 1446 800 
+                 C 1500 796, 1800 796, 1854 800 
+                 C 1886 804, 1886 890, 1850 904
+                 C 1826 912, 1770 928, 1722 928
+                 C 1706 928, 1702 884, 1680 884
+                 C 1658 884, 1654 928, 1638 928
+                 C 1590 928, 1534 912, 1510 904
+                 C 1474 890, 1474 804, 1446 800 Z"
+              fill={isCurrent('fatshark') ? '#f1f5f9' : 'url(#goggleShell)'}
+              stroke="#09090b"
+              strokeWidth="3.5"
+            />
+
+            {/* Seam line horizontale traversante */}
+            <path
+              d="M 1462 860 C 1540 860, 1760 860, 1838 860"
               fill="none"
               stroke="#cbd5e1"
-              strokeWidth="1.2"
+              strokeWidth="2.5"
             />
 
             {/* Baie Récepteur Gauche */}
             <path
-              d="M 746 458 C 750 458, 772 458, 774 458 C 776 458, 776 478, 776 480 L 774 498 C 770 500, 756 500, 750 496"
+              d="M 1442 816 C 1450 816, 1494 816, 1498 816 C 1502 816, 1502 856, 1502 860 L 1498 896 C 1490 900, 1462 900, 1450 892"
               fill="none"
               stroke="#94a3b8"
-              strokeWidth="1.2"
+              strokeWidth="2.5"
             />
 
-            {/* Baie Récepteur Droite avec bague circulaire subtile */}
+            {/* Baie Récepteur Droite avec bague circulaire */}
             <path
-              d="M 924 458 C 920 458, 898 458, 896 458 C 894 458, 894 478, 894 480 L 896 498 C 900 500, 914 500, 920 496"
+              d="M 1858 816 C 1850 816, 1806 816, 1802 816 C 1798 816, 1798 856, 1798 860 L 1802 896 C 1810 900, 1838 900, 1850 892"
               fill="none"
               stroke="#94a3b8"
-              strokeWidth="1.2"
+              strokeWidth="2.5"
             />
-            <circle cx="905" cy="469" r="4.5" fill="none" stroke="#cbd5e1" strokeWidth="1" />
+            <circle cx="1820" cy="838" r="9" fill="none" stroke="#cbd5e1" strokeWidth="2" />
 
             {/* LOGO OFFICIEL FAT SHARK EN FAÇADE */}
-            <text x="835" y="474" textAnchor="middle" fontSize="13" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.1em" fill="#18181b">
+            <text x="1652" y="848" textAnchor="middle" fontSize="26" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.1em" fill="#18181b">
               FAT SHARK
-            </text>
-            <text x="835" y="487" textAnchor="middle" fontSize="6" fontFamily="sans-serif" fontWeight="800" letterSpacing="0.22em" fill="#2563eb">
-              HDO2 OLED
             </text>
 
             {/* Curseurs de réglage IPD */}
-            <rect x="792" y="513" width="10" height="3" rx="1" fill="#09090b" stroke="#cbd5e1" strokeWidth="0.5" />
-            <rect x="868" y="513" width="10" height="3" rx="1" fill="#09090b" stroke="#cbd5e1" strokeWidth="0.5" />
+            <rect x="1564" y="926" width="20" height="6" rx="2" fill="#09090b" stroke="#cbd5e1" strokeWidth="1" />
+            <rect x="1716" y="926" width="20" height="6" rx="2" fill="#09090b" stroke="#cbd5e1" strokeWidth="1" />
 
             {/* Badge Titre */}
-            <rect x="783" y="534" width="104" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="835" y="545" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="1552" y="955" width="200" height="28" rx="7" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
+            <text x="1652" y="974" textAnchor="middle" fontSize="14" fontFamily="sans-serif" fontWeight="900" fill="#000000">
               LUNETTES FAT SHARK
             </text>
           </g>
@@ -952,22 +955,22 @@ export function MonochromeDetailedCanvas({
         {/* Repère d'atelier discret en bas à gauche */}
         <div className="absolute bottom-3 left-4 bg-white/95 px-3 py-1.5 rounded-xl border border-black/30 text-[11px] text-zinc-700 flex items-center gap-2 pointer-events-none shadow-xs">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Disposition & Échelle 1:1 Figma • Châssis centré, composants vectorisés réalistes</span>
+          <span>Fidélité géométrique 1:1 Figma (1920×1080) • Coordonnées réelles au pixel près</span>
         </div>
 
       </div>
 
       {/* Barre d'état sous le schéma */}
-      <div className="w-full max-w-[1360px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
+      <div className="w-full max-w-[1562px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
         <div className="flex items-center gap-3">
           <span className="font-bold text-black uppercase tracking-wider text-[11px]">
-            Disposition Conforme Figma :
+            Disposition Exacte Figma :
           </span>
-          <span className="italic text-[11px]">Châssis centré (X=415) • FC & ESC dans les bras • VTX/GPS/RX en ligne haute • Tango/LiPo/Fat Shark à droite</span>
+          <span className="italic text-[11px]">Frame (X:384..1152, Y:245..915) • FC & ESC dans les bras • Ligne haute (VTX, GPS, RX) • Tango & Fat Shark à droite</span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-black font-semibold">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Alignement Figma 100% • Déploiement automatique direct OVH</span>
+          <span>Alignement au pixel près avec le fichier Figma `FixMyDrone`</span>
         </div>
       </div>
 
