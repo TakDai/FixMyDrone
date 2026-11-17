@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { FigmaHeader } from '@/components/FigmaHeader';
 import { BugFixNewsSidebar } from '@/components/BugFixNewsSidebar';
-import { FigmaDroneCanvas } from '@/components/FigmaDroneCanvas';
+import { MonochromeDroneCanvas } from '@/components/MonochromeDroneCanvas';
 import { ComponentDetailModal } from '@/components/ComponentDetailModal';
 import { 
   FPVIntroModal, 
@@ -56,8 +56,8 @@ export default function Home() {
         {/* Colonne Gauche : Sidebar BugFixe News */}
         <BugFixNewsSidebar onSelectNews={handleSelectNewsCategory} />
 
-        {/* Colonne Droite & Centre : Les composants du drone étalés sur la page */}
-        <FigmaDroneCanvas
+        {/* Colonne Droite & Centre : Les composants du drone redessinés en monochrome parfait */}
+        <MonochromeDroneCanvas
           onSelectComponent={(comp) => setSelectedComp(comp)}
           selectedCompId={selectedComp?.id}
         />
