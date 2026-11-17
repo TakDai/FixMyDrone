@@ -28,18 +28,7 @@ jobs:
 
       - name: Copy .htaccess to out
         run: |
-          cat << 'EOF' > out/.htaccess
-          DirectoryIndex index.html
-          <IfModule mod_rewrite.c>
-            RewriteEngine On
-            RewriteBase /
-            RewriteCond %{HTTPS} off
-            RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteCond %{REQUEST_FILENAME} !-d
-            RewriteRule ^(.*)$ /index.html [L]
-          </IfModule>
-          EOF
+          cp public/.htaccess out/.htaccess
 
       - name: FTP Deploy to OVH
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
