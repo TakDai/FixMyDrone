@@ -864,9 +864,9 @@ export function MonochromeDetailedCanvas({
           </g>
 
           {/* ====================================================================
-              16. VRAIES LUNETTES FPV FAT SHARK - En bas à droite sous la Tango (x=805, y=490)
-                 Véritable masque FPV avec visière profilée, baie récepteur RapidFIRE avec antenne Pagoda
-                 & Patch, ventilateur anti-buée central, sangle réglable et curseurs IPD
+              16. LUNETTES FPV FAT SHARK - En bas à droite sous la Tango (x=805, y=490)
+                 Fidélité 100% à la maquette Figma : Coque blanche satinée, découpe de nez
+                 en arche inversée, lobes de joues, module ventilateur supérieur et baies
              ==================================================================== */}
           <g
             onClick={() => handleComponentClick('fatshark')}
@@ -875,134 +875,108 @@ export function MonochromeDetailedCanvas({
             className="cursor-pointer transition-all duration-200"
             filter={isCurrent('fatshark') ? 'url(#realisticShadow)' : undefined}
           >
-            {/* Sangle élastique latérale gauche avec motif technique */}
+            {/* 1. Mousse faciale et sous-face des oculaires sombres visibles en arrière-plan */}
+            {/* Oculaire gauche peeking sous le lobe */}
             <path
-              d="M 685 470 L 715 475 L 715 500 L 685 495 Z"
-              fill="url(#strapPattern)"
-              stroke="#09090b"
-              strokeWidth="1.5"
-            />
-            {/* Boucle de serrage gauche */}
-            <rect x="682" y="468" width="5" height="30" rx="1" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
-
-            {/* Sangle élastique latérale droite avec inscription FAT SHARK */}
-            <path
-              d="M 895 475 L 930 470 L 930 495 L 895 500 Z"
-              fill="url(#strapPattern)"
-              stroke="#09090b"
-              strokeWidth="1.5"
-            />
-            <rect x="925" y="468" width="5" height="30" rx="1" fill="url(#aluminumReal)" stroke="#09090b" strokeWidth="0.8" />
-
-            {/* Mousse faciale velours noire (Face foam) visible derrière la coque */}
-            <rect
-              x="705"
-              y="445"
-              width="200"
-              height="80"
-              rx="18"
+              d="M 740 505 C 745 524, 775 524, 785 508 Z"
               fill="#18181b"
+              stroke="#09090b"
+              strokeWidth="1.2"
+            />
+            {/* Oculaire droit peeking sous le lobe */}
+            <path
+              d="M 825 508 C 835 524, 865 524, 870 505 Z"
+              fill="#18181b"
+              stroke="#09090b"
+              strokeWidth="1.2"
+            />
+
+            {/* 2. Capot supérieur sombre (Upper faceplate housing) */}
+            <path
+              d="M 720 442 C 755 435, 855 435, 890 442 L 892 455 L 718 455 Z"
+              fill="#1e293b"
+              stroke="#09090b"
+              strokeWidth="1.5"
+            />
+            {/* Bloc saillant attache sangle / port à l'extrême gauche */}
+            <rect x="715" y="437" width="8" height="15" rx="1.5" fill="#0f172a" stroke="#09090b" strokeWidth="1" />
+
+            {/* 3. Module ventilateur anti-buée central avec 7 lamelles verticales */}
+            <rect x="785" y="428" width="40" height="18" rx="3.5" fill="#0f172a" stroke="#09090b" strokeWidth="1.2" />
+            <rect x="789" y="431" width="32" height="12" rx="1.5" fill="#18181b" />
+            <line x1="793" y1="433" x2="793" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="797" y1="433" x2="797" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="801" y1="433" x2="801" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="805" y1="433" x2="805" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="809" y1="433" x2="809" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="813" y1="433" x2="813" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+            <line x1="817" y1="433" x2="817" y2="441" stroke="#cbd5e1" strokeWidth="1.2" />
+
+            {/* Boutons et joystick sur la tranche supérieure */}
+            <circle cx="762" cy="442" r="2.5" fill="#09090b" stroke="#64748b" strokeWidth="0.8" />
+            <circle cx="773" cy="443" r="2" fill="#ef4444" />
+            <circle cx="848" cy="442" r="2.5" fill="#09090b" stroke="#64748b" strokeWidth="0.8" />
+
+            {/* Inscription gravée ton sur ton sur le capot supérieur droit */}
+            <text x="852" y="436" fontSize="4.5" fontFamily="sans-serif" fontWeight="900" fill="#475569" letterSpacing="0.08em">
+              FAT SHARK
+            </text>
+
+            {/* 4. COQUE BLANCHE DU MASQUE VISIÈRE (Silhouette exacte avec arche de nez) */}
+            <path
+              d="M 718 450 
+                 C 745 448, 865 448, 892 450 
+                 C 908 452, 908 495, 890 502
+                 C 878 506, 850 514, 826 514
+                 C 818 514, 816 492, 805 492
+                 C 794 492, 792 514, 784 514
+                 C 760 514, 732 506, 720 502
+                 C 702 495, 702 452, 718 450 Z"
+              fill={isCurrent('fatshark') ? '#f1f5f9' : 'url(#goggleShell)'}
               stroke="#09090b"
               strokeWidth="2"
             />
 
-            {/* COQUE PRINCIPALE DU MASQUE FPV (Fat Shark HDO / Dominator) */}
-            <rect
-              x="712"
-              y="442"
-              width="186"
-              height="74"
-              rx="14"
-              fill={isCurrent('fatshark') ? '#f1f5f9' : 'url(#goggleShell)'}
-              stroke="#09090b"
-              strokeWidth="2.2"
-            />
-
-            {/* Échancrure centrale inférieure pour le nez du pilote */}
+            {/* Ligne de jointure horizontale (Split Seam) traversante sous le logo */}
             <path
-              d="M 788 516 C 795 506, 815 506, 822 516 Z"
-              fill="#18181b"
-              stroke="#09090b"
-              strokeWidth="1.5"
+              d="M 726 480 C 765 480, 845 480, 884 480"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.2"
             />
 
-            {/* Dôme supérieur ventilateur anti-buée (Fan cowl) avec lamelles d'aération */}
-            <rect x="785" y="432" width="40" height="13" rx="4" fill="#09090b" stroke="#334155" strokeWidth="1.2" />
-            <line x1="792" y1="434" x2="792" y2="443" stroke="#f8fafc" strokeWidth="1" />
-            <line x1="798" y1="434" x2="798" y2="443" stroke="#f8fafc" strokeWidth="1" />
-            <line x1="805" y1="434" x2="805" y2="443" stroke="#f8fafc" strokeWidth="1" />
-            <line x1="812" y1="434" x2="812" y2="443" stroke="#f8fafc" strokeWidth="1" />
-            <line x1="818" y1="434" x2="818" y2="443" stroke="#f8fafc" strokeWidth="1" />
-
-            {/* Boutons sur la tranche supérieure (Bouton DVR, Joystick de menu, Jack alimentation) */}
-            <circle cx="750" cy="440" r="3" fill="#09090b" stroke="url(#aluminumReal)" strokeWidth="0.8" />
-            <circle cx="765" cy="439" r="2.5" fill="#ef4444" style={{ filter: 'drop-shadow(0 0 1px #ef4444)' }} />
-            <circle cx="845" cy="439" r="3" fill="#09090b" stroke="url(#aluminumReal)" strokeWidth="0.8" />
-            <rect x="855" y="437" width="8" height="4" rx="1" fill="#09090b" />
-
-            {/* BAIE RÉCEPTEUR GAUCHE : Module RapidFIRE avec écran OLED et antenne */}
-            <rect
-              x="718"
-              y="450"
-              width="38"
-              height="58"
-              rx="6"
-              fill="#1e293b"
-              stroke="#09090b"
-              strokeWidth="1.5"
+            {/* Baie Récepteur Gauche (Trappe module) */}
+            <path
+              d="M 716 458 C 720 458, 742 458, 744 458 C 746 458, 746 478, 746 480 L 744 498 C 740 500, 726 500, 720 496"
+              fill="none"
+              stroke="#94a3b8"
+              strokeWidth="1.2"
             />
-            {/* Petit écran OLED du récepteur RapidFIRE */}
-            <rect x="723" y="456" width="28" height="15" rx="2" fill="#020617" stroke="#334155" strokeWidth="0.8" />
-            <text x="737" y="466" textAnchor="middle" fontSize="6.5" fontFamily="monospace" fontWeight="bold" fill="#38bdf8">
-              R4 5760
-            </text>
-            <circle cx="737" cy="482" r="3" fill="#09090b" stroke="url(#aluminumReal)" strokeWidth="0.8" />
-            {/* Connecteur SMA doré femelle au sommet de la baie */}
-            <rect x="731" y="443" width="12" height="7" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            {/* Antenne omnidirectionnelle Pagoda / Mushroom au-dessus */}
-            <line x1="737" y1="443" x2="737" y2="415" stroke="#09090b" strokeWidth="2.5" />
-            <circle cx="737" cy="413" r="7" fill="#dc2626" stroke="#09090b" strokeWidth="1.2" />
-            <circle cx="737" cy="413" r="3" fill="#fde047" />
 
-            {/* BAIE RÉCEPTEUR DROITE : Trappe secondaire avec antenne patch directionnelle */}
-            <rect
-              x="854"
-              y="450"
-              width="38"
-              height="58"
-              rx="6"
-              fill="#1e293b"
-              stroke="#09090b"
-              strokeWidth="1.5"
+            {/* Baie Récepteur Droite avec bague circulaire subtile */}
+            <path
+              d="M 894 458 C 890 458, 868 458, 866 458 C 864 458, 864 478, 864 480 L 866 498 C 870 500, 884 500, 890 496"
+              fill="none"
+              stroke="#94a3b8"
+              strokeWidth="1.2"
             />
-            <rect x="860" y="456" width="26" height="24" rx="2" fill="#0f172a" stroke="#334155" strokeWidth="0.8" />
-            {/* Logo de polarisation RHCP */}
-            <circle cx="873" cy="468" r="6" fill="none" stroke="#64748b" strokeWidth="1" strokeDasharray="2 2" />
-            {/* Connecteur SMA doré */}
-            <rect x="867" y="443" width="12" height="7" rx="1" fill="url(#goldPadReal)" stroke="#09090b" strokeWidth="0.8" />
-            {/* Antenne Patch carrée directionnelle (Menace Invader / ImmersionRC) */}
-            <line x1="873" y1="443" x2="873" y2="423" stroke="#09090b" strokeWidth="2.5" />
-            <rect x="861" y="405" width="24" height="20" rx="3" fill="#18181b" stroke="#dc2626" strokeWidth="1.5" />
-            <circle cx="873" cy="415" r="4" fill="#dc2626" />
+            <circle cx="875" cy="469" r="4.5" fill="none" stroke="#cbd5e1" strokeWidth="1" />
 
-            {/* VISIÈRE CENTRALE AVEC MARQUAGE OFFICIEL FAT SHARK */}
-            <text x="805" y="475" textAnchor="middle" fontSize="13" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.1em" fill="#09090b">
+            {/* 5. LOGO OFFICIEL FAT SHARK EN FAÇADE */}
+            <text x="805" y="474" textAnchor="middle" fontSize="13" fontFamily="sans-serif" fontWeight="900" letterSpacing="0.1em" fill="#18181b">
               FAT SHARK
             </text>
-            <text x="805" y="487" textAnchor="middle" fontSize="6.5" fontFamily="sans-serif" fontWeight="800" letterSpacing="0.2em" fill="#2563eb">
+            <text x="805" y="487" textAnchor="middle" fontSize="6" fontFamily="sans-serif" fontWeight="800" letterSpacing="0.22em" fill="#2563eb">
               HDO2 OLED
             </text>
-            <text x="805" y="496" textAnchor="middle" fontSize="5" fontFamily="sans-serif" fontWeight="600" fill="#64748b">
-              1280x960 • 46° FOV
-            </text>
 
-            {/* Deux curseurs de réglage IPD (Interpupillary Distance 59-69mm) sous la coque */}
-            <rect x="760" y="516" width="14" height="4" rx="1" fill="#09090b" stroke="url(#aluminumReal)" strokeWidth="0.6" />
-            <rect x="836" y="516" width="14" height="4" rx="1" fill="#09090b" stroke="url(#aluminumReal)" strokeWidth="0.6" />
+            {/* Curseurs de réglage IPD sous les lobes */}
+            <rect x="762" y="513" width="10" height="3" rx="1" fill="#09090b" stroke="#cbd5e1" strokeWidth="0.5" />
+            <rect x="838" y="513" width="10" height="3" rx="1" fill="#09090b" stroke="#cbd5e1" strokeWidth="0.5" />
 
             {/* Badge Titre */}
-            <rect x="753" y="540" width="104" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
-            <text x="805" y="551" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
+            <rect x="753" y="534" width="104" height="15" rx="4" fill="#ffffff" stroke="#000000" strokeWidth="1" />
+            <text x="805" y="545" textAnchor="middle" fontSize="8" fontFamily="sans-serif" fontWeight="800" fill="#000000">
               LUNETTES FAT SHARK
             </text>
           </g>
