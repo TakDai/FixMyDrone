@@ -4,8 +4,8 @@ export interface FigmaComponentData {
   category: string;
   model: string;
   hotspot: {
-    top: string; // pourcentage
-    left: string; // pourcentage
+    top: string;
+    left: string;
     width: string;
     height: string;
   };
@@ -19,7 +19,6 @@ export interface FigmaComponentData {
     successRate: number;
   }[];
   specifications: Record<string, string>;
-  multiMotorsRef?: string;
 }
 
 export const FIGMA_COMPONENTS: FigmaComponentData[] = [
@@ -29,10 +28,10 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Structure',
     model: 'iFlight / Apex Freestyle 5"',
     hotspot: {
-      top: '25%',
-      left: '20%',
-      width: '32%',
-      height: '60%',
+      top: '18%',
+      left: '18%',
+      width: '38%',
+      height: '62%',
     },
     description: 'Châssis en fibre de carbone T700 haute rigidité pour quad 5 pouces.',
     role: 'Structure principale protégeant l électronique et maintenant les 4 bras moteurs.',
@@ -65,10 +64,10 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Vidéo FPV',
     model: 'Mach 3.1 VTX 5.8GHz',
     hotspot: {
-      top: '1%',
-      left: '17%',
-      width: '10%',
-      height: '16%',
+      top: '4%',
+      left: '12%',
+      width: '6%',
+      height: '12%',
     },
     description: 'Émetteur vidéo analogique haute puissance avec afficheur digital 7 segments et support SmartAudio.',
     role: 'Transmission sans fil du flux vidéo caméra vers les lunettes FPV.',
@@ -86,13 +85,6 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
         fix: 'Activer le PitMode via Betaflight ou régler Low Power Disarm à 25mW.',
         successRate: 98,
       },
-      {
-        title: 'Lignes horizontales blanches parasites à chaque accélération',
-        symptoms: 'L image se brouille dès qu on met du gaz.',
-        cause: 'Bruit électrique haute fréquence généré par les moteurs et l ESC.',
-        fix: 'Installer un condensateur 1000µF Low ESR aux bornes de la LiPo et brancher le VTX sur un BEC 9V filtré.',
-        successRate: 95,
-      },
     ],
   },
   {
@@ -101,17 +93,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Sécurité & Navigation',
     model: 'iFlight BLITZ M10 GPS',
     hotspot: {
-      top: '1%',
-      left: '28%',
-      width: '9%',
-      height: '12%',
+      top: '3%',
+      left: '24%',
+      width: '6%',
+      height: '10%',
     },
     description: 'Puce de géolocalisation haute précision u-blox M10 de dernière génération.',
     role: 'Acquisition des coordonnées, vitesse sol, distance maison et fonction retour automatique GPS Rescue.',
     specifications: {
       'Puce': 'u-blox M10050',
       'Protocole': 'UBLOX / NMEA',
-      'Fréquence': 'Jusqu à 10 Hz',
       'Sensibilité': '-167 dBm',
     },
     commonIssues: [
@@ -130,10 +121,10 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Liaison Radio',
     model: 'FOXEER ELRS 2.4G RX',
     hotspot: {
-      top: '4%',
-      left: '38%',
-      width: '8%',
-      height: '14%',
+      top: '5%',
+      left: '32%',
+      width: '5%',
+      height: '11%',
     },
     description: 'Micro-récepteur ExpressLRS 2.4GHz à latence ultra-faible (500Hz/1000Hz).',
     role: 'Réception des commandes de vol de la radiocommande et envoi de la télémétrie.',
@@ -141,7 +132,6 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
       'Firmware': 'ExpressLRS v3.x',
       'Fréquence': '2.4 GHz ISM',
       'Connecteur': 'IPEX U.FL',
-      'Poids': '0.8g sans antenne',
     },
     commonIssues: [
       {
@@ -161,22 +151,21 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     hotspot: {
       top: '42%',
       left: '1%',
-      width: '5%',
-      height: '10%',
+      width: '4%',
+      height: '8%',
     },
     description: 'Condensateur électrolytique à faible résistance série pour absorber les pics de tension.',
     role: 'Lissage de la tension batterie et protection des MOSFETs de l ESC contre les surtensions.',
     specifications: {
       'Capacité': '1000 µF',
       'Tension max': '35V (compatible 6S)',
-      'Série': 'Low ESR Panasonic FR',
     },
     commonIssues: [
       {
         title: 'Pattes du condensateur qui cassent au ras du boîtier',
         symptoms: 'Extinction de la caméra ou bruit vidéo brutal en vol.',
         cause: 'Vibrations et flexibilité des pattes métalliques sans fixation colle.',
-        fix: 'Raccourcir les pattes au maximum, souder directement sur les pads XT60 et sécuriser avec de la colle chaude ou gaine thermo.',
+        fix: 'Raccourcir les pattes au maximum et sécuriser avec de la gaine thermo.',
         successRate: 98,
       },
     ],
@@ -187,33 +176,24 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Électronique de Vol',
     model: 'Betaflight F405 / F722 30x30 FC',
     hotspot: {
-      top: '37%',
-      left: '9%',
-      width: '16%',
-      height: '24%',
+      top: '38%',
+      left: '6%',
+      width: '10%',
+      height: '15%',
     },
     description: 'Carte maîtresse embarquant le gyroscope ICM42688P et le processeur STM32.',
     role: 'Calcul des corrections de vol en temps réel (8kHz), gestion de l OSD et des sécurités.',
     specifications: {
       'MCU': 'STM32F405 / F722',
       'Gyro': 'ICM42688P faible bruit',
-      'Baromètre': 'DPS310 inclus',
-      'UARTs': '5 ports série libres',
     },
     commonIssues: [
       {
         title: 'Le drone refuse d armer (Arming Flags)',
         symptoms: 'Rien ne tourne quand on active l interrupteur ARM.',
-        cause: 'Sécurité logicielle (gaz non nuls, accéléromètre désaligné, câble USB branché).',
+        cause: 'Sécurité logicielle (gaz non nuls, accéléromètre désaligné).',
         fix: 'Taper "status" dans le CLI de Betaflight pour identifier l arming flag bloquant.',
         successRate: 99,
-      },
-      {
-        title: 'Pad de soudure arraché suite à traction d un fil',
-        symptoms: 'Impossible de souder le récepteur radio ou la caméra.',
-        cause: 'Traction excessive lors d un choc sans décharge de câble.',
-        fix: 'Réassigner la fonction sur un autre pad libre via la commande CLI "resource".',
-        successRate: 92,
       },
     ],
   },
@@ -223,18 +203,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Puissance',
     model: '55A 6S BLHeli_S / Bluejay ESC',
     hotspot: {
-      top: '37%',
-      left: '42%',
-      width: '16%',
-      height: '24%',
+      top: '38%',
+      left: '36%',
+      width: '10%',
+      height: '15%',
     },
     description: 'Variateur de vitesse électronique 4 canaux délivrant le courant triphasé aux 4 moteurs.',
     role: 'Contrôle précis de la vitesse de chaque moteur d après les signaux DSHOT300/600.',
     specifications: {
       'Courant continu': '55A par moteur',
-      'Courant burst': '65A (10 secondes)',
       'Firmware': 'Bluejay 48kHz / BLHeli_S',
-      'Support DSHOT': 'DSHOT300 / DSHOT600 avec RPM Filter',
     },
     commonIssues: [
       {
@@ -248,14 +226,14 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
   },
   {
     id: 'motor',
-    name: 'Moteur Brushless',
+    name: 'Moteur Brushless 2207',
     category: 'Propulsion',
     model: '2207.5 1950KV (6S)',
     hotspot: {
       top: '78%',
-      left: '16%',
-      width: '12%',
-      height: '20%',
+      left: '18%',
+      width: '8%',
+      height: '14%',
     },
     description: 'Moteur synchrone sans balai avec cloche usinée alu et arbre creux en titane.',
     role: 'Génération de la puissance mécanique rotative pour les hélices.',
@@ -263,22 +241,14 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
       'Dimensions stator': '2207.5',
       'KV': '1950 KV (optimisé 6S)',
       'Arbre': '4mm Titane creux',
-      'Poids': '33g',
     },
     commonIssues: [
       {
         title: 'Le moteur tremble et broute à très bas régime',
         symptoms: 'Bruit de craquement saccadé au ralenti.',
         cause: 'Une des trois phases coupée ou soudure froide sur pad ESC.',
-        fix: 'Refaire les 3 soudures au fer régulé à 380°C et vérifier les fils sous gaine.',
+        fix: 'Refaire les 3 soudures au fer régulé à 380°C.',
         successRate: 97,
-      },
-      {
-        title: 'Cloche tordue ou roulement qui gratte après crash',
-        symptoms: 'Vibrations visibles dans le flux vidéo (jello) et moteur brûlant.',
-        cause: 'Déformation de la cloche sous impact sur pierre ou béton.',
-        fix: 'Remplacer la cloche et les roulements 684ZZ.',
-        successRate: 90,
       },
     ],
   },
@@ -288,18 +258,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Vidéo FPV',
     model: 'Micro FPV Cam 1200TVL 1.8mm',
     hotspot: {
-      top: '80%',
-      left: '36%',
-      width: '9%',
-      height: '18%',
+      top: '82%',
+      left: '27%',
+      width: '6%',
+      height: '10%',
     },
     description: 'Caméra analogique faible latence avec capteur CMOS HDR et lentille grand angle.',
     role: 'Capture de l environnement en temps réel pour le pilotage immersif.',
     specifications: {
       'Capteur': '1/3" CMOS 1200TVL',
       'Latence': '< 6 ms',
-      'Format': '16:9 / 4:3 commutable',
-      'FOV': '165 degrés',
     },
     commonIssues: [
       {
@@ -318,17 +286,15 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     model: 'ViFly Finder 2 Buzzer',
     hotspot: {
       top: '68%',
-      left: '37%',
-      width: '6%',
-      height: '11%',
+      left: '33%',
+      width: '4%',
+      height: '8%',
     },
     description: 'Buzzer d urgence avec batterie LiPo 1S intégrée et LED stroboscopique.',
     role: 'Continue à sonner à 105 dB même si la batterie principale du drone est éjectée au crash.',
     specifications: {
       'Volume sonore': '105 dB',
       'Autonomie secours': 'Jusqu à 30 heures',
-      'Batterie': 'LiPo 1S intégrée avec recharge auto',
-      'Capteur': 'Optique jour/nuit',
     },
     commonIssues: [
       {
@@ -346,17 +312,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Liaison Radio',
     model: 'Immortal-T 2.4GHz / 868MHz',
     hotspot: {
-      top: '1%',
-      left: '49%',
-      width: '45%',
-      height: '8%',
+      top: '3%',
+      left: '40%',
+      width: '40%',
+      height: '6%',
     },
     description: 'Antenne dipôle omnidirectionnelle souple renforcée en caoutchouc.',
     role: 'Rayonnement optimal du signal radio de commande sans zone d ombre.',
     specifications: {
       'Format': 'Dipôle T-Antenna',
       'Connecteur': 'IPEX U.FL',
-      'Polarisation': 'Linéaire horizontale',
     },
     commonIssues: [
       {
@@ -374,17 +339,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Vidéo FPV',
     model: 'Lollipop 4 5.8GHz RHCP',
     hotspot: {
-      top: '11%',
-      left: '68%',
-      width: '5%',
-      height: '40%',
+      top: '8%',
+      left: '65%',
+      width: '4%',
+      height: '35%',
     },
     description: 'Antenne omnidirectionnelle circulaire polarisée (RHCP) à haut gain.',
     role: 'Émission du signal vidéo 5.8GHz avec réjection des réflexions parasites multi-trajets.',
     specifications: {
       'Gain': '2.6 dBi',
-      'Polarisation': 'RHCP (Circulaire droite)',
-      'Connecteur': 'SMA / U.FL',
+      'Polarisation': 'RHCP',
     },
     commonIssues: [
       {
@@ -402,17 +366,15 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Logiciel & Firmware',
     model: 'Betaflight 4.5.x Firmware',
     hotspot: {
-      top: '2%',
-      left: '88%',
-      width: '10%',
-      height: '14%',
+      top: '4%',
+      left: '85%',
+      width: '9%',
+      height: '10%',
     },
     description: 'Le firmware de contrôle de vol open-source le plus utilisé au monde pour le FPV.',
     role: 'Gestion des boucles PID, filtrage dynamique gyro, OSD, GPS Rescue et télémétrie.',
     specifications: {
       'Version': 'Betaflight 4.5.0 Cloud Build',
-      'Protocoles': 'DSHOT, CRSF, MSP, ELRS',
-      'Fonctions': 'RPM Filter, GPS Rescue v2, Feedforward 2.0',
     },
     commonIssues: [
       {
@@ -431,23 +393,21 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     model: 'TBS Tango II Pro V3',
     hotspot: {
       top: '25%',
-      left: '73%',
+      left: '69%',
       width: '26%',
-      height: '35%',
+      height: '32%',
     },
     description: 'Radiocommande ergonomique compacte format manette avec gimbals à effet Hall pliables.',
     role: 'Envoi des ordres de commande aux doigts du pilote avec latence minime.',
     specifications: {
       'Système': 'FreedomTX / EdgeTX',
       'Gimbals': 'Hall Sensor pleine taille',
-      'Émetteur': 'Crossfire Micro TX intégré (jusqu à 250mW)',
-      'Batterie': 'LiPo 5000mAh USB-C',
     },
     commonIssues: [
       {
         title: 'Gimbal des gaz qui frotte ou ne revient pas parfaitement au neutre',
         symptoms: 'Dérive lente sur le Roll ou Pitch en vol sans toucher les sticks.',
-        cause: 'Vis de tension de ressort mal calibrée ou poussière dans le mécanisme hall.',
+        cause: 'Vis de tension de ressort mal calibrée.',
         fix: 'Ouvrir le capot arrière et ajuster la vis de serrage de friction du stick.',
         successRate: 98,
       },
@@ -460,17 +420,15 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     model: '6S 1300mAh 100C XT60',
     hotspot: {
       top: '48%',
-      left: '50%',
-      width: '18%',
-      height: '45%',
+      left: '52%',
+      width: '8%',
+      height: '35%',
     },
     description: 'Batterie Lithium-Polymère 6 cellules délivrant plus de 130 ampères instantanés.',
     role: 'Alimentation générale de l ensemble du quadricoptère.',
     specifications: {
       'Configuration': '6S1P (22.2V nominal / 25.2V max)',
       'Capacité': '1300 mAh',
-      'Décharge': '100C continu / 150C burst',
-      'Connecteur': 'Amass XT60 Jaune',
     },
     commonIssues: [
       {
@@ -488,18 +446,16 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     category: 'Immersion & Réception',
     model: 'Fat Shark HDO / Dominator HD',
     hotspot: {
-      top: '64%',
-      left: '72%',
-      width: '27%',
-      height: '32%',
+      top: '68%',
+      left: '65%',
+      width: '30%',
+      height: '25%',
     },
     description: 'Masque et lunettes d immersion avec écrans OLED haute résolution et baie de module récepteur.',
     role: 'Affichage plein champ du flux vidéo FPV pour une immersion totale à la première personne.',
     specifications: {
       'Écrans': 'Double dalles OLED 1080p',
       'FOV': '46 degrés diagonal',
-      'Réglage IPD': '59 à 69 mm',
-      'Alimentation': '7-13V (2S LiPo)',
     },
     commonIssues: [
       {
