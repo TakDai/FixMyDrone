@@ -1,0 +1,5 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" rx="24" fill="#06b6d4" />
+  <path d="M 25 60 C 45 25, 75 25, 95 60 C 75 95, 45 95, 25 60 Z" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" />
+  <text x="60" y="68" font-family="system-ui, sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="1">KISS</text>
+</svg>
