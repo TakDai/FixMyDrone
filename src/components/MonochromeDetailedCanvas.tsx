@@ -287,11 +287,6 @@ export function MonochromeDetailedCanvas({
           className="w-full h-full select-none"
         >
           <defs>
-            {/* Ombre portée réaliste */}
-            <filter id="realisticShadow" x="-10%" y="-10%" width="120%" height="120%">
-              <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#000000" floodOpacity="0.28" />
-            </filter>
-
             {/* Surbrillance bleue de sélection */}
             <filter id="selectGlow" x="-15%" y="-15%" width="130%" height="130%">
               <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#2563eb" floodOpacity="0.7" />
@@ -355,7 +350,7 @@ export function MonochromeDetailedCanvas({
                 onMouseEnter={() => setHoveredId(comp.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 className="cursor-pointer transition-all duration-200"
-                filter={isSelected ? 'url(#selectGlow)' : isHov ? 'url(#hoverGlow)' : 'url(#realisticShadow)'}
+                filter={isSelected ? 'url(#selectGlow)' : isHov ? 'url(#hoverGlow)' : undefined}
               >
                 {/* Zone réactive cliquable */}
                 <rect

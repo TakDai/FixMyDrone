@@ -1,327 +1,258 @@
-<svg viewBox="40 75 320 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <filter id="fcDrop" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.25" />
-    </filter>
-  </defs>
+<svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- PURE TOP-DOWN FLIGHT CONTROLLER (VUE DU HAUT) - STYLE MULTI-MOTORS SANS OMBRE -->
+  <g id="fc-top-view">
 
-  <!-- Groupe principal avec rotation et perspective isométrique -->
-  <g id="flight-controller" filter="url(#fcDrop)">
-
-    <!-- OMBRE AU SOL SOUS LA FC -->
+    <!-- 1. CHÂSSIS PCB (CONTOUR EXTÉRIEUR CARRÉ À COINS ARRONDIS) -->
     <path
-      d="M 200 345 L 340 265 L 200 185 L 60 265 Z"
-      fill="#000000"
-      opacity="0.12"
-      transform="translate(0, 15) scale(1.04)"
-      transform-origin="200 265"
-    />
-
-    <!-- ==========================================
-         1. ÉPAISSEUR / TRANCHE DU PCB (3D DEPTH)
-         ========================================== -->
-    <!-- Tranche côté Sud-Ouest -->
-    <path
-      d="M 68 226 L 68 244 C 68 252, 74 258, 84 264 L 192 326 C 196 328, 200 329, 204 328 L 204 310 L 84 246 C 76 242, 68 236, 68 226 Z"
-      fill="#18181b"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-    <!-- Tranche côté Sud-Est -->
-    <path
-      d="M 204 310 L 204 328 C 208 329, 212 328, 216 326 L 324 264 C 334 258, 340 252, 340 244 L 340 226 C 340 236, 332 242, 324 246 L 204 310 Z"
-      fill="#27272a"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-
-    <!-- ==========================================
-         2. SURFACE SUPÉRIEURE DU PCB (PLAQUE PRINCIPALE)
-         ========================================== -->
-    <path
-      d="M 184 94 C 194 88, 214 88, 224 94 L 324 152 C 334 158, 340 170, 340 182 L 340 216 C 340 228, 334 240, 324 246 L 216 308 C 206 314, 194 314, 184 308 L 76 246 C 66 240, 60 228, 60 216 L 60 182 C 60 170, 66 158, 76 152 Z"
+      d="M 50 15 
+         L 250 15 
+         C 275 15, 285 25, 285 50 
+         L 285 250 
+         C 285 275, 275 285, 250 285 
+         L 50 285 
+         C 25 285, 15 275, 15 250 
+         L 15 50 
+         C 15 25, 25 15, 50 15 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="4.5"
-      stroke-linejoin="round"
-    />
-
-    <!-- Piste de masse interne / ligne décorative de bordure -->
-    <path
-      d="M 188 106 C 196 101, 212 101, 220 106 L 314 160 C 322 165, 326 174, 326 183 L 326 211 C 326 220, 322 229, 314 234 L 218 294 C 210 299, 198 299, 190 294 L 86 234 C 78 229, 74 220, 74 211 L 74 183 C 74 174, 78 165, 86 160 Z"
-      fill="#f4f4f5"
-      stroke="#000000"
-      stroke-width="1.8"
-      stroke-dasharray="8 5"
-    />
-
-    <!-- ==========================================
-         3. GROMMETS SILICONE ANTI-VIBRATION (4 COINS)
-         ========================================== -->
-    <!-- Coin Nord (Top) -->
-    <g transform="translate(204, 114)">
-      <ellipse cx="0" cy="0" rx="20" ry="11" fill="#000000" stroke="#000000" stroke-width="3" />
-      <ellipse cx="0" cy="-2" rx="19" ry="10" fill="#27272a" stroke="#000000" stroke-width="2" />
-      <ellipse cx="0" cy="-2" rx="10" ry="5.5" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <ellipse cx="0" cy="-2" rx="4.5" ry="2.5" fill="#000000" />
-    </g>
-
-    <!-- Coin Est (Right) -->
-    <g transform="translate(306, 172)">
-      <ellipse cx="0" cy="0" rx="20" ry="11" fill="#000000" stroke="#000000" stroke-width="3" />
-      <ellipse cx="0" cy="-2" rx="19" ry="10" fill="#27272a" stroke="#000000" stroke-width="2" />
-      <ellipse cx="0" cy="-2" rx="10" ry="5.5" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <ellipse cx="0" cy="-2" rx="4.5" ry="2.5" fill="#000000" />
-    </g>
-
-    <!-- Coin Sud (Bottom) -->
-    <g transform="translate(200, 276)">
-      <ellipse cx="0" cy="0" rx="20" ry="11" fill="#000000" stroke="#000000" stroke-width="3" />
-      <ellipse cx="0" cy="-2" rx="19" ry="10" fill="#27272a" stroke="#000000" stroke-width="2" />
-      <ellipse cx="0" cy="-2" rx="10" ry="5.5" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <ellipse cx="0" cy="-2" rx="4.5" ry="2.5" fill="#000000" />
-    </g>
-
-    <!-- Coin Ouest (Left) -->
-    <g transform="translate(98, 218)">
-      <ellipse cx="0" cy="0" rx="20" ry="11" fill="#000000" stroke="#000000" stroke-width="3" />
-      <ellipse cx="0" cy="-2" rx="19" ry="10" fill="#27272a" stroke="#000000" stroke-width="2" />
-      <ellipse cx="0" cy="-2" rx="10" ry="5.5" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <ellipse cx="0" cy="-2" rx="4.5" ry="2.5" fill="#000000" />
-    </g>
-
-    <!-- ==========================================
-         4. RANGEES DE PADS DE SOUDURE OR ENIG
-         ========================================== -->
-    <!-- Rangée Nord-Est (Pads Moteurs 1 & 2 / VTX) -->
-    <g stroke="#000000" stroke-width="1.8" fill="#e4e4e7">
-      <path d="M 230 114 L 238 118 L 234 125 L 226 120 Z" />
-      <path d="M 242 121 L 250 125 L 246 132 L 238 127 Z" />
-      <path d="M 254 128 L 262 132 L 258 139 L 250 134 Z" fill="#ff5757" />
-      <path d="M 266 135 L 274 139 L 270 146 L 262 141 Z" />
-      <path d="M 278 142 L 286 146 L 282 153 L 274 148 Z" />
-    </g>
-
-    <!-- Rangée Sud-Est (Pads Caméra & OSD & LED) -->
-    <g stroke="#000000" stroke-width="1.8" fill="#e4e4e7">
-      <path d="M 292 196 L 298 202 L 290 207 L 284 201 Z" />
-      <path d="M 278 205 L 284 211 L 276 216 L 270 210 Z" />
-      <path d="M 264 214 L 270 220 L 262 225 L 256 219 Z" fill="#ff5757" />
-      <path d="M 250 223 L 256 229 L 248 234 L 242 228 Z" />
-      <path d="M 236 232 L 242 238 L 234 243 L 228 237 Z" />
-    </g>
-
-    <!-- Rangée Sud-Ouest (Pads Récepteur RX / ELRS / SBUS) -->
-    <g stroke="#000000" stroke-width="1.8" fill="#e4e4e7">
-      <path d="M 174 278 L 166 282 L 162 274 L 170 270 Z" />
-      <path d="M 160 270 L 152 274 L 148 266 L 156 262 Z" />
-      <path d="M 146 262 L 138 266 L 134 258 L 142 254 Z" fill="#ff5757" />
-      <path d="M 132 254 L 124 258 L 120 250 L 128 246 Z" />
-      <path d="M 118 246 L 110 250 L 106 242 L 114 238 Z" />
-    </g>
-
-    <!-- Rangée Nord-Ouest (Pads Buzzer / GPS / Baromètre I2C) -->
-    <g stroke="#000000" stroke-width="1.8" fill="#e4e4e7">
-      <path d="M 112 196 L 118 190 L 124 195 L 118 201 Z" />
-      <path d="M 126 187 L 132 181 L 138 186 L 132 192 Z" />
-      <path d="M 140 178 L 146 172 L 152 177 L 146 183 Z" fill="#ff5757" />
-      <path d="M 154 169 L 160 163 L 166 168 L 160 174 Z" />
-      <path d="M 168 160 L 174 154 L 180 159 L 174 165 Z" />
-    </g>
-
-    <!-- ==========================================
-         5. PORT USB-C LATERAL (SURFACE & FLANC)
-         ========================================== -->
-    <g id="usbc-port" transform="translate(68, 170)">
-      <!-- Prise métallique USB-C sortant du bord du PCB -->
-      <path
-        d="M -12 6 L 12 -7 L 14 1 L -10 14 Z"
-        fill="#ffffff"
-        stroke="#000000"
-        stroke-width="3"
-        stroke-linejoin="round"
-      />
-      <!-- Ouverture intérieure ovale du connecteur USB-C -->
-      <path
-        d="M -16 12 L -6 6 L -4 10 L -14 16 Z"
-        fill="#18181b"
-        stroke="#000000"
-        stroke-width="2.5"
-      />
-      <!-- Languette centrale interne réversible -->
-      <line x1="-12" y1="12" x2="-8" y2="10" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" />
-    </g>
-
-    <!-- ==========================================
-         6. MICROCONTROLEUR CENTRAL STM32 F7 (BOITIER BGA/QFP)
-         ========================================== -->
-    <!-- Ombre du processeur -->
-    <polygon
-      points="200,162 254,193 200,224 146,193"
-      fill="#000000"
-      opacity="0.3"
-      transform="translate(0, 4)"
-    />
-
-    <!-- Tranches du processeur pour le relief 3D -->
-    <polygon
-      points="146,193 200,224 200,230 146,199"
-      fill="#09090b"
-      stroke="#000000"
-      stroke-width="2.5"
-      stroke-linejoin="round"
-    />
-    <polygon
-      points="200,224 254,193 254,199 200,230"
-      fill="#18181b"
-      stroke="#000000"
-      stroke-width="2.5"
-      stroke-linejoin="round"
-    />
-
-    <!-- Surface supérieure du processeur STM32 -->
-    <polygon
-      points="200,160 254,191 200,222 146,191"
-      fill="#18181b"
-      stroke="#000000"
       stroke-width="3.5"
       stroke-linejoin="round"
     />
 
-    <!-- Pins / broches argentées autour du boîtier -->
-    <g stroke="#ffffff" stroke-width="1.8" opacity="0.85">
-      <!-- Bord Sud-Ouest -->
-      <line x1="162" y1="199" x2="159" y2="204" />
-      <line x1="172" y1="205" x2="169" y2="210" />
-      <line x1="182" y1="211" x2="179" y2="216" />
-      <line x1="192" y1="217" x2="189" y2="222" />
-      <!-- Bord Sud-Est -->
-      <line x1="208" y1="217" x2="211" y2="222" />
-      <line x1="218" y1="211" x2="221" y2="216" />
-      <line x1="228" y1="205" x2="231" y2="210" />
-      <line x1="238" y1="199" x2="241" y2="204" />
-      <!-- Bord Nord-Est -->
-      <line x1="238" y1="183" x2="241" y2="178" />
-      <line x1="228" y1="177" x2="231" y2="172" />
-      <line x1="218" y1="171" x2="221" y2="166" />
-      <line x1="208" y1="165" x2="211" y2="160" />
-      <!-- Bord Nord-Ouest -->
-      <line x1="192" y1="165" x2="189" y2="160" />
-      <line x1="182" y1="171" x2="179" y2="166" />
-      <line x1="172" y1="177" x2="169" y2="172" />
-      <line x1="162" y1="183" x2="159" y2="178" />
+    <!-- Ligne de masse interne décorative / trace de bordure -->
+    <path
+      d="M 52 24 L 248 24 C 268 24, 276 32, 276 52 L 276 248 C 276 268, 268 276, 248 276 L 52 276 C 32 276, 24 268, 24 248 L 24 52 C 24 32, 32 24, 52 24 Z"
+      fill="#fcfcfc"
+      stroke="#000000"
+      stroke-width="1.5"
+      stroke-dasharray="6 4"
+    />
+
+    <!-- 2. PORT USB-C (BORD GAUCHE EN VUE DU DESSUS) -->
+    <g id="usb-port" transform="translate(15, 128)">
+      <rect x="-8" y="0" width="16" height="44" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <rect x="-5" y="6" width="6" height="32" rx="1.5" fill="#18181b" stroke="#000000" stroke-width="1.5" />
+      <line x1="-2" y1="12" x2="-2" y2="32" stroke="#ffffff" stroke-width="1.5" />
     </g>
 
-    <!-- Point repère broche 1 (Pin 1 Dot) -->
-    <circle cx="166" cy="191" r="2.5" fill="#ffffff" />
-
-    <!-- Marquage laser officiel "STM32 F7" sur le processeur -->
-    <text
-      x="200"
-      y="189"
-      text-anchor="middle"
-      font-family="system-ui, monospace, sans-serif"
-      font-size="12"
-      font-weight="900"
-      fill="#ffffff"
-      letter-spacing="1.2"
-    >
-      STM32
-    </text>
-    <text
-      x="200"
-      y="201"
-      text-anchor="middle"
-      font-family="system-ui, monospace, sans-serif"
-      font-size="10"
-      font-weight="bold"
-      fill="#ff5757"
-      letter-spacing="1"
-    >
-      F722RET6
-    </text>
-
-    <!-- ==========================================
-         7. PUCE GYROSCOPE & ACCELEROMETRE (BMI270/ICM)
-         ========================================== -->
-    <g transform="translate(242, 160)">
-      <!-- Boîtier QFN capteur gyro avec capot métal -->
-      <polygon points="0,0 20,11 0,22 -20,11" fill="#27272a" stroke="#000000" stroke-width="2.5" />
-      <polygon points="0,2 16,11 0,20 -16,11" fill="#cbd5e1" stroke="#000000" stroke-width="1.5" />
-      <text x="0" y="14" font-family="monospace" font-size="6.5" font-weight="900" text-anchor="middle" fill="#000000">GYRO</text>
+    <!-- 3. ŒILLETS SILICONE ANTI-VIBRATION (4 COINS STANDARD 30.5x30.5) -->
+    <!-- Haut-Gauche -->
+    <g transform="translate(48, 48)">
+      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
     </g>
 
-    <!-- ==========================================
-         8. PUCE OSD VIDEO & MEMOIRE BLACKBOX FLASH
-         ========================================== -->
-    <!-- Puce OSD AT7456E -->
-    <g transform="translate(156, 214)">
-      <polygon points="0,0 24,14 0,28 -24,14" fill="#18181b" stroke="#000000" stroke-width="2.5" />
-      <text x="0" y="17" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle" fill="#ffffff">OSD</text>
+    <!-- Haut-Droit -->
+    <g transform="translate(252, 48)">
+      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
     </g>
 
-    <!-- Puce Flash Blackbox 16MB -->
-    <g transform="translate(236, 224)">
-      <polygon points="0,0 16,9 0,18 -16,9" fill="#18181b" stroke="#000000" stroke-width="2.5" />
-      <text x="0" y="11" font-family="monospace" font-size="5.5" font-weight="bold" text-anchor="middle" fill="#ffffff">FLASH</text>
+    <!-- Bas-Gauche -->
+    <g transform="translate(48, 252)">
+      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
     </g>
 
-    <!-- ==========================================
-         9. BOUTON BOOT & LEDS D'ÉTAT
-         ========================================== -->
-    <!-- Bouton poussoir tactile BOOT -->
-    <g transform="translate(142, 148)">
-      <polygon points="0,0 14,8 0,16 -14,8" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <ellipse cx="0" cy="8" rx="4" ry="2.5" fill="#ff5757" stroke="#000000" stroke-width="1.5" />
-      <text x="0" y="24" font-family="sans-serif" font-size="6" font-weight="900" text-anchor="middle" fill="#000000">BOOT</text>
+    <!-- Bas-Droit -->
+    <g transform="translate(252, 252)">
+      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
     </g>
 
-    <!-- LEDs de statut (Verte / Bleue / Rouge) -->
-    <ellipse cx="166" cy="138" rx="3.5" ry="2" fill="#22c55e" stroke="#000000" stroke-width="1.5" />
-    <ellipse cx="174" cy="142" rx="3.5" ry="2" fill="#3b82f6" stroke="#000000" stroke-width="1.5" />
-    <ellipse cx="182" cy="146" rx="3.5" ry="2" fill="#ef4444" stroke="#000000" stroke-width="1.5" />
+    <!-- 4. PADS DE SOUDURE OR ENIG SUR LES 4 BORDS (VUE DU DESSUS) -->
+    <!-- Bord Haut (ESC / Moteurs 1 à 4) -->
+    <g stroke="#000000" stroke-width="1.8">
+      <rect x="80" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="87" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M1</text>
+      
+      <rect x="100" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="107" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M2</text>
+      
+      <rect x="122" y="16" width="16" height="20" rx="3" fill="#ff5757" />
+      <text x="130" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">BAT</text>
+      
+      <rect x="144" y="16" width="14" height="20" rx="3" fill="#18181b" />
+      <text x="151" y="32" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      
+      <rect x="164" y="16" width="16" height="20" rx="3" fill="#ff5757" />
+      <text x="172" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
+      
+      <rect x="186" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="193" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M3</text>
+      
+      <rect x="206" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="213" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M4</text>
+    </g>
 
-    <!-- ==========================================
-         10. CONDENSATEURS SMD & COMPOSANTS PASSIFS
-         ========================================== -->
+    <!-- Bord Bas (Buzzer / LED / RX) -->
+    <g stroke="#000000" stroke-width="1.8">
+      <rect x="80" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="87" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">BZ-</text>
+      
+      <rect x="100" y="264" width="14" height="20" rx="3" fill="#ff5757" />
+      <text x="107" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
+      
+      <rect x="120" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="127" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">TX1</text>
+      
+      <rect x="140" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="147" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">RX1</text>
+      
+      <rect x="160" y="264" width="14" height="20" rx="3" fill="#18181b" />
+      <text x="167" y="278" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      
+      <rect x="180" y="264" width="14" height="20" rx="3" fill="#ff5757" />
+      <text x="187" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
+      
+      <rect x="206" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
+      <text x="213" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">LED</text>
+    </g>
+
+    <!-- Bord Droit (Caméra & VTX) -->
+    <g stroke="#000000" stroke-width="1.8">
+      <rect x="264" y="86" width="20" height="13" rx="3" fill="#ff5757" />
+      <text x="274" y="96" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
+      
+      <rect x="264" y="104" width="20" height="13" rx="3" fill="#18181b" />
+      <text x="274" y="114" font-family="monospace" font-size="6.5" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      
+      <rect x="264" y="122" width="20" height="13" rx="3" fill="#e4e4e7" />
+      <text x="274" y="132" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">VTX</text>
+      
+      <rect x="264" y="140" width="20" height="13" rx="3" fill="#e4e4e7" />
+      <text x="274" y="150" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">CAM</text>
+      
+      <rect x="264" y="158" width="20" height="13" rx="3" fill="#e4e4e7" />
+      <text x="274" y="168" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">T2</text>
+      
+      <rect x="264" y="176" width="20" height="13" rx="3" fill="#e4e4e7" />
+      <text x="274" y="186" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">R2</text>
+      
+      <rect x="264" y="194" width="20" height="13" rx="3" fill="#ff5757" />
+      <text x="274" y="204" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
+    </g>
+
+    <!-- 5. MICROCONTROLEUR CENTRAL STM32 F7 (BOITIER LQFP-64 / BGA À PLAT) -->
+    <g id="stm32-chip" transform="translate(150, 150)">
+      <!-- Broches / pins du processeur sur les 4 côtés -->
+      <g stroke="#18181b" stroke-width="1.8">
+        <!-- Haut -->
+        <line x1="-30" y1="-38" x2="-30" y2="-46" />
+        <line x1="-20" y1="-38" x2="-20" y2="-46" />
+        <line x1="-10" y1="-38" x2="-10" y2="-46" />
+        <line x1="0" y1="-38" x2="0" y2="-46" />
+        <line x1="10" y1="-38" x2="10" y2="-46" />
+        <line x1="20" y1="-38" x2="20" y2="-46" />
+        <line x1="30" y1="-38" x2="30" y2="-46" />
+        <!-- Bas -->
+        <line x1="-30" y1="38" x2="-30" y2="46" />
+        <line x1="-20" y1="38" x2="-20" y2="46" />
+        <line x1="-10" y1="38" x2="-10" y2="46" />
+        <line x1="0" y1="38" x2="0" y2="46" />
+        <line x1="10" y1="38" x2="10" y2="46" />
+        <line x1="20" y1="38" x2="20" y2="46" />
+        <line x1="30" y1="38" x2="30" y2="46" />
+        <!-- Gauche -->
+        <line x1="-38" y1="-30" x2="-46" y2="-30" />
+        <line x1="-38" y1="-20" x2="-46" y2="-20" />
+        <line x1="-38" y1="-10" x2="-46" y2="-10" />
+        <line x1="-38" y1="0" x2="-46" y2="0" />
+        <line x1="-38" y1="10" x2="-46" y2="10" />
+        <line x1="-38" y1="20" x2="-46" y2="20" />
+        <line x1="-38" y1="30" x2="-46" y2="30" />
+        <!-- Droite -->
+        <line x1="38" y1="-30" x2="46" y2="-30" />
+        <line x1="38" y1="-20" x2="46" y2="-20" />
+        <line x1="38" y1="-10" x2="46" y2="-10" />
+        <line x1="38" y1="0" x2="46" y2="0" />
+        <line x1="38" y1="10" x2="46" y2="10" />
+        <line x1="38" y1="20" x2="46" y2="20" />
+        <line x1="38" y1="30" x2="46" y2="30" />
+      </g>
+
+      <!-- Corps du processeur carré noir -->
+      <rect x="-38" y="-38" width="76" height="76" rx="4" fill="#18181b" stroke="#000000" stroke-width="3" />
+      
+      <!-- Point repère Pin 1 -->
+      <circle cx="-28" cy="-28" r="3" fill="#ffffff" />
+
+      <!-- Sérigraphie officielle STM32 -->
+      <text x="0" y="-8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="#ffffff" letter-spacing="1.5">
+        STM32
+      </text>
+      <text x="0" y="10" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ff5757" letter-spacing="1">
+        F722RET6
+      </text>
+      <text x="0" y="25" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="#a1a1aa">
+        216MHz
+      </text>
+    </g>
+
+    <!-- 6. CAPTEUR GYROSCOPE (BMI270/ICM) -->
+    <g transform="translate(198, 92)">
+      <rect x="0" y="0" width="30" height="26" rx="2" fill="#27272a" stroke="#000000" stroke-width="2" />
+      <rect x="4" y="4" width="22" height="18" rx="1.5" fill="#cbd5e1" stroke="#000000" stroke-width="1.2" />
+      <text x="15" y="16" font-family="monospace" font-size="7.5" font-weight="900" text-anchor="middle" fill="#000000">GYRO</text>
+    </g>
+
+    <!-- 7. PUCE OSD (MAX7456 / AT7456E) -->
+    <g transform="translate(72, 88)">
+      <rect x="0" y="0" width="34" height="22" rx="2" fill="#18181b" stroke="#000000" stroke-width="2" />
+      <!-- Broches OSD -->
+      <line x1="6" y1="-4" x2="6" y2="0" stroke="#000000" stroke-width="1.5" />
+      <line x1="14" y1="-4" x2="14" y2="0" stroke="#000000" stroke-width="1.5" />
+      <line x1="22" y1="-4" x2="22" y2="0" stroke="#000000" stroke-width="1.5" />
+      <line x1="28" y1="-4" x2="28" y2="0" stroke="#000000" stroke-width="1.5" />
+      <text x="17" y="14" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle" fill="#ffffff">OSD</text>
+    </g>
+
+    <!-- 8. MÉMOIRE FLASH BLACKBOX 16MB -->
+    <g transform="translate(74, 194)">
+      <rect x="0" y="0" width="28" height="24" rx="2" fill="#18181b" stroke="#000000" stroke-width="2" />
+      <text x="14" y="15" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle" fill="#ffffff">FLASH</text>
+    </g>
+
+    <!-- 9. BOUTON BOOT & LEDS D'ÉTAT -->
+    <!-- Bouton BOOT -->
+    <g transform="translate(196, 196)">
+      <rect x="0" y="0" width="24" height="20" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="12" cy="10" r="5" fill="#ff5757" stroke="#000000" stroke-width="1.5" />
+      <text x="12" y="30" font-family="sans-serif" font-size="7" font-weight="900" text-anchor="middle" fill="#000000">BOOT</text>
+    </g>
+
+    <!-- LEDs de statut (Verte, Bleue, Rouge) -->
+    <circle cx="132" cy="98" r="4" fill="#22c55e" stroke="#000000" stroke-width="1.5" />
+    <circle cx="144" cy="98" r="4" fill="#3b82f6" stroke="#000000" stroke-width="1.5" />
+    <circle cx="156" cy="98" r="4" fill="#ef4444" stroke="#000000" stroke-width="1.5" />
+
+    <!-- 10. CONDENSATEURS CÉRAMIQUE SMD ALIMENTATION -->
     <g stroke="#000000" stroke-width="1.5">
-      <!-- Condensateur Tantale / Céramique alim 5V -->
-      <polygon points="196,134 206,140 196,146 186,140" fill="#eab308" />
-      <polygon points="214,144 224,150 214,156 204,150" fill="#eab308" />
+      <rect x="136" y="112" width="12" height="7" rx="1" fill="#eab308" />
+      <rect x="152" y="112" width="12" height="7" rx="1" fill="#eab308" />
       
       <!-- Petites résistances 0402 noires -->
-      <polygon points="186,236 192,239 186,243 180,240" fill="#18181b" />
-      <polygon points="194,240 200,243 194,247 188,244" fill="#18181b" />
-      <polygon points="202,244 208,247 202,251 196,248" fill="#18181b" />
+      <rect x="136" y="180" width="7" height="4" fill="#18181b" />
+      <rect x="146" y="180" width="7" height="4" fill="#18181b" />
+      <rect x="156" y="180" width="7" height="4" fill="#18181b" />
     </g>
 
-    <!-- ==========================================
-         11. FLECHE DIRECTIONNELLE SERIGRAPHIE AVANT
-         ========================================== -->
-    <g transform="translate(200, 142)">
-      <!-- Flèche pointant vers l'avant (coin Nord) -->
-      <path
-        d="M 0 0 L -8 10 L -3 10 L -3 18 L 3 18 L 3 10 L 8 10 Z"
-        fill="#000000"
-        stroke="#ffffff"
-        stroke-width="1.5"
-      />
+    <!-- 11. FLÈCHE BLANCHE DIRECTION AVANT DU DRONE -->
+    <g transform="translate(150, 70)">
+      <polygon points="0,-12 -8,2 -3,2 -3,12 3,12 3,2 8,2" fill="#000000" stroke="#ffffff" stroke-width="1.5" />
     </g>
 
-    <!-- Silkscreen label "F7 • 30.5x30.5" -->
-    <text
-      x="200"
-      y="262"
-      text-anchor="middle"
-      font-family="system-ui, monospace, sans-serif"
-      font-size="8.5"
-      font-weight="900"
-      fill="#000000"
-      letter-spacing="0.8"
-    >
-      F7 • 30.5x30.5
+    <!-- 12. TEXTE SÉRIGRAPHIE FIXMYDRONE STYLE MULTI-MOTORS -->
+    <text x="150" y="240" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="10" font-weight="900" fill="#000000" letter-spacing="1">
+      FIXMYDRONE F7 • 30.5x30.5
     </text>
 
   </g>
