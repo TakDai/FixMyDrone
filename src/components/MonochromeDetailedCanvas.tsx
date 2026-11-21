@@ -17,6 +17,8 @@ import {
   Radio,
   Glasses,
   Cpu,
+  Sliders,
+  ChevronDown,
 } from 'lucide-react';
 
 interface MonochromeDetailedCanvasProps {
@@ -34,11 +36,10 @@ interface ComponentVisualConfig {
   labelX: number;
   labelY: number;
   label: string;
-  isGeneric?: boolean;
 }
 
-// 16 composants vectorisés fidèles à 100% positionnés selon la maquette Figma (viewBox 358 176 1562 904)
-const COMPONENT_CONFIGS: ComponentVisualConfig[] = [
+// 13 composants vectorisés fidèles du drone (aucun composant externe sur le schéma)
+const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 1. Châssis Carbone True-X (node 2004-5) : 768 × 670, centre (768, 580)
   {
     id: 'frame',
@@ -135,15 +136,15 @@ const COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 362,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 639 × 38 à (945, 200)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 26 à (945, 200)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg',
     x: 945,
     y: 200,
-    width: 639,
-    height: 38,
-    labelX: 1264,
+    width: 440,
+    height: 26,
+    labelX: 1165,
     labelY: 190,
     label: 'ANTENNE IMMORTAL-T',
   },
@@ -183,33 +184,7 @@ const COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 866,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Configurateur & Firmware (node 2004-14) : 172 × 168 à (1627, 196)
-  {
-    id: 'betaflight',
-    image: '/images/components/betaflight.svg',
-    x: 1627,
-    y: 196,
-    width: 172,
-    height: 168,
-    labelX: 1713,
-    labelY: 382,
-    label: 'CONFIGURATEUR',
-    isGeneric: true,
-  },
-  // 14. Radiocommande Multi-Marques (node 2004-12) : 404 × 354 à (1432, 386)
-  {
-    id: 'tango',
-    image: '/images/components/tango.svg',
-    x: 1432,
-    y: 386,
-    width: 404,
-    height: 354,
-    labelX: 1634,
-    labelY: 755,
-    label: 'RADIOCOMMANDE',
-    isGeneric: true,
-  },
-  // 15. Batterie LiPo 6S (node 2004-10) : 192 × 437 à (1141, 588)
+  // 13. Batterie LiPo 6S (node 2004-10) : 192 × 437 à (1141, 588)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg',
@@ -221,19 +196,6 @@ const COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 1042,
     label: 'BATTERIE LIPO 6S XT60',
   },
-  // 16. Lunettes FPV Multi-Systèmes (node 2004-11) : 503 × 224 à (1401, 766)
-  {
-    id: 'fatshark',
-    image: '/images/components/fatshark.svg',
-    x: 1401,
-    y: 766,
-    width: 503,
-    height: 224,
-    labelX: 1652,
-    labelY: 1010,
-    label: 'LUNETTES FPV',
-    isGeneric: true,
-  },
 ];
 
 export function MonochromeDetailedCanvas({
@@ -242,15 +204,15 @@ export function MonochromeDetailedCanvas({
 }: MonochromeDetailedCanvasProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // Marques sélectionnées pour les 3 éléments génériques
+  // Marques sélectionnées pour les 3 éléments génériques externes
   const [selectedGoggleBrand, setSelectedGoggleBrand] = useState<string>('fatshark');
   const [selectedRadioBrand, setSelectedRadioBrand] = useState<string>('tbs');
   const [selectedConfigBrand, setSelectedConfigBrand] = useState<string>('betaflight');
 
-  // Affichage des menus au survol
-  const [hoverGoggleMenu, setHoverGoggleMenu] = useState(false);
-  const [hoverRadioMenu, setHoverRadioMenu] = useState(false);
-  const [hoverConfigMenu, setHoverConfigMenu] = useState(false);
+  // Menus déroulants de sélection de marque au survol
+  const [showGoggleMenu, setShowGoggleMenu] = useState(false);
+  const [showRadioMenu, setShowRadioMenu] = useState(false);
+  const [showConfigMenu, setShowConfigMenu] = useState(false);
 
   const currentGoggle = GOGGLE_BRANDS.find((b) => b.id === selectedGoggleBrand) || GOGGLE_BRANDS[0];
   const currentRadio = RADIO_BRANDS.find((b) => b.id === selectedRadioBrand) || RADIO_BRANDS[0];
@@ -299,15 +261,211 @@ export function MonochromeDetailedCanvas({
 
   const isCurrent = (id: string) => selectedCompId === id || hoveredId === id;
 
-  // Détection visibilité menu marque (survol de l'objet, clic dessus, ou survol du menu)
-  const isGoggleMenuVisible = hoverGoggleMenu || hoveredId === 'fatshark' || selectedCompId === 'fatshark';
-  const isRadioMenuVisible = hoverRadioMenu || hoveredId === 'tango' || selectedCompId === 'tango';
-  const isConfigMenuVisible = hoverConfigMenu || hoveredId === 'betaflight' || selectedCompId === 'betaflight';
-
   return (
     <section className="flex-1 w-full flex flex-col items-center justify-center p-1 sm:p-4 select-none bg-white">
-      {/* Conteneur principal - Proportions 1562:904 conformes à la maquette Figma Home */}
-      <div className="relative w-full max-w-[1562px] aspect-[1562/904] bg-[#fafafa] border-[1.5px] border-dashed border-black rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-hidden shadow-xs">
+      
+      {/* ====================================================================
+          SÉLECTEURS GÉNÉRIQUES DES ÉQUIPEMENTS EXTERNES (Survol & Choix de marque)
+         ==================================================================== */}
+      <div className="w-full max-w-[1240px] mb-3 flex flex-wrap items-center justify-between gap-3 bg-zinc-50 border-[1.5px] border-black/80 rounded-2xl p-3 shadow-xs">
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-700 uppercase tracking-wider">
+          <Sliders className="w-4 h-4 text-black" />
+          <span>Équipements & Écosystème :</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* 1. Lunettes FPV génériques */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowGoggleMenu(true)}
+            onMouseLeave={() => setShowGoggleMenu(false)}
+          >
+            <button
+              onClick={() => {
+                handleComponentClick('fatshark');
+                setShowGoggleMenu((v) => !v);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                selectedCompId === 'fatshark'
+                  ? 'bg-black text-white border-black shadow-xs'
+                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
+              }`}
+            >
+              <Glasses className="w-4 h-4" />
+              <span>Lunettes :</span>
+              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                selectedCompId === 'fatshark' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
+              }`}>
+                {currentGoggle.badge}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            </button>
+
+            {/* Menu déroulant des marques de lunettes au survol */}
+            {showGoggleMenu && (
+              <div className="absolute top-full mt-1.5 left-0 sm:left-auto sm:right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
+                  Systèmes Vidéo FPV ({GOGGLE_BRANDS.length}) :
+                </div>
+                <div className="flex flex-col gap-1">
+                  {GOGGLE_BRANDS.map((gb) => (
+                    <button
+                      key={gb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedGoggleBrand(gb.id);
+                        onSelectComponent(getComp('fatshark'));
+                        setShowGoggleMenu(false);
+                      }}
+                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
+                        selectedGoggleBrand === gb.id
+                          ? 'bg-black text-white shadow-xs'
+                          : 'hover:bg-zinc-100 text-zinc-800'
+                      }`}
+                    >
+                      <span>{gb.name}</span>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                        selectedGoggleBrand === gb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
+                      }`}>
+                        {gb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Radiocommande générique */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowRadioMenu(true)}
+            onMouseLeave={() => setShowRadioMenu(false)}
+          >
+            <button
+              onClick={() => {
+                handleComponentClick('tango');
+                setShowRadioMenu((v) => !v);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                selectedCompId === 'tango'
+                  ? 'bg-black text-white border-black shadow-xs'
+                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
+              }`}
+            >
+              <Radio className="w-4 h-4" />
+              <span>Radio :</span>
+              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                selectedCompId === 'tango' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
+              }`}>
+                {currentRadio.badge}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            </button>
+
+            {/* Menu déroulant des radios au survol */}
+            {showRadioMenu && (
+              <div className="absolute top-full mt-1.5 left-0 sm:left-auto sm:right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
+                  Marques Radiocommandes ({RADIO_BRANDS.length}) :
+                </div>
+                <div className="flex flex-col gap-1">
+                  {RADIO_BRANDS.map((rb) => (
+                    <button
+                      key={rb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedRadioBrand(rb.id);
+                        onSelectComponent(getComp('tango'));
+                        setShowRadioMenu(false);
+                      }}
+                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
+                        selectedRadioBrand === rb.id
+                          ? 'bg-black text-white shadow-xs'
+                          : 'hover:bg-zinc-100 text-zinc-800'
+                      }`}
+                    >
+                      <span>{rb.name}</span>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                        selectedRadioBrand === rb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
+                      }`}>
+                        {rb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Firmware / Configurateur générique */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowConfigMenu(true)}
+            onMouseLeave={() => setShowConfigMenu(false)}
+          >
+            <button
+              onClick={() => {
+                handleComponentClick('betaflight');
+                setShowConfigMenu((v) => !v);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                selectedCompId === 'betaflight'
+                  ? 'bg-black text-white border-black shadow-xs'
+                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
+              }`}
+            >
+              <Cpu className="w-4 h-4" />
+              <span>Firmware :</span>
+              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                selectedCompId === 'betaflight' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
+              }`}>
+                {currentConfig.badge}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            </button>
+
+            {/* Menu déroulant des firmwares au survol */}
+            {showConfigMenu && (
+              <div className="absolute top-full mt-1.5 right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
+                  Firmwares & Configurateurs ({CONFIGURATOR_BRANDS.length}) :
+                </div>
+                <div className="flex flex-col gap-1">
+                  {CONFIGURATOR_BRANDS.map((cb) => (
+                    <button
+                      key={cb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedConfigBrand(cb.id);
+                        onSelectComponent(getComp('betaflight'));
+                        setShowConfigMenu(false);
+                      }}
+                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
+                        selectedConfigBrand === cb.id
+                          ? 'bg-black text-white shadow-xs'
+                          : 'hover:bg-zinc-100 text-zinc-800'
+                      }`}
+                    >
+                      <span>{cb.name}</span>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                        selectedConfigBrand === cb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
+                      }`}>
+                        {cb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ====================================================================
+          PLAN ÉCLATÉ CAO DU DRONE (Schéma Pur des Composants Embarqués)
+         ==================================================================== */}
+      <div className="relative w-full max-w-[1240px] aspect-[1140/920] bg-[#fafafa] border-[1.5px] border-dashed border-black rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-hidden shadow-xs">
         
         {/* Grille technique d'atelier FPV style SEEWORLD */}
         <div
@@ -318,17 +476,16 @@ export function MonochromeDetailedCanvas({
           }}
         />
 
-        {/* Lignes directrices CAO d'alignement */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="358 176 1562 904">
-          <line x1="768" y1="176" x2="768" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <line x1="358" y1="580" x2="1920" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+        {/* Lignes directrices CAO d'alignement centrées sur le châssis */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="340 160 1120 920">
+          <line x1="768" y1="160" x2="768" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <line x1="340" y1="580" x2="1460" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
           <circle cx="768" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
-          <circle cx="1634" cy="563" r="210" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
         </svg>
 
-        {/* SVG Vectoriel Haute Fidélité */}
+        {/* SVG Vectoriel Haute Fidélité du Drone */}
         <svg
-          viewBox="358 176 1562 904"
+          viewBox="340 160 1120 920"
           className="w-full h-full select-none"
         >
           <defs>
@@ -342,14 +499,14 @@ export function MonochromeDetailedCanvas({
               <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#2563eb" floodOpacity="0.7" />
             </filter>
 
-            {/* Surbrillance dorée au survol */}
+            {/* Surbrillance au survol */}
             <filter id="hoverGlow" x="-12%" y="-12%" width="124%" height="124%">
               <feDropShadow dx="0" dy="2" stdDeviation="7" floodColor="#000000" floodOpacity="0.4" />
             </filter>
           </defs>
 
           {/* ====================================================================
-              LIGNES DE REPÉRAGE CAO & CÂBLAGE ÉLECTRIQUE DU BLUEPRINT
+              LIGNES DE CÂBLAGE & REPÉRAGE TECHNIQUE DU BLUEPRINT
              ==================================================================== */}
           <g className="pointer-events-none opacity-40">
             {/* Ligne Standoffs Frame -> FC -> ESC */}
@@ -382,21 +539,12 @@ export function MonochromeDetailedCanvas({
 
             {/* Câble LiPo XT60 vers ESC */}
             <line x1="1141" y1="806" x2="1090" y2="587" stroke="#eab308" strokeWidth="2" strokeDasharray="5 5" />
-
-            {/* Liaison Onde Radio 2.4GHz / ELRS vers RX */}
-            <path d="M 1432 563 Q 1160 400 920 289" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="6 6" />
-
-            {/* Liaison Vidéo 5.8GHz vers Lunettes */}
-            <path d="M 1401 878 Q 1358 700 1343 475" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="6 6" />
-
-            {/* Liaison USB-C Configurateur vers FC */}
-            <path d="M 1627 280 Q 1100 240 613 540" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="6 6" />
           </g>
 
           {/* ====================================================================
-              16 COMPOSANTS VECTORISÉS AUTHENTIQUES (100% SVG FIDÈLE FIGMA)
+              13 COMPOSANTS DU DRONE 100% VECTORIELS FIDÈLES FIGMA
              ==================================================================== */}
-          {COMPONENT_CONFIGS.map((comp) => {
+          {DRONE_COMPONENT_CONFIGS.map((comp) => {
             const isSelected = selectedCompId === comp.id;
             const isHov = hoveredId === comp.id;
             const active = isSelected || isHov;
@@ -436,237 +584,35 @@ export function MonochromeDetailedCanvas({
                   className="select-none pointer-events-none"
                 />
 
-                {/* BADGE SPÉCIFIQUE POUR LES COMPOSANTS GÉNÉRIQUES MULTI-MARQUES */}
-                {comp.id === 'fatshark' && (
-                  <g className="pointer-events-none">
-                    <rect
-                      x={comp.x + comp.width / 2 - 110}
-                      y={comp.y + comp.height + 12}
-                      width="220"
-                      height="26"
-                      rx="6"
-                      fill="#000000"
-                      stroke="#ffffff"
-                      strokeWidth="1.5"
-                    />
-                    <text
-                      x={comp.x + comp.width / 2}
-                      y={comp.y + comp.height + 29}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fontFamily="sans-serif"
-                      fontWeight="900"
-                      fill="#ffffff"
-                      letterSpacing="0.05em"
-                    >
-                      {currentGoggle.badge}
-                    </text>
-                  </g>
-                )}
-
-                {comp.id === 'tango' && (
-                  <g className="pointer-events-none">
-                    <rect
-                      x={comp.x + comp.width / 2 - 95}
-                      y={comp.y + comp.height + 12}
-                      width="190"
-                      height="26"
-                      rx="6"
-                      fill="#000000"
-                      stroke="#ffffff"
-                      strokeWidth="1.5"
-                    />
-                    <text
-                      x={comp.x + comp.width / 2}
-                      y={comp.y + comp.height + 29}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fontFamily="sans-serif"
-                      fontWeight="900"
-                      fill="#ffffff"
-                      letterSpacing="0.05em"
-                    >
-                      {currentRadio.badge}
-                    </text>
-                  </g>
-                )}
-
-                {comp.id === 'betaflight' && (
-                  <g className="pointer-events-none">
-                    <rect
-                      x={comp.x + comp.width / 2 - 90}
-                      y={comp.y + comp.height + 12}
-                      width="180"
-                      height="26"
-                      rx="6"
-                      fill="#000000"
-                      stroke="#ffffff"
-                      strokeWidth="1.5"
-                    />
-                    <text
-                      x={comp.x + comp.width / 2}
-                      y={comp.y + comp.height + 29}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fontFamily="sans-serif"
-                      fontWeight="900"
-                      fill="#ffffff"
-                      letterSpacing="0.05em"
-                    >
-                      {currentConfig.badge}
-                    </text>
-                  </g>
-                )}
-
-                {/* Étiquette technique de désignation pour les composants du drone */}
-                {!comp.isGeneric && (
-                  <g className={`transition-opacity duration-150 ${active ? 'opacity-100' : 'opacity-85'}`}>
-                    <rect
-                      x={comp.labelX - 85}
-                      y={comp.labelY - 14}
-                      width="170"
-                      height="22"
-                      rx="5"
-                      fill={active ? '#000000' : '#ffffff'}
-                      stroke="#000000"
-                      strokeWidth={active ? '2' : '1.2'}
-                    />
-                    <text
-                      x={comp.labelX}
-                      y={comp.labelY + 1}
-                      textAnchor="middle"
-                      fontSize="10"
-                      fontFamily="monospace"
-                      fontWeight="bold"
-                      letterSpacing="0.04em"
-                      fill={active ? '#ffffff' : '#000000'}
-                    >
-                      {comp.label}
-                    </text>
-                  </g>
-                )}
+                {/* Étiquette technique de désignation */}
+                <g className={`transition-opacity duration-150 ${active ? 'opacity-100' : 'opacity-85'}`}>
+                  <rect
+                    x={comp.labelX - 85}
+                    y={comp.labelY - 14}
+                    width="170"
+                    height="22"
+                    rx="5"
+                    fill={active ? '#000000' : '#ffffff'}
+                    stroke="#000000"
+                    strokeWidth={active ? '2' : '1.2'}
+                  />
+                  <text
+                    x={comp.labelX}
+                    y={comp.labelY + 1}
+                    textAnchor="middle"
+                    fontSize="10"
+                    fontFamily="monospace"
+                    fontWeight="bold"
+                    letterSpacing="0.04em"
+                    fill={active ? '#ffffff' : '#000000'}
+                  >
+                    {comp.label}
+                  </text>
+                </g>
               </g>
             );
           })}
         </svg>
-
-        {/* ====================================================================
-            BARRES DE SÉLECTION FLOTTANTES MULTI-MARQUES (GÉNÉRIQUES)
-           ==================================================================== */}
-
-        {/* 1. Sélecteur de Marque : LUNETTES FPV (Positionné sur les lunettes) */}
-        <div
-          onMouseEnter={() => setHoverGoggleMenu(true)}
-          onMouseLeave={() => setHoverGoggleMenu(false)}
-          className={`absolute bottom-5 right-6 bg-white/95 backdrop-blur-md border-[1.5px] border-black rounded-2xl p-3 shadow-2xl transition-all duration-200 z-40 ${
-            isGoggleMenuVisible ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-80 hover:opacity-100'
-          }`}
-        >
-          <div className="flex items-center justify-between text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-            <span className="flex items-center gap-1.5 text-black">
-              <Glasses className="w-3.5 h-3.5 text-black" />
-              <span>Système Vidéo FPV :</span>
-            </span>
-            <span className="text-zinc-600 font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-[9px]">
-              {GOGGLE_BRANDS.length} Marques
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5 max-w-[380px]">
-            {GOGGLE_BRANDS.map((gb) => (
-              <button
-                key={gb.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedGoggleBrand(gb.id);
-                  onSelectComponent(getComp('fatshark'));
-                }}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                  selectedGoggleBrand === gb.id
-                    ? 'bg-black text-white border-black shadow-xs'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'
-                }`}
-              >
-                {gb.brand}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 2. Sélecteur de Marque : RADIOCOMMANDE (Positionné sur la radiocommande) */}
-        <div
-          onMouseEnter={() => setHoverRadioMenu(true)}
-          onMouseLeave={() => setHoverRadioMenu(false)}
-          className={`absolute top-84 right-6 bg-white/95 backdrop-blur-md border-[1.5px] border-black rounded-2xl p-3 shadow-2xl transition-all duration-200 z-40 ${
-            isRadioMenuVisible ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-80 hover:opacity-100'
-          }`}
-        >
-          <div className="flex items-center justify-between text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-            <span className="flex items-center gap-1.5 text-black">
-              <Radio className="w-3.5 h-3.5 text-black" />
-              <span>Radiocommande & Protocole :</span>
-            </span>
-            <span className="text-zinc-600 font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-[9px]">
-              {RADIO_BRANDS.length} Marques
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5 max-w-[380px]">
-            {RADIO_BRANDS.map((rb) => (
-              <button
-                key={rb.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedRadioBrand(rb.id);
-                  onSelectComponent(getComp('tango'));
-                }}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                  selectedRadioBrand === rb.id
-                    ? 'bg-black text-white border-black shadow-xs'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'
-                }`}
-              >
-                {rb.brand}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 3. Sélecteur de Firmware : CONFIGURATEUR (En haut à droite) */}
-        <div
-          onMouseEnter={() => setHoverConfigMenu(true)}
-          onMouseLeave={() => setHoverConfigMenu(false)}
-          className={`absolute top-5 right-6 bg-white/95 backdrop-blur-md border-[1.5px] border-black rounded-2xl p-3 shadow-2xl transition-all duration-200 z-40 ${
-            isConfigMenuVisible ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-80 hover:opacity-100'
-          }`}
-        >
-          <div className="flex items-center justify-between text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-            <span className="flex items-center gap-1.5 text-black">
-              <Cpu className="w-3.5 h-3.5 text-black" />
-              <span>Firmware & Configurateur :</span>
-            </span>
-            <span className="text-zinc-600 font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-[9px]">
-              {CONFIGURATOR_BRANDS.length} Firmwares
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5 max-w-[380px]">
-            {CONFIGURATOR_BRANDS.map((cb) => (
-              <button
-                key={cb.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedConfigBrand(cb.id);
-                  onSelectComponent(getComp('betaflight'));
-                }}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                  selectedConfigBrand === cb.id
-                    ? 'bg-black text-white border-black shadow-xs'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-300'
-                }`}
-              >
-                {cb.brand}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Infobulle technique dynamique au survol */}
         {hoveredId && (
@@ -696,16 +642,16 @@ export function MonochromeDetailedCanvas({
         {/* Repère d'atelier discret en bas à gauche */}
         <div className="absolute bottom-3 left-4 bg-white/95 px-3 py-1.5 rounded-xl border border-black/30 text-[11px] text-zinc-700 flex items-center gap-2 pointer-events-none shadow-xs">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Vecteurs SVG fidèles 1:1 • Écosystèmes multi-marques configurables</span>
+          <span>Schéma Éclaté Drone • Composants 100% Vectoriels • Périphériques configurables</span>
         </div>
 
       </div>
 
       {/* Barre d'état sous le schéma */}
-      <div className="w-full max-w-[1562px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
+      <div className="w-full max-w-[1240px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
         <div className="flex items-center gap-3">
           <span className="font-bold text-black uppercase tracking-wider text-[11px]">
-            Sélection Actuelle :
+            Configuration active :
           </span>
           <span className="italic text-[11px]">
             Lunettes : <b className="text-black">{currentGoggle.name}</b> • Radio : <b className="text-black">{currentRadio.name}</b> • Firmware : <b className="text-black">{currentConfig.name}</b>
@@ -713,7 +659,7 @@ export function MonochromeDetailedCanvas({
         </div>
         <div className="flex items-center gap-2 text-[11px] text-black font-semibold">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-          <span>16 Composants Vectorisés • Base de diagnostics synchronisée</span>
+          <span>13 Composants Drone Vectorisés • Diagnostics connectés</span>
         </div>
       </div>
     </section>
