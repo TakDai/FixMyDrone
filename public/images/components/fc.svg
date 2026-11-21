@@ -1,212 +1,212 @@
 <svg viewBox="0 0 300 300" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-  <!-- PURE TOP-DOWN FLIGHT CONTROLLER (VUE DU HAUT) - STYLE MULTI-MOTORS SANS OMBRE -->
-  <g id="fc-top-view">
+  <!-- PURE TOP-DOWN FLIGHT CONTROLLER (STYLE MULTI-MOTORS: 100% NOIR & BLANC SANS OMBRE) -->
+  <g id="fc-top-view-multimotors">
 
     <!-- 1. CHÂSSIS PCB (CONTOUR EXTÉRIEUR CARRÉ À COINS ARRONDIS) -->
     <path
-      d="M 50 15 
-         L 250 15 
-         C 275 15, 285 25, 285 50 
-         L 285 250 
-         C 285 275, 275 285, 250 285 
-         L 50 285 
-         C 25 285, 15 275, 15 250 
-         L 15 50 
-         C 15 25, 25 15, 50 15 Z"
+      d="M 52 16 
+         L 248 16 
+         C 272 16, 284 28, 284 52 
+         L 284 248 
+         C 284 272, 272 284, 248 284 
+         L 52 284 
+         C 28 284, 16 272, 16 248 
+         L 16 52 
+         C 16 28, 28 16, 52 16 Z"
       fill="#ffffff"
       stroke="#000000"
       stroke-width="3.5"
       stroke-linejoin="round"
     />
 
-    <!-- Ligne de masse interne décorative / trace de bordure -->
+    <!-- Ligne décorative interne de plan de masse en pointillés fins -->
     <path
-      d="M 52 24 L 248 24 C 268 24, 276 32, 276 52 L 276 248 C 276 268, 268 276, 248 276 L 52 276 C 32 276, 24 268, 24 248 L 24 52 C 24 32, 32 24, 52 24 Z"
-      fill="#fcfcfc"
+      d="M 54 24 L 246 24 C 266 24, 276 34, 276 54 L 276 246 C 276 266, 266 276, 246 276 L 54 276 C 34 276, 24 266, 24 246 L 24 54 C 24 34, 34 24, 54 24 Z"
+      fill="#ffffff"
       stroke="#000000"
-      stroke-width="1.5"
+      stroke-width="1.2"
       stroke-dasharray="6 4"
     />
 
-    <!-- 2. PORT USB-C (BORD GAUCHE EN VUE DU DESSUS) -->
-    <g id="usb-port" transform="translate(15, 128)">
+    <!-- 2. PORT USB-C LATERAL GAUCHE (VUE DE DESSUS) -->
+    <g id="usbc-port" transform="translate(16, 128)">
       <rect x="-8" y="0" width="16" height="44" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <rect x="-5" y="6" width="6" height="32" rx="1.5" fill="#18181b" stroke="#000000" stroke-width="1.5" />
-      <line x1="-2" y1="12" x2="-2" y2="32" stroke="#ffffff" stroke-width="1.5" />
+      <rect x="-5" y="6" width="6" height="32" rx="1.5" fill="#000000" />
+      <line x1="-2" y1="12" x2="-2" y2="32" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
     </g>
 
-    <!-- 3. ŒILLETS SILICONE ANTI-VIBRATION (4 COINS STANDARD 30.5x30.5) -->
+    <!-- 3. ŒILLETS SILICONE ANTI-VIBRATION AUX 4 COINS (30.5x30.5) -->
     <!-- Haut-Gauche -->
     <g transform="translate(48, 48)">
-      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="18" fill="#000000" />
       <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
       <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
+      <circle cx="0" cy="0" r="3.5" fill="#000000" />
     </g>
 
     <!-- Haut-Droit -->
     <g transform="translate(252, 48)">
-      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="18" fill="#000000" />
       <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
       <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
+      <circle cx="0" cy="0" r="3.5" fill="#000000" />
     </g>
 
     <!-- Bas-Gauche -->
     <g transform="translate(48, 252)">
-      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="18" fill="#000000" />
       <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
       <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
+      <circle cx="0" cy="0" r="3.5" fill="#000000" />
     </g>
 
     <!-- Bas-Droit -->
     <g transform="translate(252, 252)">
-      <circle cx="0" cy="0" r="18" fill="#18181b" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="18" fill="#000000" />
       <circle cx="0" cy="0" r="12" fill="#27272a" stroke="#000000" stroke-width="1.5" />
       <circle cx="0" cy="0" r="7.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="0" cy="0" r="3.5" fill="#18181b" />
+      <circle cx="0" cy="0" r="3.5" fill="#000000" />
     </g>
 
-    <!-- 4. PADS DE SOUDURE OR ENIG SUR LES 4 BORDS (VUE DU DESSUS) -->
-    <!-- Bord Haut (ESC / Moteurs 1 à 4) -->
+    <!-- 4. PADS DE SOUDURE OR ENIG SUR LES BORDS (MONOCHROME PUR MULTI-MOTORS) -->
+    <!-- BORD HAUT : Moteurs 1 à 4 & Alimentation ESC -->
     <g stroke="#000000" stroke-width="1.8">
-      <rect x="80" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="87" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M1</text>
+      <rect x="78" y="17" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="85" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">M1</text>
       
-      <rect x="100" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="107" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M2</text>
+      <rect x="98" y="17" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="105" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">M2</text>
       
-      <rect x="122" y="16" width="16" height="20" rx="3" fill="#ff5757" />
-      <text x="130" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">BAT</text>
+      <rect x="120" y="17" width="17" height="20" rx="3" fill="#000000" />
+      <text x="128.5" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">BAT</text>
       
-      <rect x="144" y="16" width="14" height="20" rx="3" fill="#18181b" />
-      <text x="151" y="32" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      <rect x="143" y="17" width="15" height="20" rx="3" fill="#000000" />
+      <text x="150.5" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">GND</text>
       
-      <rect x="164" y="16" width="16" height="20" rx="3" fill="#ff5757" />
+      <rect x="164" y="17" width="16" height="20" rx="3" fill="#000000" />
       <text x="172" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
       
-      <rect x="186" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="193" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M3</text>
+      <rect x="186" y="17" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="193" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">M3</text>
       
-      <rect x="206" y="16" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="213" y="32" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">M4</text>
+      <rect x="206" y="17" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="213" y="32" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">M4</text>
     </g>
 
-    <!-- Bord Bas (Buzzer / LED / RX) -->
+    <!-- BORD BAS : Buzzer, Radio & UARTs -->
     <g stroke="#000000" stroke-width="1.8">
-      <rect x="80" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="87" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">BZ-</text>
+      <rect x="78" y="263" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="85" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">BZ-</text>
       
-      <rect x="100" y="264" width="14" height="20" rx="3" fill="#ff5757" />
-      <text x="107" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
+      <rect x="98" y="263" width="14" height="20" rx="3" fill="#000000" />
+      <text x="105" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
       
-      <rect x="120" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="127" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">TX1</text>
+      <rect x="118" y="263" width="15" height="20" rx="3" fill="#ffffff" />
+      <text x="125.5" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">TX1</text>
       
-      <rect x="140" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="147" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">RX1</text>
+      <rect x="139" y="263" width="15" height="20" rx="3" fill="#ffffff" />
+      <text x="146.5" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">RX1</text>
       
-      <rect x="160" y="264" width="14" height="20" rx="3" fill="#18181b" />
-      <text x="167" y="278" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      <rect x="160" y="263" width="15" height="20" rx="3" fill="#000000" />
+      <text x="167.5" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">GND</text>
       
-      <rect x="180" y="264" width="14" height="20" rx="3" fill="#ff5757" />
-      <text x="187" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
+      <rect x="181" y="263" width="15" height="20" rx="3" fill="#000000" />
+      <text x="188.5" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
       
-      <rect x="206" y="264" width="14" height="20" rx="3" fill="#e4e4e7" />
-      <text x="213" y="278" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle">LED</text>
+      <rect x="206" y="263" width="14" height="20" rx="3" fill="#ffffff" />
+      <text x="213" y="278" font-family="monospace" font-size="7" font-weight="900" fill="#000000" text-anchor="middle">LED</text>
     </g>
 
-    <!-- Bord Droit (Caméra & VTX) -->
+    <!-- BORD DROIT : Caméra & Émetteur VTX -->
     <g stroke="#000000" stroke-width="1.8">
-      <rect x="264" y="86" width="20" height="13" rx="3" fill="#ff5757" />
-      <text x="274" y="96" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
+      <rect x="263" y="86" width="20" height="13" rx="3" fill="#000000" />
+      <text x="273" y="96" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">9V</text>
       
-      <rect x="264" y="104" width="20" height="13" rx="3" fill="#18181b" />
-      <text x="274" y="114" font-family="monospace" font-size="6.5" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+      <rect x="263" y="104" width="20" height="13" rx="3" fill="#000000" />
+      <text x="273" y="114" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">GND</text>
       
-      <rect x="264" y="122" width="20" height="13" rx="3" fill="#e4e4e7" />
-      <text x="274" y="132" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">VTX</text>
+      <rect x="263" y="122" width="20" height="13" rx="3" fill="#ffffff" />
+      <text x="273" y="132" font-family="monospace" font-size="6.5" font-weight="900" fill="#000000" text-anchor="middle">VTX</text>
       
-      <rect x="264" y="140" width="20" height="13" rx="3" fill="#e4e4e7" />
-      <text x="274" y="150" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">CAM</text>
+      <rect x="263" y="140" width="20" height="13" rx="3" fill="#ffffff" />
+      <text x="273" y="150" font-family="monospace" font-size="6.5" font-weight="900" fill="#000000" text-anchor="middle">CAM</text>
       
-      <rect x="264" y="158" width="20" height="13" rx="3" fill="#e4e4e7" />
-      <text x="274" y="168" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">T2</text>
+      <rect x="263" y="158" width="20" height="13" rx="3" fill="#ffffff" />
+      <text x="273" y="168" font-family="monospace" font-size="6.5" font-weight="900" fill="#000000" text-anchor="middle">T2</text>
       
-      <rect x="264" y="176" width="20" height="13" rx="3" fill="#e4e4e7" />
-      <text x="274" y="186" font-family="monospace" font-size="6.5" font-weight="bold" text-anchor="middle">R2</text>
+      <rect x="263" y="176" width="20" height="13" rx="3" fill="#ffffff" />
+      <text x="273" y="186" font-family="monospace" font-size="6.5" font-weight="900" fill="#000000" text-anchor="middle">R2</text>
       
-      <rect x="264" y="194" width="20" height="13" rx="3" fill="#ff5757" />
-      <text x="274" y="204" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
+      <rect x="263" y="194" width="20" height="13" rx="3" fill="#000000" />
+      <text x="273" y="204" font-family="monospace" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle">5V</text>
     </g>
 
     <!-- 5. MICROCONTROLEUR CENTRAL STM32 F7 (BOITIER LQFP-64 / BGA À PLAT) -->
     <g id="stm32-chip" transform="translate(150, 150)">
-      <!-- Broches / pins du processeur sur les 4 côtés -->
-      <g stroke="#18181b" stroke-width="1.8">
+      <!-- Broches métalliques noires autour du processeur -->
+      <g stroke="#000000" stroke-width="2">
         <!-- Haut -->
-        <line x1="-30" y1="-38" x2="-30" y2="-46" />
-        <line x1="-20" y1="-38" x2="-20" y2="-46" />
-        <line x1="-10" y1="-38" x2="-10" y2="-46" />
-        <line x1="0" y1="-38" x2="0" y2="-46" />
-        <line x1="10" y1="-38" x2="10" y2="-46" />
-        <line x1="20" y1="-38" x2="20" y2="-46" />
-        <line x1="30" y1="-38" x2="30" y2="-46" />
+        <line x1="-30" y1="-38" x2="-30" y2="-47" />
+        <line x1="-20" y1="-38" x2="-20" y2="-47" />
+        <line x1="-10" y1="-38" x2="-10" y2="-47" />
+        <line x1="0" y1="-38" x2="0" y2="-47" />
+        <line x1="10" y1="-38" x2="10" y2="-47" />
+        <line x1="20" y1="-38" x2="20" y2="-47" />
+        <line x1="30" y1="-38" x2="30" y2="-47" />
         <!-- Bas -->
-        <line x1="-30" y1="38" x2="-30" y2="46" />
-        <line x1="-20" y1="38" x2="-20" y2="46" />
-        <line x1="-10" y1="38" x2="-10" y2="46" />
-        <line x1="0" y1="38" x2="0" y2="46" />
-        <line x1="10" y1="38" x2="10" y2="46" />
-        <line x1="20" y1="38" x2="20" y2="46" />
-        <line x1="30" y1="38" x2="30" y2="46" />
+        <line x1="-30" y1="38" x2="-30" y2="47" />
+        <line x1="-20" y1="38" x2="-20" y2="47" />
+        <line x1="-10" y1="38" x2="-10" y2="47" />
+        <line x1="0" y1="38" x2="0" y2="47" />
+        <line x1="10" y1="38" x2="10" y2="47" />
+        <line x1="20" y1="38" x2="20" y2="47" />
+        <line x1="30" y1="38" x2="30" y2="47" />
         <!-- Gauche -->
-        <line x1="-38" y1="-30" x2="-46" y2="-30" />
-        <line x1="-38" y1="-20" x2="-46" y2="-20" />
-        <line x1="-38" y1="-10" x2="-46" y2="-10" />
-        <line x1="-38" y1="0" x2="-46" y2="0" />
-        <line x1="-38" y1="10" x2="-46" y2="10" />
-        <line x1="-38" y1="20" x2="-46" y2="20" />
-        <line x1="-38" y1="30" x2="-46" y2="30" />
+        <line x1="-38" y1="-30" x2="-47" y2="-30" />
+        <line x1="-38" y1="-20" x2="-47" y2="-20" />
+        <line x1="-38" y1="-10" x2="-47" y2="-10" />
+        <line x1="-38" y1="0" x2="-47" y2="0" />
+        <line x1="-38" y1="10" x2="-47" y2="10" />
+        <line x1="-38" y1="20" x2="-47" y2="20" />
+        <line x1="-38" y1="30" x2="-47" y2="30" />
         <!-- Droite -->
-        <line x1="38" y1="-30" x2="46" y2="-30" />
-        <line x1="38" y1="-20" x2="46" y2="-20" />
-        <line x1="38" y1="-10" x2="46" y2="-10" />
-        <line x1="38" y1="0" x2="46" y2="0" />
-        <line x1="38" y1="10" x2="46" y2="10" />
-        <line x1="38" y1="20" x2="46" y2="20" />
-        <line x1="38" y1="30" x2="46" y2="30" />
+        <line x1="38" y1="-30" x2="47" y2="-30" />
+        <line x1="38" y1="-20" x2="47" y2="-20" />
+        <line x1="38" y1="-10" x2="47" y2="-10" />
+        <line x1="38" y1="0" x2="47" y2="0" />
+        <line x1="38" y1="10" x2="47" y2="10" />
+        <line x1="38" y1="20" x2="47" y2="20" />
+        <line x1="38" y1="30" x2="47" y2="30" />
       </g>
 
-      <!-- Corps du processeur carré noir -->
-      <rect x="-38" y="-38" width="76" height="76" rx="4" fill="#18181b" stroke="#000000" stroke-width="3" />
+      <!-- Boîtier carré noir pur -->
+      <rect x="-38" y="-38" width="76" height="76" rx="4" fill="#000000" stroke="#000000" stroke-width="3" />
       
-      <!-- Point repère Pin 1 -->
+      <!-- Point repère Pin 1 blanc -->
       <circle cx="-28" cy="-28" r="3" fill="#ffffff" />
 
-      <!-- Sérigraphie officielle STM32 -->
+      <!-- Sérigraphie blanche STM32 F7 -->
       <text x="0" y="-8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="900" fill="#ffffff" letter-spacing="1.5">
         STM32
       </text>
-      <text x="0" y="10" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ff5757" letter-spacing="1">
+      <text x="0" y="10" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="900" fill="#ffffff" letter-spacing="1">
         F722RET6
       </text>
-      <text x="0" y="25" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="#a1a1aa">
+      <text x="0" y="24" text-anchor="middle" font-family="monospace" font-size="8" font-weight="bold" fill="#e4e4e7">
         216MHz
       </text>
     </g>
 
-    <!-- 6. CAPTEUR GYROSCOPE (BMI270/ICM) -->
+    <!-- 6. PUCE GYROSCOPE (BMI270/ICM) EN LIGNES NOIRES & BLANCHES -->
     <g transform="translate(198, 92)">
-      <rect x="0" y="0" width="30" height="26" rx="2" fill="#27272a" stroke="#000000" stroke-width="2" />
-      <rect x="4" y="4" width="22" height="18" rx="1.5" fill="#cbd5e1" stroke="#000000" stroke-width="1.2" />
+      <rect x="0" y="0" width="30" height="26" rx="3" fill="#000000" stroke="#000000" stroke-width="2" />
+      <rect x="4" y="4" width="22" height="18" rx="1.5" fill="#ffffff" stroke="#000000" stroke-width="1.2" />
       <text x="15" y="16" font-family="monospace" font-size="7.5" font-weight="900" text-anchor="middle" fill="#000000">GYRO</text>
     </g>
 
     <!-- 7. PUCE OSD (MAX7456 / AT7456E) -->
     <g transform="translate(72, 88)">
-      <rect x="0" y="0" width="34" height="22" rx="2" fill="#18181b" stroke="#000000" stroke-width="2" />
+      <rect x="0" y="0" width="34" height="22" rx="2" fill="#000000" stroke="#000000" stroke-width="2" />
       <!-- Broches OSD -->
       <line x1="6" y1="-4" x2="6" y2="0" stroke="#000000" stroke-width="1.5" />
       <line x1="14" y1="-4" x2="14" y2="0" stroke="#000000" stroke-width="1.5" />
@@ -217,40 +217,39 @@
 
     <!-- 8. MÉMOIRE FLASH BLACKBOX 16MB -->
     <g transform="translate(74, 194)">
-      <rect x="0" y="0" width="28" height="24" rx="2" fill="#18181b" stroke="#000000" stroke-width="2" />
+      <rect x="0" y="0" width="28" height="24" rx="2" fill="#000000" stroke="#000000" stroke-width="2" />
       <text x="14" y="15" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle" fill="#ffffff">FLASH</text>
     </g>
 
-    <!-- 9. BOUTON BOOT & LEDS D'ÉTAT -->
-    <!-- Bouton BOOT -->
+    <!-- 9. BOUTON POUSSOIR TACTILE BOOT -->
     <g transform="translate(196, 196)">
       <rect x="0" y="0" width="24" height="20" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="12" cy="10" r="5" fill="#ff5757" stroke="#000000" stroke-width="1.5" />
+      <circle cx="12" cy="10" r="5" fill="#000000" stroke="#000000" stroke-width="1.5" />
+      <circle cx="12" cy="10" r="2.5" fill="#ffffff" />
       <text x="12" y="30" font-family="sans-serif" font-size="7" font-weight="900" text-anchor="middle" fill="#000000">BOOT</text>
     </g>
 
-    <!-- LEDs de statut (Verte, Bleue, Rouge) -->
-    <circle cx="132" cy="98" r="4" fill="#22c55e" stroke="#000000" stroke-width="1.5" />
-    <circle cx="144" cy="98" r="4" fill="#3b82f6" stroke="#000000" stroke-width="1.5" />
-    <circle cx="156" cy="98" r="4" fill="#ef4444" stroke="#000000" stroke-width="1.5" />
+    <!-- 10. LEDS D'ÉTAT (MONOCHROME PUR : NOIR, GRIS, BLANC) -->
+    <circle cx="132" cy="98" r="4" fill="#000000" stroke="#000000" stroke-width="1.5" />
+    <circle cx="144" cy="98" r="4" fill="#a1a1aa" stroke="#000000" stroke-width="1.5" />
+    <circle cx="156" cy="98" r="4" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
 
-    <!-- 10. CONDENSATEURS CÉRAMIQUE SMD ALIMENTATION -->
+    <!-- 11. COMPOSANTS PASSIFS (CONDENSATEURS & RÉSISTANCES SMD EN NOIR & BLANC) -->
     <g stroke="#000000" stroke-width="1.5">
-      <rect x="136" y="112" width="12" height="7" rx="1" fill="#eab308" />
-      <rect x="152" y="112" width="12" height="7" rx="1" fill="#eab308" />
+      <rect x="136" y="112" width="12" height="7" rx="1" fill="#e4e4e7" />
+      <rect x="152" y="112" width="12" height="7" rx="1" fill="#e4e4e7" />
       
-      <!-- Petites résistances 0402 noires -->
-      <rect x="136" y="180" width="7" height="4" fill="#18181b" />
-      <rect x="146" y="180" width="7" height="4" fill="#18181b" />
-      <rect x="156" y="180" width="7" height="4" fill="#18181b" />
+      <rect x="136" y="180" width="7" height="4" fill="#000000" />
+      <rect x="146" y="180" width="7" height="4" fill="#000000" />
+      <rect x="156" y="180" width="7" height="4" fill="#000000" />
     </g>
 
-    <!-- 11. FLÈCHE BLANCHE DIRECTION AVANT DU DRONE -->
+    <!-- 12. FLÈCHE DE DIRECTION NOIRE AVANT DU DRONE -->
     <g transform="translate(150, 70)">
-      <polygon points="0,-12 -8,2 -3,2 -3,12 3,12 3,2 8,2" fill="#000000" stroke="#ffffff" stroke-width="1.5" />
+      <polygon points="0,-12 -8,2 -3,2 -3,12 3,12 3,2 8,2" fill="#000000" stroke="#000000" stroke-width="1" />
     </g>
 
-    <!-- 12. TEXTE SÉRIGRAPHIE FIXMYDRONE STYLE MULTI-MOTORS -->
+    <!-- 13. SÉRIGRAPHIE NOIRE SUR PCB STYLE MULTI-MOTORS -->
     <text x="150" y="240" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="10" font-weight="900" fill="#000000" letter-spacing="1">
       FIXMYDRONE F7 • 30.5x30.5
     </text>
