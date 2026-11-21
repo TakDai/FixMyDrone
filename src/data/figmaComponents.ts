@@ -1,3 +1,20 @@
+export interface ComponentBrandOption {
+  id: string;
+  name: string;
+  brand: string;
+  model: string;
+  badge: string;
+  description: string;
+  specifications: Record<string, string>;
+  commonIssues: {
+    title: string;
+    symptoms: string;
+    cause: string;
+    fix: string;
+    successRate: number;
+  }[];
+}
+
 export interface FigmaComponentData {
   id: string;
   name: string;
@@ -19,7 +36,367 @@ export interface FigmaComponentData {
     successRate: number;
   }[];
   specifications: Record<string, string>;
+  brands?: ComponentBrandOption[];
+  selectedBrandId?: string;
 }
+
+export const GOGGLE_BRANDS: ComponentBrandOption[] = [
+  {
+    id: 'fatshark',
+    name: 'Fat Shark Dominator / HDO 2',
+    brand: 'Fat Shark',
+    model: 'HDO 2 OLED (Analog / Walksnail)',
+    badge: 'FAT SHARK',
+    description: 'La référence historique du FPV analogique et numérique modulaire avec doubles écrans OLED Sony.',
+    specifications: {
+      'Technologie': 'Double dalles Micro-OLED',
+      'Résolution': '1280 × 960 (4:3) / 1080p',
+      'FOV': '46° diagonal',
+      'Récepteur': 'Baie modulaire standard 5.8GHz',
+    },
+    commonIssues: [
+      {
+        title: 'Buée sur les lentilles par temps froid ou humide',
+        symptoms: 'Vision floue après 30 secondes sur le visage.',
+        cause: 'Condensation thermique entre le visage et les lentilles froides.',
+        fix: 'Allumer le mini-ventilateur antibuée intégré 1 minute avant de voler.',
+        successRate: 100,
+      },
+      {
+        title: 'Lignes de balayage ou parasites horizontaux',
+        symptoms: 'Parasites blancs qui défilent sur l écran en analogique.',
+        cause: 'Filtre LC insuffisant sur l alimentation du récepteur.',
+        fix: 'Vérifier la tension de la batterie de lunettes ou installer un module RapidFIRE.',
+        successRate: 96,
+      },
+    ],
+  },
+  {
+    id: 'dji',
+    name: 'DJI Goggles 2 / Integra / V2',
+    brand: 'DJI FPV',
+    model: 'Goggles 2 / Integra (O3 HD System)',
+    badge: 'DJI FPV',
+    description: 'Système vidéo numérique HD DJI O3 à latence ultra-faible avec écrans Micro-OLED 1080p 100fps.',
+    specifications: {
+      'Technologie': 'DJI O3 Transmission HD',
+      'Résolution': '1920 × 1080 Micro-OLED',
+      'Latence': '< 30 ms',
+      'Portée max': 'Jusqu à 10 km (FCC)',
+    },
+    commonIssues: [
+      {
+        title: 'Alerte "Low Power Mode" qui persiste au décollage',
+        symptoms: 'Le bitrate reste bridé à 25Mbps et l image se pixelise.',
+        cause: 'L O3 Air Unit attend le signal d armement via le protocole MSP.',
+        fix: 'Vérifier que les ports UART TX/RX entre la FC et le Air Unit sont bien inversés.',
+        successRate: 98,
+      },
+      {
+        title: 'Écran noir après mise à jour firmware',
+        symptoms: 'Les lunettes bipent en continu et refusent d afficher le retour.',
+        cause: 'Décalage de version de firmware entre les lunettes et le Air Unit.',
+        fix: 'Relancer DJI Assistant 2 (Consumer Drones Series) et reflasher la même version.',
+        successRate: 99,
+      },
+    ],
+  },
+  {
+    id: 'walksnail',
+    name: 'Walksnail Avatar HD Goggles X',
+    brand: 'Walksnail',
+    model: 'Avatar HD Goggles X (OLED 1080p)',
+    badge: 'WALKSNAIL HD',
+    description: 'Écosystème numérique haute définition Walksnail Avatar avec module VRX amovible et entrée HDMI.',
+    specifications: {
+      'Technologie': 'Avatar HD H.265',
+      'Résolution': '1080p 100fps OLED',
+      'FOV': '50° champ large',
+      'VRX': 'Module remplaçable nouvelle génération',
+    },
+    commonIssues: [
+      {
+        title: 'Déconnexion du flux vidéo lors d un coup de gaz violent',
+        symptoms: 'Écran figé une seconde avec message "Link Lost".',
+        cause: 'Chute de tension sur le VTX Walksnail alimenté directement en VTX sans condo.',
+        fix: 'Ajouter un condensateur Low ESR 1000µF 35V directement aux bornes de la LiPo.',
+        successRate: 97,
+      },
+    ],
+  },
+  {
+    id: 'hdzero',
+    name: 'HDZero Goggles',
+    brand: 'HDZero',
+    model: 'HDZero Goggle (Zero-Latency Digital)',
+    badge: 'HDZERO',
+    description: 'Conçues pour la course FPV avec une latence fixe incompressible de 14ms et support 90fps.',
+    specifications: {
+      'Technologie': 'HDZero Uncompressed Digital',
+      'Résolution': '1080p 90fps OLED',
+      'Latence': '14 ms fixe temps réel',
+      'Analogique': 'Module analogique inclus avec de-interlacer',
+    },
+    commonIssues: [
+      {
+        title: 'Bruit de neige arc-en-ciel en limite de portée',
+        symptoms: 'La vidéo se dégrade en paillettes sans latence supplémentaire.',
+        cause: 'Comportement normal de HDZero qui ne met pas en mémoire tampon.',
+        fix: 'Orienter les antennes directionnelles patch vers la zone de vol.',
+        successRate: 95,
+      },
+    ],
+  },
+  {
+    id: 'skyzone',
+    name: 'Skyzone SKY04X PRO',
+    brand: 'Skyzone',
+    model: 'SKY04X PRO (OLED 1920x1080)',
+    badge: 'SKYZONE',
+    description: 'Lunettes analogiques et numériques haut de gamme avec récepteur Steadyview V3.3 à fusion de signaux.',
+    specifications: {
+      'Technologie': 'Steadyview 5.8GHz Fusion',
+      'Résolution': '1920 × 1080 OLED 100Hz',
+      'FOV': '52° ultra-large',
+      'DVR': '60fps H.264 intégré',
+    },
+    commonIssues: [
+      {
+        title: 'Désynchronisation de l image en mode Diversity standard',
+        symptoms: 'L image saute lors des transitions entre deux antennes.',
+        cause: 'Mode Diversity basique sélectionné au lieu de Steadyview.',
+        fix: 'Activer le mode Steadyview Mix dans le menu système des lunettes.',
+        successRate: 98,
+      },
+    ],
+  },
+];
+
+export const RADIO_BRANDS: ComponentBrandOption[] = [
+  {
+    id: 'radiomaster',
+    name: 'RadioMaster Boxer / Pocket / TX16S',
+    brand: 'RadioMaster',
+    model: 'Boxer MAX / Pocket ELRS (EdgeTX)',
+    badge: 'RADIOMASTER',
+    description: 'La référence mondiale des radiocommandes FPV open-source sous EdgeTX avec ExpressLRS natif jusqu à 1000mW.',
+    specifications: {
+      'Système': 'EdgeTX 2.10 multi-langues',
+      'Protocole RF': 'ExpressLRS 2.4GHz natif 1000mW',
+      'Gimbals': 'Capteurs à effet Hall CNC AG01',
+      'Taux de rafraîchissement': 'Jusqu à 1000 Hz',
+    },
+    commonIssues: [
+      {
+        title: 'Erreur "Emergency Mode" sur l écran au démarrage',
+        symptoms: 'La radio démarre en boucle avec fond d écran d urgence.',
+        cause: 'Fichier de modèle ou script LUA corrompu sur la carte MicroSD.',
+        fix: 'Sauvegarder et formater la carte SD en FAT32, puis réinstaller les sons et thèmes EdgeTX.',
+        successRate: 99,
+      },
+      {
+        title: 'Gimbal qui ne revient pas exactement à 1500us dans Betaflight',
+        symptoms: 'Léger drift persistant sur le roulis ou l lacet.',
+        cause: 'Étalonnage des sticks non effectué après changement de ressort.',
+        fix: 'Lancer l étalonnage des axes dans le menu Hardware d EdgeTX.',
+        successRate: 100,
+      },
+    ],
+  },
+  {
+    id: 'tbs',
+    name: 'TBS Tango II / Mambo',
+    brand: 'Team BlackSheep',
+    model: 'TBS Tango II Pro V3 (Crossfire)',
+    badge: 'TBS TANGO II',
+    description: 'Format manette ergonomique plébiscité pour le freestyle avec module Crossfire Long-Range intégré et gimbals pliables.',
+    specifications: {
+      'Système': 'FreedomTX / EdgeTX',
+      'Protocole RF': 'TBS Crossfire 868MHz / 915MHz',
+      'Puissance max': 'Jusqu à 500mW / 1W',
+      'Antenne': 'T-Antenne pliable omnidirectionnelle',
+    },
+    commonIssues: [
+      {
+        title: 'Gimbal des gaz qui frotte ou ne revient pas parfaitement au neutre',
+        symptoms: 'Dérive lente sur le Roll ou Pitch en vol sans toucher les sticks.',
+        cause: 'Vis de tension de ressort mal calibrée.',
+        fix: 'Ouvrir le capot arrière et ajuster la vis de serrage de friction du stick.',
+        successRate: 98,
+      },
+      {
+        title: 'Message "CRSF V3 Required" lors du bind',
+        symptoms: 'Liaison impossible avec le récepteur Crossfire Nano.',
+        cause: 'Mise à jour requise du module interne de la radio.',
+        fix: 'Connecter la Tango II à TBS Agent X en USB et mettre à jour le firmware.',
+        successRate: 100,
+      },
+    ],
+  },
+  {
+    id: 'jumper',
+    name: 'Jumper T-Pro V2 / T20',
+    brand: 'Jumper RC',
+    model: 'Jumper T20 Gemini ELRS',
+    badge: 'JUMPER RC',
+    description: 'Radiocommandes compactes et modulaires à double émetteur Gemini pour une redondance de signal absolue.',
+    specifications: {
+      'Système': 'EdgeTX',
+      'Protocole RF': 'ELRS 2.4GHz Dual Gemini',
+      'Refroidissement': 'Ventilateur interne haute puissance',
+    },
+    commonIssues: [
+      {
+        title: 'Surchauffe du module RF à 1000mW',
+        symptoms: 'Avertissement de température radio après 15 minutes d utilisation.',
+        cause: 'Ventilateur réglé en mode silencieux ou obstrué.',
+        fix: 'Activer le déclenchement automatique du ventilateur à partir de 250mW dans le script LUA.',
+        successRate: 97,
+      },
+    ],
+  },
+  {
+    id: 'frsky',
+    name: 'FrSky Taranis QX7 / X9D Plus',
+    brand: 'FrSky',
+    model: 'Taranis QX7 ACCESS / ACCST',
+    badge: 'FRSKY TARANIS',
+    description: 'Le châssis radio légendaire des pionniers du FPV, avec baie JR arrière pour modules externes ELRS/Crossfire.',
+    specifications: {
+      'Système': 'OpenTX / EdgeTX',
+      'Baie externe': 'Format JR standard (compatible Crossfire/ELRS)',
+      'Écran': 'LCD rétro-éclairé 128×64',
+    },
+    commonIssues: [
+      {
+        title: 'Télémétrie perdue avec module externe ELRS (Baudrate error)',
+        symptoms: 'Alerte sonore "Télémétrie perdue" toutes les 10 secondes.',
+        cause: 'Inverseur matériel de la radio limité à 115200 bauds sur anciennes QX7.',
+        fix: 'Régler le baudrate à 115200 dans EdgeTX ou souder le petit câble OneBit mod.',
+        successRate: 96,
+      },
+    ],
+  },
+];
+
+export const CONFIGURATOR_BRANDS: ComponentBrandOption[] = [
+  {
+    id: 'betaflight',
+    name: 'Betaflight 4.5 Configurator',
+    brand: 'Betaflight',
+    model: 'Betaflight 4.5.x Cloud Build',
+    badge: 'BETAFLIGHT',
+    description: 'Le firmware de contrôle de vol open-source le plus utilisé au monde pour le freestyle et la compétition.',
+    specifications: {
+      'Version': 'Betaflight 4.5.0 Release',
+      'Boucle PID': '8 kHz / 8 kHz synchronisé',
+      'Filtrage': 'RPM Filter dynamique + PT1/Biquad D-Term',
+      'Fonctions phares': 'GPS Rescue v2, DSHOT bidirectionnel, OSD Canvas HD',
+    },
+    commonIssues: [
+      {
+        title: 'Moteurs qui chauffent suite à mauvaise configuration de filtres',
+        symptoms: 'Cloches des moteurs chaudes après 1 minute de vol calme.',
+        cause: 'Curseurs de filtrage D poussés trop à droite sans RPM filter fonctionnel.',
+        fix: 'Réactiver le DSHOT bidirectionnel et remettre les curseurs de filtres à 1.0 (défaut).',
+        successRate: 98,
+      },
+      {
+        title: 'Le drone refuse d armer (Arming Flags bloquants)',
+        symptoms: 'Rien ne tourne quand on active l interrupteur ARM sur la radio.',
+        cause: 'Sécurité logicielle (gaz non nuls, accéléromètre désaligné, bad RX).',
+        fix: 'Taper "status" dans le CLI de Betaflight pour identifier l arming flag bloquant.',
+        successRate: 99,
+      },
+    ],
+  },
+  {
+    id: 'inav',
+    name: 'INAV 7.1 Navigation Configurator',
+    brand: 'INAV Flight',
+    model: 'INAV 7.1 Long-Range & Autonomous',
+    badge: 'INAV FLIGHT',
+    description: 'Spécialisé dans les missions longue distance, les vols autonomes, le vol stationnaire assisté et les ailes volantes.',
+    specifications: {
+      'Version': 'INAV 7.1.0',
+      'Navigation': 'Waypoints autonomes, Return To Home (RTH) sécurisé',
+      'Capteurs': 'Support boussole compas I2C, Baromètre haute précision',
+    },
+    commonIssues: [
+      {
+        title: 'Le drone fait des cercles ("Toilet Bowling") en stationnaire GPS',
+        symptoms: 'Le quad spirale de plus en plus vite en mode PosHold.',
+        cause: 'Calibration de la boussole erronée ou magnétisme des câbles de puissance.',
+        fix: 'Éloigner le compas magnétique des fils de batterie et recalibrer sur 6 axes à l extérieur.',
+        successRate: 96,
+      },
+    ],
+  },
+  {
+    id: 'kiss',
+    name: 'KISS Ultra / FETtec Configurator',
+    brand: 'KISS / FETtec',
+    model: 'KISS Ultra v2 / FETtec OSD',
+    badge: 'KISS ULTRA',
+    description: 'Réputé pour son ressenti de vol organique, ses boucles ultra-rapides et sa simplicité de réglage.',
+    specifications: {
+      'Architecture': 'Algorithme adaptatif KISS',
+      'Protocole ESC': 'OneShot / DShot / FETtec OneWire',
+      'Ressenti': 'Sensibilité organique pour le cinématique et le flow freestyle',
+    },
+    commonIssues: [
+      {
+        title: 'Perte de télémétrie ESC OneWire',
+        symptoms: 'Consommation mAh et régime RPM non affichés dans l OSD.',
+        cause: 'Câble OneWire RX/TX croisé ou soudure froide.',
+        fix: 'Vérifier la ligne OneWire et flasher le firmware FETtec ESC correspondant.',
+        successRate: 98,
+      },
+    ],
+  },
+  {
+    id: 'emuflight',
+    name: 'EmuFlight Configurator',
+    brand: 'EmuFlight',
+    model: 'EmuFlight 0.4.x (IMU-F)',
+    badge: 'EMUFLIGHT',
+    description: 'Fork spécialisé dans le filtrage dynamique IMU-F pour une réactivité instantanée sur les quads légers.',
+    specifications: {
+      'Filtrage': 'Filtres IMU-F dynamiques',
+      'Spécialité': 'Reprise d accroche immédiate en sortie de powerloop',
+    },
+    commonIssues: [
+      {
+        title: 'Oscillations rapides sur les arrêts nets de figures (Bounceback)',
+        symptoms: 'Vibrations sonores sur les roll stops.',
+        cause: 'Gain D trop élevé ou dynamique d hélice non amortie.',
+        fix: 'Activer le curseur "Dynamic D" dans l onglet PID d EmuFlight.',
+        successRate: 95,
+      },
+    ],
+  },
+  {
+    id: 'ardupilot',
+    name: 'ArduPilot / Mission Planner',
+    brand: 'ArduPilot',
+    model: 'ArduCopter 4.5 Pro Missions',
+    badge: 'ARDUPILOT',
+    description: 'Le standard professionnel de l industrie pour les drones de cartographie, surveillance et missions programmées.',
+    specifications: {
+      'Capacités': 'Télémétrie MAVLink, évitement d obstacles, LiDAR',
+      'Missions': 'Grilles de photogrammétrie automatiques',
+    },
+    commonIssues: [
+      {
+        title: 'Alerte "PreArm: EKF attitude divergence"',
+        symptoms: 'Refus de décoller en mode automatique.',
+        cause: 'Conflit de données entre l accéléromètre et le GPS.',
+        fix: 'Attendre le HDOP < 1.2 et vérifier la fixation anti-vibration de la FC.',
+        successRate: 99,
+      },
+    ],
+  },
+];
 
 export const FIGMA_COMPONENTS: FigmaComponentData[] = [
   {
@@ -362,7 +739,7 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
   },
   {
     id: 'betaflight',
-    name: 'Écosystème Betaflight',
+    name: 'Configurateur & Firmware',
     category: 'Logiciel & Firmware',
     model: 'Betaflight 4.5.x Firmware',
     hotspot: {
@@ -376,6 +753,8 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
     specifications: {
       'Version': 'Betaflight 4.5.0 Cloud Build',
     },
+    brands: CONFIGURATOR_BRANDS,
+    selectedBrandId: 'betaflight',
     commonIssues: [
       {
         title: 'Moteurs qui chauffent suite à mauvaise configuration de filtres',
@@ -388,21 +767,23 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
   },
   {
     id: 'tango',
-    name: 'Radiocommande TBS Tango II',
+    name: 'Radiocommande Universelle',
     category: 'Pilotage & Émetteur',
-    model: 'TBS Tango II Pro V3',
+    model: 'Format Gamepad & Pupitre FPV',
     hotspot: {
       top: '25%',
       left: '69%',
       width: '26%',
       height: '32%',
     },
-    description: 'Radiocommande ergonomique compacte format manette avec gimbals à effet Hall pliables.',
+    description: 'Émetteur radio ergonomique pour le pilotage FPV avec gimbals de haute précision.',
     role: 'Envoi des ordres de commande aux doigts du pilote avec latence minime.',
     specifications: {
-      'Système': 'FreedomTX / EdgeTX',
+      'Système': 'EdgeTX / FreedomTX',
       'Gimbals': 'Hall Sensor pleine taille',
     },
+    brands: RADIO_BRANDS,
+    selectedBrandId: 'tbs',
     commonIssues: [
       {
         title: 'Gimbal des gaz qui frotte ou ne revient pas parfaitement au neutre',
@@ -442,21 +823,23 @@ export const FIGMA_COMPONENTS: FigmaComponentData[] = [
   },
   {
     id: 'fatshark',
-    name: 'Lunettes FPV Fat Shark',
+    name: 'Système Vidéo Lunettes / Masque',
     category: 'Immersion & Réception',
-    model: 'Fat Shark HDO / Dominator HD',
+    model: 'Lunettes FPV Haute Définition',
     hotspot: {
       top: '68%',
       left: '65%',
       width: '30%',
       height: '25%',
     },
-    description: 'Masque et lunettes d immersion avec écrans OLED haute résolution et baie de module récepteur.',
+    description: 'Masque et lunettes d immersion avec écrans OLED haute résolution et réception temps réel.',
     role: 'Affichage plein champ du flux vidéo FPV pour une immersion totale à la première personne.',
     specifications: {
       'Écrans': 'Double dalles OLED 1080p',
-      'FOV': '46 degrés diagonal',
+      'FOV': '46° à 52° diagonal',
     },
+    brands: GOGGLE_BRANDS,
+    selectedBrandId: 'fatshark',
     commonIssues: [
       {
         title: 'Buée sur les lentilles par temps froid ou humide',
