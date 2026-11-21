@@ -9,6 +9,7 @@ import {
   CONFIGURATOR_BRANDS,
   ComponentBrandOption,
 } from '@/data/figmaComponents';
+import { BrandLogo } from '@/components/BrandLogos';
 import {
   CheckCircle2,
   Crosshair,
@@ -17,8 +18,8 @@ import {
   Radio,
   Glasses,
   Cpu,
-  Sliders,
-  ChevronDown,
+  ChevronRight,
+  Flame,
 } from 'lucide-react';
 
 interface MonochromeDetailedCanvasProps {
@@ -38,7 +39,7 @@ interface ComponentVisualConfig {
   label: string;
 }
 
-// 13 composants vectorisés fidèles du drone (aucun composant externe sur le schéma)
+// 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 1. Châssis Carbone True-X (node 2004-5) : 768 × 670, centre (768, 580)
   {
@@ -76,17 +77,17 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 685,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 (node 2004-7) : 143 × 159 à (542, 890)
+  // 4. Moteur Brushless 2207 (Logo Multi-Motors.fr Vectorisé) : 145 × 158 à (542, 890)
   {
     id: 'motor',
     image: '/images/components/motor.svg',
     x: 542,
     y: 890,
-    width: 143,
-    height: 159,
+    width: 145,
+    height: 158,
     labelX: 613,
     labelY: 1065,
-    label: 'MOTEURS 2207 1950KV',
+    label: 'MOTEUR BRUSHLESS (MULTI-MOTORS)',
   },
   // 5. Caméra FPV Micro (node 2004-2) : 93 × 77 à (804, 945)
   {
@@ -209,10 +210,8 @@ export function MonochromeDetailedCanvas({
   const [selectedRadioBrand, setSelectedRadioBrand] = useState<string>('tbs');
   const [selectedConfigBrand, setSelectedConfigBrand] = useState<string>('betaflight');
 
-  // Menus déroulants de sélection de marque au survol
-  const [showGoggleMenu, setShowGoggleMenu] = useState(false);
-  const [showRadioMenu, setShowRadioMenu] = useState(false);
-  const [showConfigMenu, setShowConfigMenu] = useState(false);
+  // Menus de marques ouverts au survol des 3 boutons de droite
+  const [hoveredButton, setHoveredButton] = useState<'goggles' | 'radio' | 'config' | null>(null);
 
   const currentGoggle = GOGGLE_BRANDS.find((b) => b.id === selectedGoggleBrand) || GOGGLE_BRANDS[0];
   const currentRadio = RADIO_BRANDS.find((b) => b.id === selectedRadioBrand) || RADIO_BRANDS[0];
@@ -264,212 +263,12 @@ export function MonochromeDetailedCanvas({
   return (
     <section className="flex-1 w-full flex flex-col items-center justify-center p-1 sm:p-4 select-none bg-white">
       
-      {/* ====================================================================
-          SÉLECTEURS GÉNÉRIQUES DES ÉQUIPEMENTS EXTERNES (Survol & Choix de marque)
-         ==================================================================== */}
-      <div className="w-full max-w-[1240px] mb-3 flex flex-wrap items-center justify-between gap-3 bg-zinc-50 border-[1.5px] border-black/80 rounded-2xl p-3 shadow-xs">
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-700 uppercase tracking-wider">
-          <Sliders className="w-4 h-4 text-black" />
-          <span>Équipements & Écosystème :</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* 1. Lunettes FPV génériques */}
-          <div
-            className="relative"
-            onMouseEnter={() => setShowGoggleMenu(true)}
-            onMouseLeave={() => setShowGoggleMenu(false)}
-          >
-            <button
-              onClick={() => {
-                handleComponentClick('fatshark');
-                setShowGoggleMenu((v) => !v);
-              }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                selectedCompId === 'fatshark'
-                  ? 'bg-black text-white border-black shadow-xs'
-                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
-              }`}
-            >
-              <Glasses className="w-4 h-4" />
-              <span>Lunettes :</span>
-              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
-                selectedCompId === 'fatshark' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
-              }`}>
-                {currentGoggle.badge}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-            </button>
-
-            {/* Menu déroulant des marques de lunettes au survol */}
-            {showGoggleMenu && (
-              <div className="absolute top-full mt-1.5 left-0 sm:left-auto sm:right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
-                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-                  Systèmes Vidéo FPV ({GOGGLE_BRANDS.length}) :
-                </div>
-                <div className="flex flex-col gap-1">
-                  {GOGGLE_BRANDS.map((gb) => (
-                    <button
-                      key={gb.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedGoggleBrand(gb.id);
-                        onSelectComponent(getComp('fatshark'));
-                        setShowGoggleMenu(false);
-                      }}
-                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
-                        selectedGoggleBrand === gb.id
-                          ? 'bg-black text-white shadow-xs'
-                          : 'hover:bg-zinc-100 text-zinc-800'
-                      }`}
-                    >
-                      <span>{gb.name}</span>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                        selectedGoggleBrand === gb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
-                      }`}>
-                        {gb.badge}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 2. Radiocommande générique */}
-          <div
-            className="relative"
-            onMouseEnter={() => setShowRadioMenu(true)}
-            onMouseLeave={() => setShowRadioMenu(false)}
-          >
-            <button
-              onClick={() => {
-                handleComponentClick('tango');
-                setShowRadioMenu((v) => !v);
-              }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                selectedCompId === 'tango'
-                  ? 'bg-black text-white border-black shadow-xs'
-                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
-              }`}
-            >
-              <Radio className="w-4 h-4" />
-              <span>Radio :</span>
-              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
-                selectedCompId === 'tango' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
-              }`}>
-                {currentRadio.badge}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-            </button>
-
-            {/* Menu déroulant des radios au survol */}
-            {showRadioMenu && (
-              <div className="absolute top-full mt-1.5 left-0 sm:left-auto sm:right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
-                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-                  Marques Radiocommandes ({RADIO_BRANDS.length}) :
-                </div>
-                <div className="flex flex-col gap-1">
-                  {RADIO_BRANDS.map((rb) => (
-                    <button
-                      key={rb.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedRadioBrand(rb.id);
-                        onSelectComponent(getComp('tango'));
-                        setShowRadioMenu(false);
-                      }}
-                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
-                        selectedRadioBrand === rb.id
-                          ? 'bg-black text-white shadow-xs'
-                          : 'hover:bg-zinc-100 text-zinc-800'
-                      }`}
-                    >
-                      <span>{rb.name}</span>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                        selectedRadioBrand === rb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
-                      }`}>
-                        {rb.badge}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 3. Firmware / Configurateur générique */}
-          <div
-            className="relative"
-            onMouseEnter={() => setShowConfigMenu(true)}
-            onMouseLeave={() => setShowConfigMenu(false)}
-          >
-            <button
-              onClick={() => {
-                handleComponentClick('betaflight');
-                setShowConfigMenu((v) => !v);
-              }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                selectedCompId === 'betaflight'
-                  ? 'bg-black text-white border-black shadow-xs'
-                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
-              }`}
-            >
-              <Cpu className="w-4 h-4" />
-              <span>Firmware :</span>
-              <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
-                selectedCompId === 'betaflight' ? 'bg-zinc-800 text-white' : 'bg-black text-white'
-              }`}>
-                {currentConfig.badge}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-            </button>
-
-            {/* Menu déroulant des firmwares au survol */}
-            {showConfigMenu && (
-              <div className="absolute top-full mt-1.5 right-0 bg-white border border-black rounded-xl p-2.5 shadow-2xl z-50 min-w-[280px] animate-in fade-in duration-150">
-                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1">
-                  Firmwares & Configurateurs ({CONFIGURATOR_BRANDS.length}) :
-                </div>
-                <div className="flex flex-col gap-1">
-                  {CONFIGURATOR_BRANDS.map((cb) => (
-                    <button
-                      key={cb.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedConfigBrand(cb.id);
-                        onSelectComponent(getComp('betaflight'));
-                        setShowConfigMenu(false);
-                      }}
-                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-all cursor-pointer ${
-                        selectedConfigBrand === cb.id
-                          ? 'bg-black text-white shadow-xs'
-                          : 'hover:bg-zinc-100 text-zinc-800'
-                      }`}
-                    >
-                      <span>{cb.name}</span>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                        selectedConfigBrand === cb.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'
-                      }`}>
-                        {cb.badge}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ====================================================================
-          PLAN ÉCLATÉ CAO DU DRONE (Schéma Pur des Composants Embarqués)
-         ==================================================================== */}
-      <div className="relative w-full max-w-[1240px] aspect-[1140/920] bg-[#fafafa] border-[1.5px] border-dashed border-black rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-hidden shadow-xs">
+      {/* Conteneur principal style Multi-Motors : fond papier pur, bordure pointillée, typo technique */}
+      <div className="relative w-full max-w-[1562px] aspect-[1562/904] bg-[#ffffff] border-[1.5px] border-dashed border-black/75 rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-visible shadow-xs">
         
-        {/* Grille technique d'atelier FPV style SEEWORLD */}
+        {/* Grille technique d'atelier FPV style SEEWORLD & Multi-Motors */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-20"
+          className="absolute inset-0 pointer-events-none opacity-20 rounded-3xl overflow-hidden"
           style={{
             backgroundImage: 'radial-gradient(circle at 1px 1px, #71717a 0.8px, transparent 0)',
             backgroundSize: '24px 24px',
@@ -477,15 +276,15 @@ export function MonochromeDetailedCanvas({
         />
 
         {/* Lignes directrices CAO d'alignement centrées sur le châssis */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" viewBox="340 160 1120 920">
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="340 160 1562 904">
           <line x1="768" y1="160" x2="768" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <line x1="340" y1="580" x2="1460" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <line x1="340" y1="580" x2="1900" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
           <circle cx="768" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
         </svg>
 
-        {/* SVG Vectoriel Haute Fidélité du Drone */}
+        {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="340 160 1120 920"
+          viewBox="340 160 1562 904"
           className="w-full h-full select-none"
         >
           <defs>
@@ -499,9 +298,9 @@ export function MonochromeDetailedCanvas({
               <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#2563eb" floodOpacity="0.7" />
             </filter>
 
-            {/* Surbrillance au survol */}
+            {/* Surbrillance au survol rouge corail style Multi-Motors */}
             <filter id="hoverGlow" x="-12%" y="-12%" width="124%" height="124%">
-              <feDropShadow dx="0" dy="2" stdDeviation="7" floodColor="#000000" floodOpacity="0.4" />
+              <feDropShadow dx="0" dy="2" stdDeviation="7" floodColor="#ff5757" floodOpacity="0.5" />
             </filter>
           </defs>
 
@@ -542,7 +341,7 @@ export function MonochromeDetailedCanvas({
           </g>
 
           {/* ====================================================================
-              13 COMPOSANTS DU DRONE 100% VECTORIELS FIDÈLES FIGMA
+              13 COMPOSANTS DU DRONE VECTORISÉS (Moteur Multi-Motors.fr)
              ==================================================================== */}
           {DRONE_COMPONENT_CONFIGS.map((comp) => {
             const isSelected = selectedCompId === comp.id;
@@ -559,21 +358,21 @@ export function MonochromeDetailedCanvas({
                 className="cursor-pointer transition-all duration-200"
                 filter={isSelected ? 'url(#selectGlow)' : isHov ? 'url(#hoverGlow)' : 'url(#realisticShadow)'}
               >
-                {/* Zone réactive cliquable avec bordure de repérage CAO */}
+                {/* Zone réactive cliquable */}
                 <rect
                   x={comp.x - 6}
                   y={comp.y - 6}
                   width={comp.width + 12}
                   height={comp.height + 12}
                   rx="10"
-                  fill={active ? 'rgba(59, 130, 246, 0.05)' : 'transparent'}
-                  stroke={isSelected ? '#2563eb' : isHov ? '#000000' : 'transparent'}
+                  fill={active ? 'rgba(255, 87, 87, 0.06)' : 'transparent'}
+                  stroke={isSelected ? '#2563eb' : isHov ? '#ff5757' : 'transparent'}
                   strokeWidth={isSelected ? '2.5' : '1.5'}
                   strokeDasharray={isHov && !isSelected ? '4 4' : undefined}
                   className="transition-colors duration-150"
                 />
 
-                {/* VECTEUR AUTHENTIQUE ISSU DE LA VECTORISATION DE L'IMAGE FIGMA */}
+                {/* VECTEUR AUTHENTIQUE (Moteur Multi-Motors ou Tracé Figma) */}
                 <image
                   href={comp.image}
                   x={comp.x}
@@ -584,27 +383,27 @@ export function MonochromeDetailedCanvas({
                   className="select-none pointer-events-none"
                 />
 
-                {/* Étiquette technique de désignation */}
+                {/* Étiquette technique style Multi-Motors (pill noir / blanc à contour précis) */}
                 <g className={`transition-opacity duration-150 ${active ? 'opacity-100' : 'opacity-85'}`}>
                   <rect
-                    x={comp.labelX - 85}
+                    x={comp.labelX - 90}
                     y={comp.labelY - 14}
-                    width="170"
-                    height="22"
-                    rx="5"
-                    fill={active ? '#000000' : '#ffffff'}
-                    stroke="#000000"
-                    strokeWidth={active ? '2' : '1.2'}
+                    width="180"
+                    height="24"
+                    rx="6"
+                    fill={active ? '#ff5757' : '#000000'}
+                    stroke={active ? '#000000' : '#000000'}
+                    strokeWidth="1.2"
                   />
                   <text
                     x={comp.labelX}
-                    y={comp.labelY + 1}
+                    y={comp.labelY + 2}
                     textAnchor="middle"
-                    fontSize="10"
+                    fontSize="9.5"
                     fontFamily="monospace"
                     fontWeight="bold"
                     letterSpacing="0.04em"
-                    fill={active ? '#ffffff' : '#000000'}
+                    fill="#ffffff"
                   >
                     {comp.label}
                   </text>
@@ -614,7 +413,284 @@ export function MonochromeDetailedCanvas({
           })}
         </svg>
 
-        {/* Infobulle technique dynamique au survol */}
+        {/* ====================================================================
+            À DROITE : LES 3 BOUTONS D'ÉQUIPEMENTS EXTERNES STYLE MULTI-MOTORS.FR
+            (Quand on les survole, affiche les marques avec leur logo)
+           ==================================================================== */}
+        <div className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3.5 z-40 w-72 sm:w-80">
+          
+          <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest px-1 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#ff5757]" />
+            <span>Périphériques & Écosystème</span>
+          </div>
+
+          {/* -------------------------------------------------------------
+              BOUTON 1 : LUNETTES FPV (Survol -> Marques + Logos)
+             ------------------------------------------------------------- */}
+          <div
+            className="relative"
+            onMouseEnter={() => setHoveredButton('goggles')}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            <div
+              onClick={() => handleComponentClick('fatshark')}
+              className={`p-3.5 rounded-2xl border-[1.5px] transition-all cursor-pointer shadow-md backdrop-blur-md ${
+                selectedCompId === 'fatshark' || hoveredButton === 'goggles'
+                  ? 'bg-black text-white border-black scale-[1.02]'
+                  : 'bg-white hover:bg-zinc-50 text-zinc-900 border-black/80'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Glasses className={`w-4 h-4 ${hoveredButton === 'goggles' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider">
+                    Lunettes FPV
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                  {GOGGLE_BRANDS.length} MARQUES
+                </span>
+              </div>
+
+              <div className="mt-2.5 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+                <div className="flex items-center gap-2">
+                  <BrandLogo brandId={selectedGoggleBrand} size={22} />
+                  <div>
+                    <div className="text-xs font-bold leading-tight">
+                      {currentGoggle.name}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 font-mono">
+                      {currentGoggle.badge}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+              </div>
+            </div>
+
+            {/* Menu dépliant à gauche avec les marques et leurs logos officiels */}
+            {hoveredButton === 'goggles' && (
+              <div className="absolute right-full top-0 mr-3 w-80 bg-white border-[1.5px] border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in slide-in-from-right-2 duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2.5 px-1 flex items-center justify-between">
+                  <span>Choisir un Système Vidéo :</span>
+                  <span className="text-[#ff5757] font-bold">1 clic pour activer</span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  {GOGGLE_BRANDS.map((gb) => (
+                    <button
+                      key={gb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedGoggleBrand(gb.id);
+                        onSelectComponent(getComp('fatshark'));
+                        setHoveredButton(null);
+                      }}
+                      className={`flex items-center justify-between p-2 rounded-xl text-left transition-all cursor-pointer border ${
+                        selectedGoggleBrand === gb.id
+                          ? 'bg-black text-white border-black shadow-xs'
+                          : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-900 border-zinc-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1 bg-white rounded-lg border border-zinc-200 shadow-2xs">
+                          <BrandLogo brandId={gb.id} size={24} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold leading-tight">{gb.name}</div>
+                          <div className="text-[10px] font-mono text-zinc-500">{gb.brand}</div>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        selectedGoggleBrand === gb.id ? 'bg-[#ff5757] text-white' : 'bg-zinc-200 text-zinc-700'
+                      }`}>
+                        {gb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* -------------------------------------------------------------
+              BOUTON 2 : RADIOCOMMANDE (Survol -> Marques + Logos)
+             ------------------------------------------------------------- */}
+          <div
+            className="relative"
+            onMouseEnter={() => setHoveredButton('radio')}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            <div
+              onClick={() => handleComponentClick('tango')}
+              className={`p-3.5 rounded-2xl border-[1.5px] transition-all cursor-pointer shadow-md backdrop-blur-md ${
+                selectedCompId === 'tango' || hoveredButton === 'radio'
+                  ? 'bg-black text-white border-black scale-[1.02]'
+                  : 'bg-white hover:bg-zinc-50 text-zinc-900 border-black/80'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Radio className={`w-4 h-4 ${hoveredButton === 'radio' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider">
+                    Radiocommande
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                  {RADIO_BRANDS.length} MARQUES
+                </span>
+              </div>
+
+              <div className="mt-2.5 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+                <div className="flex items-center gap-2">
+                  <BrandLogo brandId={selectedRadioBrand} size={22} />
+                  <div>
+                    <div className="text-xs font-bold leading-tight">
+                      {currentRadio.name}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 font-mono">
+                      {currentRadio.badge}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+              </div>
+            </div>
+
+            {/* Menu dépliant à gauche avec les marques et leurs logos officiels */}
+            {hoveredButton === 'radio' && (
+              <div className="absolute right-full top-0 mr-3 w-80 bg-white border-[1.5px] border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in slide-in-from-right-2 duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2.5 px-1 flex items-center justify-between">
+                  <span>Choisir une Radiocommande :</span>
+                  <span className="text-[#ff5757] font-bold">1 clic pour activer</span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  {RADIO_BRANDS.map((rb) => (
+                    <button
+                      key={rb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedRadioBrand(rb.id);
+                        onSelectComponent(getComp('tango'));
+                        setHoveredButton(null);
+                      }}
+                      className={`flex items-center justify-between p-2 rounded-xl text-left transition-all cursor-pointer border ${
+                        selectedRadioBrand === rb.id
+                          ? 'bg-black text-white border-black shadow-xs'
+                          : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-900 border-zinc-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1 bg-white rounded-lg border border-zinc-200 shadow-2xs">
+                          <BrandLogo brandId={rb.id} size={24} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold leading-tight">{rb.name}</div>
+                          <div className="text-[10px] font-mono text-zinc-500">{rb.brand}</div>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        selectedRadioBrand === rb.id ? 'bg-[#ff5757] text-white' : 'bg-zinc-200 text-zinc-700'
+                      }`}>
+                        {rb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* -------------------------------------------------------------
+              BOUTON 3 : CONFIGURATEUR / FIRMWARE (Survol -> Marques + Logos)
+             ------------------------------------------------------------- */}
+          <div
+            className="relative"
+            onMouseEnter={() => setHoveredButton('config')}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            <div
+              onClick={() => handleComponentClick('betaflight')}
+              className={`p-3.5 rounded-2xl border-[1.5px] transition-all cursor-pointer shadow-md backdrop-blur-md ${
+                selectedCompId === 'betaflight' || hoveredButton === 'config'
+                  ? 'bg-black text-white border-black scale-[1.02]'
+                  : 'bg-white hover:bg-zinc-50 text-zinc-900 border-black/80'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Cpu className={`w-4 h-4 ${hoveredButton === 'config' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider">
+                    Firmware / Config
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                  {CONFIGURATOR_BRANDS.length} FIRMWARES
+                </span>
+              </div>
+
+              <div className="mt-2.5 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+                <div className="flex items-center gap-2">
+                  <BrandLogo brandId={selectedConfigBrand} size={22} />
+                  <div>
+                    <div className="text-xs font-bold leading-tight">
+                      {currentConfig.name}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 font-mono">
+                      {currentConfig.badge}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+              </div>
+            </div>
+
+            {/* Menu dépliant à gauche avec les firmwares et leurs logos officiels */}
+            {hoveredButton === 'config' && (
+              <div className="absolute right-full top-0 mr-3 w-80 bg-white border-[1.5px] border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in slide-in-from-right-2 duration-150">
+                <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-wider mb-2.5 px-1 flex items-center justify-between">
+                  <span>Choisir un Firmware de Vol :</span>
+                  <span className="text-[#ff5757] font-bold">1 clic pour activer</span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  {CONFIGURATOR_BRANDS.map((cb) => (
+                    <button
+                      key={cb.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedConfigBrand(cb.id);
+                        onSelectComponent(getComp('betaflight'));
+                        setHoveredButton(null);
+                      }}
+                      className={`flex items-center justify-between p-2 rounded-xl text-left transition-all cursor-pointer border ${
+                        selectedConfigBrand === cb.id
+                          ? 'bg-black text-white border-black shadow-xs'
+                          : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-900 border-zinc-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1 bg-white rounded-lg border border-zinc-200 shadow-2xs">
+                          <BrandLogo brandId={cb.id} size={24} />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold leading-tight">{cb.name}</div>
+                          <div className="text-[10px] font-mono text-zinc-500">{cb.brand}</div>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        selectedConfigBrand === cb.id ? 'bg-[#ff5757] text-white' : 'bg-zinc-200 text-zinc-700'
+                      }`}>
+                        {cb.badge}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* Infobulle technique dynamique au survol des composants du drone */}
         {hoveredId && (
           <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border-[1.5px] border-dashed border-black rounded-2xl p-4 shadow-2xl pointer-events-none animate-in fade-in duration-150 max-w-sm z-30">
             <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 uppercase">
@@ -622,8 +698,8 @@ export function MonochromeDetailedCanvas({
                 <Crosshair className="w-3.5 h-3.5 text-black" />
                 {getComp(hoveredId).category}
               </span>
-              <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
-                {getComp(hoveredId).commonIssues.length} pannes répertoriées
+              <span className="text-white bg-[#ff5757] px-2 py-0.5 rounded font-mono font-bold text-[10px]">
+                {getComp(hoveredId).commonIssues.length} pannes
               </span>
             </div>
             <h4 className="text-base font-bold text-black mt-2">
@@ -639,27 +715,27 @@ export function MonochromeDetailedCanvas({
           </div>
         )}
 
-        {/* Repère d'atelier discret en bas à gauche */}
+        {/* Repère d'atelier discret en bas à gauche style Multi-Motors */}
         <div className="absolute bottom-3 left-4 bg-white/95 px-3 py-1.5 rounded-xl border border-black/30 text-[11px] text-zinc-700 flex items-center gap-2 pointer-events-none shadow-xs">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Schéma Éclaté Drone • Composants 100% Vectoriels • Périphériques configurables</span>
+          <Flame className="w-3.5 h-3.5 text-[#ff5757]" />
+          <span>Style technique Multi-Motors.fr • Moteur vectoriel • Périphériques avec logos à droite</span>
         </div>
 
       </div>
 
       {/* Barre d'état sous le schéma */}
-      <div className="w-full max-w-[1240px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
+      <div className="w-full max-w-[1562px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
         <div className="flex items-center gap-3">
           <span className="font-bold text-black uppercase tracking-wider text-[11px]">
-            Configuration active :
+            Équipements actifs :
           </span>
           <span className="italic text-[11px]">
             Lunettes : <b className="text-black">{currentGoggle.name}</b> • Radio : <b className="text-black">{currentRadio.name}</b> • Firmware : <b className="text-black">{currentConfig.name}</b>
           </span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-black font-semibold">
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-          <span>13 Composants Drone Vectorisés • Diagnostics connectés</span>
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#ff5757]" />
+          <span>Moteur Multi-Motors vectorisé • 14 Marques avec logos intégrés</span>
         </div>
       </div>
     </section>
