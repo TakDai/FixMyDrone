@@ -223,23 +223,21 @@ export function MonochromeDetailedCanvas({
   const [isMobile, setIsMobile] = useState(false);
   const [scale, setScale] = useState(1);
 
-  // Gestion responsive : échelle 1:1 pour écrans fixes, adaptation fluide pour PC portables, et vue mobile séparée
+  // Gestion responsive : occupation optimale de la hauteur de l'écran avec adaptation fluide
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
 
       if (!mobile) {
-        // En-tête FixMyDrone (environ 64px) et marges d'aération
-        const headerH = 68;
-        const paddingY = 24;
-        const paddingX = 40;
+        // Marges d'aération minimales garantissant 0 barre de défilement
+        const paddingX = 24;
+        const paddingY = 16;
         const availW = window.innerWidth - paddingX;
-        const availH = window.innerHeight - headerH - paddingY;
+        const availH = window.innerHeight - paddingY;
 
-        // Échelle 1:1 maximale (1.0) sur écrans fixes (>= 1540px et >= 880px),
-        // et adaptation automatique proportionnelle pour PC portables (1366x768, 1440x900, 1536x960)
-        const targetScale = Math.min(1, Math.min(availW / 1540, availH / 880));
+        // Utilisation maximale de la hauteur de l'écran sans restriction artificielle
+        const targetScale = Math.min(availW / 1540, availH / 880);
         setScale(Math.max(0.55, targetScale));
       } else {
         setScale(1);
@@ -455,9 +453,9 @@ export function MonochromeDetailedCanvas({
               {/* Ligne directrice technique blueprint discrète sur desktop */}
               <line
                 x1="1260"
-                y1="40"
+                y1="25"
                 x2="1260"
-                y2="840"
+                y2="855"
                 stroke="#000000"
                 strokeWidth="1.2"
                 strokeDasharray="4 6"
@@ -472,10 +470,10 @@ export function MonochromeDetailedCanvas({
             <div
               style={{
                 position: 'absolute',
-                top: '50px',
+                top: '30px',
                 right: '35px',
                 width: '148px',
-                height: '750px',
+                height: '820px',
               }}
               className="flex flex-col justify-between items-center z-40 select-none"
             >

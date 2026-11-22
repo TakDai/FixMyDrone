@@ -9,9 +9,9 @@ export default function Home() {
   const [selectedComp, setSelectedComp] = useState<FigmaComponentData | null>(null);
 
   return (
-    <div className="min-h-screen bg-white text-black flex flex-col items-center justify-center px-2 py-1 sm:px-6 sm:py-6 font-sans selection:bg-[#000000] selection:text-white">
+    <div className="h-screen w-screen bg-white text-black flex flex-col items-center justify-center p-1 sm:p-2 overflow-hidden font-sans selection:bg-[#000000] selection:text-white">
       {/* Table principale du drone : élément central unique et pleine page */}
-      <main className="w-full max-w-[1780px] flex-1 flex flex-col items-center justify-center">
+      <main className="w-full h-full flex-1 flex flex-col items-center justify-center overflow-hidden">
         <MonochromeDetailedCanvas
           onSelectComponent={(comp) => setSelectedComp(comp)}
           selectedCompId={selectedComp?.id}
