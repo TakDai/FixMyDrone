@@ -35,161 +35,162 @@ interface ComponentVisualConfig {
 }
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
+// Disposition éclatée CAD sans aucune superposition interne ni au survol
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (720, 515)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (640, 545)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=5',
-    x: 336,
-    y: 180,
+    x: 256,
+    y: 210,
     width: 768,
     height: 670,
-    labelX: 720,
-    labelY: 700,
+    labelX: 640,
+    labelY: 725,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (420, 410)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (320, 415)
   {
     id: 'fc',
     image: '/images/components/fc.svg?v=3',
-    x: 420,
-    y: 410,
+    x: 320,
+    y: 415,
     width: 146,
     height: 148,
-    labelX: 493,
-    labelY: 580,
+    labelX: 393,
+    labelY: 590,
     label: 'FC F7 30.5x30.5',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (855, 405)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (814, 415)
   {
     id: 'esc',
     image: '/images/components/esc.svg?v=3',
-    x: 855,
-    y: 405,
+    x: 814,
+    y: 415,
     width: 165,
     height: 155,
-    labelX: 937,
-    labelY: 580,
+    labelX: 896,
+    labelY: 595,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 : 150 × 150 à (310, 730)
+  // 4. Moteur Brushless 2207 : 150 × 150 à (130, 750) - Éclaté hors du bras
   {
     id: 'motor',
     image: '/images/components/motor.svg?v=3',
-    x: 310,
-    y: 730,
+    x: 130,
+    y: 750,
     width: 150,
     height: 150,
-    labelX: 385,
-    labelY: 900,
+    labelX: 205,
+    labelY: 925,
     label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro : 90 × 112 à (675, 120)
+  // 5. Caméra FPV Micro : 88 × 110 à (596, 98) - Éclatée au-dessus du nez
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=3',
-    x: 675,
-    y: 120,
-    width: 90,
-    height: 112,
-    labelX: 720,
-    labelY: 250,
+    x: 596,
+    y: 98,
+    width: 88,
+    height: 110,
+    labelX: 640,
+    labelY: 228,
     label: 'CAMÉRA FPV MICRO',
   },
-  // 6. Émetteur Vidéo VTX : 90 × 145 à (180, 180)
+  // 6. Émetteur Vidéo VTX : 90 × 145 à (90, 190)
   {
     id: 'vtx',
     image: '/images/components/vtx.svg?v=3',
-    x: 180,
-    y: 180,
+    x: 90,
+    y: 190,
     width: 90,
     height: 145,
-    labelX: 225,
-    labelY: 345,
+    labelX: 135,
+    labelY: 355,
     label: 'VTX 5.8GHZ 1W',
   },
-  // 7. Module GPS : 78 × 83 à (421, 80)
+  // 7. Module GPS : 78 × 83 à (340, 80)
   {
     id: 'gps',
     image: '/images/components/gps.svg?v=3',
-    x: 421,
+    x: 340,
     y: 80,
     width: 78,
     height: 83,
-    labelX: 460,
+    labelX: 379,
     labelY: 185,
     label: 'GPS M10 & BOUSSOLE',
   },
-  // 8. Récepteur RX ELRS : 70 × 125 à (945, 80)
+  // 8. Récepteur RX ELRS : 70 × 125 à (820, 80)
   {
     id: 'rx',
     image: '/images/components/rx.svg?v=3',
-    x: 945,
+    x: 820,
     y: 80,
     width: 70,
     height: 125,
-    labelX: 980,
+    labelX: 855,
     labelY: 225,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 100 à (500, 10)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 70 à (420, 30)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=3',
-    x: 500,
-    y: 10,
+    x: 420,
+    y: 30,
     width: 440,
-    height: 100,
-    labelX: 720,
-    labelY: 25,
+    height: 70,
+    labelX: 640,
+    labelY: 20,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1140, 140)
+  // 10. Antenne VTX RHCP Lollipop : 55 × 260 à (1030, 130)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=5',
-    x: 1140,
-    y: 140,
+    x: 1030,
+    y: 130,
     width: 55,
-    height: 275,
-    labelX: 1167,
-    labelY: 435,
+    height: 260,
+    labelX: 1057,
+    labelY: 410,
     label: 'ANTENNE RHCP VTX',
   },
-  // 11. Condensateur Low ESR : 55 × 55 à (140, 480)
+  // 11. Condensateur Low ESR : 60 × 60 à (105, 490)
   {
     id: 'condo',
     image: '/images/components/condo.svg?v=3',
-    x: 140,
-    y: 480,
-    width: 55,
-    height: 55,
-    labelX: 167,
-    labelY: 555,
+    x: 105,
+    y: 490,
+    width: 60,
+    height: 60,
+    labelX: 135,
+    labelY: 570,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 55 × 95 à (692.5, 840)
+  // 12. Buzzer ViFly : 50 × 85 à (615, 890)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=3',
-    x: 692.5,
-    y: 840,
-    width: 55,
-    height: 95,
-    labelX: 720,
-    labelY: 950,
+    x: 615,
+    y: 890,
+    width: 50,
+    height: 85,
+    labelX: 640,
+    labelY: 990,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (1060, 620)
+  // 13. Batterie LiPo 6S : 135 × 290 à (990, 620)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
-    x: 1060,
+    x: 990,
     y: 620,
-    width: 140,
-    height: 320,
-    labelX: 1130,
-    labelY: 960,
+    width: 135,
+    height: 290,
+    labelX: 1057,
+    labelY: 935,
     label: 'BATTERIE LIPO 6S XT60',
   },
 ];
@@ -303,11 +304,11 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className="relative w-full max-w-[1780px] aspect-[1680/980] bg-white flex items-center justify-center overflow-visible">
+      <div className="relative w-full max-w-[1780px] aspect-[1780/1020] bg-white flex items-center justify-center overflow-visible">
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="0 0 1680 980"
+          viewBox="0 0 1780 1020"
           className="w-full h-full select-none"
         >
           {/* ====================================================================
@@ -404,7 +405,7 @@ export function MonochromeDetailedCanvas({
             À DROITE : JUSTE LE LOGO (MINIMALISTE & DESIGN CAD)
             FONDU ENCHAÎNÉ SANS SURVOL • AFFICHAGE DES AUTRES MARQUES AU SURVOL
            ==================================================================== */}
-        <div className="absolute right-4 sm:right-8 lg:right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-7 sm:gap-9 z-40 select-none">
+        <div className="absolute right-4 sm:right-7 lg:right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-7 sm:gap-9 z-40 select-none">
           
           {/* STATION 1 : LUNETTES FPV */}
           <div
@@ -438,37 +439,44 @@ export function MonochromeDetailedCanvas({
               Lunettes FPV
             </span>
 
-            {/* Au survol : affiche les autres marques (dock horizontal ultra-design vers la gauche) */}
+            {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
             {hoveredStation === 'goggle' && (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
+                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in slide-in-from-right-2 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
-                  Marques :
-                </span>
-                {GOGGLE_BRANDS.map((gb, i) => (
-                  <button
-                    key={gb.id}
-                    onClick={() => {
-                      setGoggleIdx(i);
-                      handleComponentClick('fatshark');
-                    }}
-                    className={`flex flex-col items-center justify-center w-14 h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
-                      i === goggleIdx
-                        ? 'bg-zinc-100 border-black ring-2 ring-black font-bold shadow-xs scale-105'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
-                    }`}
-                    title={gb.name}
-                  >
-                    <div className="w-full h-8 flex items-center justify-center">
-                      <BrandLogo brandId={gb.id} width={38} height={22} />
-                    </div>
-                    <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
-                      {gb.brand}
-                    </span>
-                  </button>
-                ))}
+                <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
+                  <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
+                    Lunettes
+                  </span>
+                  <span className="text-[8px] font-mono font-bold text-zinc-400">
+                    {GOGGLE_BRANDS.length} marques
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {GOGGLE_BRANDS.map((gb, i) => (
+                    <button
+                      key={gb.id}
+                      onClick={() => {
+                        setGoggleIdx(i);
+                        handleComponentClick('fatshark');
+                      }}
+                      className={`flex flex-col items-center justify-center h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                        i === goggleIdx
+                          ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs scale-102'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={gb.name}
+                    >
+                      <div className="w-full h-7 flex items-center justify-center">
+                        <BrandLogo brandId={gb.id} width={36} height={20} />
+                      </div>
+                      <span className="text-[7.5px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {gb.brand}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -505,37 +513,44 @@ export function MonochromeDetailedCanvas({
               Radiocommande
             </span>
 
-            {/* Au survol : affiche les autres marques (dock horizontal ultra-design vers la gauche) */}
+            {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
             {hoveredStation === 'radio' && (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
+                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in slide-in-from-right-2 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
-                  Marques :
-                </span>
-                {RADIO_BRANDS.map((rb, i) => (
-                  <button
-                    key={rb.id}
-                    onClick={() => {
-                      setRadioIdx(i);
-                      handleComponentClick('tango');
-                    }}
-                    className={`flex flex-col items-center justify-center w-14 h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
-                      i === radioIdx
-                        ? 'bg-zinc-100 border-black ring-2 ring-black font-bold shadow-xs scale-105'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
-                    }`}
-                    title={rb.name}
-                  >
-                    <div className="w-full h-8 flex items-center justify-center">
-                      <BrandLogo brandId={rb.id} width={42} height={22} />
-                    </div>
-                    <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
-                      {rb.brand}
-                    </span>
-                  </button>
-                ))}
+                <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
+                  <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
+                    Radios
+                  </span>
+                  <span className="text-[8px] font-mono font-bold text-zinc-400">
+                    {RADIO_BRANDS.length} marques
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {RADIO_BRANDS.map((rb, i) => (
+                    <button
+                      key={rb.id}
+                      onClick={() => {
+                        setRadioIdx(i);
+                        handleComponentClick('tango');
+                      }}
+                      className={`flex flex-col items-center justify-center h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                        i === radioIdx
+                          ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs scale-102'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={rb.name}
+                    >
+                      <div className="w-full h-7 flex items-center justify-center">
+                        <BrandLogo brandId={rb.id} width={38} height={20} />
+                      </div>
+                      <span className="text-[7.5px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {rb.brand}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -572,37 +587,44 @@ export function MonochromeDetailedCanvas({
               Configurateur
             </span>
 
-            {/* Au survol : affiche les autres marques (dock horizontal ultra-design vers la gauche) */}
+            {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
             {hoveredStation === 'config' && (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
+                className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in slide-in-from-right-2 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
-                  Marques :
-                </span>
-                {CONFIGURATOR_BRANDS.map((cb, i) => (
-                  <button
-                    key={cb.id}
-                    onClick={() => {
-                      setConfigIdx(i);
-                      handleComponentClick('betaflight');
-                    }}
-                    className={`flex flex-col items-center justify-center w-14 h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
-                      i === configIdx
-                        ? 'bg-zinc-100 border-black ring-2 ring-black font-bold shadow-xs scale-105'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
-                    }`}
-                    title={cb.name}
-                  >
-                    <div className="w-full h-8 flex items-center justify-center">
-                      <BrandLogo brandId={cb.id} width={38} height={22} />
-                    </div>
-                    <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
-                      {cb.brand}
-                    </span>
-                  </button>
-                ))}
+                <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
+                  <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
+                    Config
+                  </span>
+                  <span className="text-[8px] font-mono font-bold text-zinc-400">
+                    {CONFIGURATOR_BRANDS.length} options
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {CONFIGURATOR_BRANDS.map((cb, i) => (
+                    <button
+                      key={cb.id}
+                      onClick={() => {
+                        setConfigIdx(i);
+                        handleComponentClick('betaflight');
+                      }}
+                      className={`flex flex-col items-center justify-center h-14 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                        i === configIdx
+                          ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs scale-102'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={cb.name}
+                    >
+                      <div className="w-full h-7 flex items-center justify-center">
+                        <BrandLogo brandId={cb.id} width={34} height={20} />
+                      </div>
+                      <span className="text-[7.5px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {cb.brand}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
