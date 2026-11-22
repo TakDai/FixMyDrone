@@ -52,9 +52,5 @@
     <circle cx="250" cy="120" r="3" fill="#000000" />
     <circle cx="250" cy="120" r="1" fill="#ffffff" />
 
-    <!-- Sérigraphie discrète -->
-    <text x="250" y="16" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" font-weight="900" fill="#000000" letter-spacing="1">
-      IMMORTAL-T • 2.4GHz / 915MHz
-    </text>
   </g>
 </svg>

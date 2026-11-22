@@ -148,13 +148,8 @@
         <line x1="21" y1="-12" x2="21" y2="-4" stroke="#ffffff" stroke-width="1.5" />
       
 
-      <!-- Shunt de mesure de courant haute précision 55A -->
+      <!-- Shunt de mesure de courant -->
       <rect x="-22" y="16" width="44" height="14" rx="2" fill="#000000" stroke="#000000" stroke-width="2" />
-      <text x="0" y="27" text-anchor="middle" font-family="monospace" font-size="7.5" font-weight="bold" fill="#ffffff">R001 SHUNT</text>
     </g>
-
-    <text x="150" y="244" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="10" font-weight="900" fill="#000000" letter-spacing="1">
-      ESC 4-IN-1 • 55A BLHELI_32
-    </text>
   </g>
 </svg>

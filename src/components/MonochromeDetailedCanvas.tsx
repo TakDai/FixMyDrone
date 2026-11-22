@@ -36,182 +36,183 @@ interface ComponentVisualConfig {
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 // Disposition éclatée CAD pure avec zéro superposition interne et dégagement total
+// Noms génériques épurés sans références techniques, placés en espace libre 100% dégagé
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 1. Châssis Carbone True-X : 768 × 670, centre (580, 585)
   // Étiquette placée en blanc pur SOUS le châssis pour ne masquer aucun détail carbone
   {
     id: 'frame',
-    image: '/images/components/frame.svg?v=5',
+    image: '/images/components/frame.svg?v=6',
     x: 196,
     y: 250,
     width: 768,
     height: 670,
     labelX: 580,
     labelY: 965,
-    label: 'CHÂSSIS CARBONE TRUE-X',
+    label: 'CHÂSSIS',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (260, 440)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (225, 440) - Éclaté hors de la plaque centrale
   {
     id: 'fc',
-    image: '/images/components/fc.svg?v=3',
-    x: 260,
+    image: '/images/components/fc.svg?v=6',
+    x: 225,
     y: 440,
     width: 146,
     height: 148,
-    labelX: 333,
-    labelY: 615,
-    label: 'FC F7 30.5x30.5',
+    labelX: 298,
+    labelY: 620,
+    label: 'FC',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (754, 440)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (775, 440) - Éclaté hors de la plaque centrale
   {
     id: 'esc',
-    image: '/images/components/esc.svg?v=3',
-    x: 754,
+    image: '/images/components/esc.svg?v=6',
+    x: 775,
     y: 440,
     width: 165,
     height: 155,
-    labelX: 836,
-    labelY: 620,
-    label: 'ESC 4-EN-1 55A',
+    labelX: 857,
+    labelY: 625,
+    label: 'ESC',
   },
-  // 4. Moteur Brushless 2207 : 150 × 150 à (80, 760) - Éclaté hors du bras
+  // 4. Moteur Brushless : 150 × 150 à (80, 760) - Éclaté hors du bras
   {
     id: 'motor',
-    image: '/images/components/motor.svg?v=3',
+    image: '/images/components/motor.svg?v=6',
     x: 80,
     y: 760,
     width: 150,
     height: 150,
     labelX: 155,
-    labelY: 940,
-    label: 'MOTEUR BRUSHLESS 2207',
+    labelY: 945,
+    label: 'MOTEUR',
   },
-  // 5. Caméra FPV Micro : 84 × 105 à (538, 110) - Éclatée au-dessus du nez
+  // 5. Caméra FPV : 84 × 105 à (538, 75) - Éclatée bien au-dessus du nez
   {
     id: 'cam',
-    image: '/images/components/camera.svg?v=3',
+    image: '/images/components/camera.svg?v=6',
     x: 538,
-    y: 110,
+    y: 75,
     width: 84,
     height: 105,
     labelX: 580,
-    labelY: 242,
-    label: 'CAMÉRA FPV MICRO',
+    labelY: 215,
+    label: 'CAMÉRA',
   },
-  // 6. Émetteur Vidéo VTX : 90 × 145 à (50, 200)
+  // 6. Émetteur Vidéo VTX : 90 × 145 à (50, 195)
   {
     id: 'vtx',
-    image: '/images/components/vtx.svg?v=3',
+    image: '/images/components/vtx.svg?v=6',
     x: 50,
-    y: 200,
+    y: 195,
     width: 90,
     height: 145,
     labelX: 95,
-    labelY: 365,
-    label: 'VTX 5.8GHZ 1W',
+    labelY: 370,
+    label: 'VTX',
   },
-  // 7. Module GPS : 78 × 83 à (280, 80)
+  // 7. Module GPS : 78 × 83 à (270, 70)
   {
     id: 'gps',
-    image: '/images/components/gps.svg?v=3',
-    x: 280,
-    y: 80,
+    image: '/images/components/gps.svg?v=6',
+    x: 270,
+    y: 70,
     width: 78,
     height: 83,
-    labelX: 319,
-    labelY: 185,
-    label: 'GPS M10 & BOUSSOLE',
+    labelX: 309,
+    labelY: 180,
+    label: 'GPS',
   },
-  // 8. Récepteur RX ELRS : 70 × 125 à (760, 80)
+  // 8. Récepteur RX : 70 × 125 à (770, 65)
   {
     id: 'rx',
-    image: '/images/components/rx.svg?v=3',
-    x: 760,
-    y: 80,
+    image: '/images/components/rx.svg?v=6',
+    x: 770,
+    y: 65,
     width: 70,
     height: 125,
-    labelX: 795,
-    labelY: 225,
-    label: 'RÉCEPTEUR RX ELRS',
+    labelX: 805,
+    labelY: 215,
+    label: 'RÉCEPTEUR',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 45 à (360, 48) - Étiquette au-dessus
+  // 9. Antenne RX (Dipôle) : 440 × 45 à (360, 30) - Étiquette au-dessus
   {
     id: 'antenna-rx',
-    image: '/images/components/antenna-rx.svg?v=3',
+    image: '/images/components/antenna-rx.svg?v=6',
     x: 360,
-    y: 48,
+    y: 30,
     width: 440,
     height: 45,
     labelX: 580,
-    labelY: 20,
-    label: 'ANTENNE IMMORTAL-T',
+    labelY: 14,
+    label: 'ANTENNE RX',
   },
-  // 10. Antenne VTX RHCP Lollipop : 55 × 260 à (950, 130)
+  // 10. Antenne VTX : 55 × 260 à (960, 130)
   {
     id: 'antenna-vtx',
-    image: '/images/components/antenna-vtx.svg?v=5',
-    x: 950,
+    image: '/images/components/antenna-vtx.svg?v=6',
+    x: 960,
     y: 130,
     width: 55,
     height: 260,
-    labelX: 977,
-    labelY: 410,
-    label: 'ANTENNE RHCP VTX',
+    labelX: 987,
+    labelY: 418,
+    label: 'ANTENNE VTX',
   },
-  // 11. Condensateur Low ESR : 60 × 60 à (65, 500)
+  // 11. Condensateur : 60 × 60 à (65, 500)
   {
     id: 'condo',
-    image: '/images/components/condo.svg?v=3',
+    image: '/images/components/condo.svg?v=6',
     x: 65,
     y: 500,
     width: 60,
     height: 60,
     labelX: 95,
-    labelY: 580,
-    label: 'CONDENSATEUR LOW ESR',
+    labelY: 588,
+    label: 'CONDENSATEUR',
   },
-  // 12. Buzzer ViFly : 48 × 78 à (680, 810) - En alvéole arrière
+  // 12. Buzzer : 48 × 78 à (690, 760)
   {
     id: 'vifly',
-    image: '/images/components/vifly.svg?v=3',
-    x: 680,
-    y: 810,
+    image: '/images/components/vifly.svg?v=6',
+    x: 690,
+    y: 760,
     width: 48,
     height: 78,
-    labelX: 704,
-    labelY: 915,
-    label: 'BUZZER AUTONOME',
+    labelX: 714,
+    labelY: 865,
+    label: 'BUZZER',
   },
-  // 13. Batterie LiPo 6S : 135 × 290 à (920, 640)
+  // 13. Batterie LiPo : 135 × 290 à (920, 640)
   {
     id: 'lipo',
-    image: '/images/components/lipo.svg?v=3',
+    image: '/images/components/lipo.svg?v=6',
     x: 920,
     y: 640,
     width: 135,
     height: 290,
     labelX: 987,
-    labelY: 955,
-    label: 'BATTERIE LIPO 6S XT60',
+    labelY: 960,
+    label: 'BATTERIE',
   },
 ];
 
 const getPillWidth = (id: string): number => {
   switch (id) {
-    case 'vtx': return 138;
-    case 'vifly': return 142;
-    case 'cam': return 152;
-    case 'fc': return 152;
-    case 'rx': return 150;
-    case 'gps': return 154;
-    case 'antenna-vtx': return 154;
-    case 'antenna-rx': return 158;
-    case 'condo': return 162;
-    case 'esc': return 164;
-    case 'frame': return 164;
-    case 'motor': return 168;
-    case 'lipo': return 172;
-    default: return 156;
+    case 'fc': return 52;
+    case 'esc': return 58;
+    case 'vtx': return 58;
+    case 'gps': return 58;
+    case 'cam': return 84;
+    case 'motor': return 84;
+    case 'vifly': return 80;
+    case 'lipo': return 88;
+    case 'frame': return 84;
+    case 'rx': return 98;
+    case 'antenna-rx': return 110;
+    case 'antenna-vtx': return 114;
+    case 'condo': return 120;
+    default: return 80;
   }
 };
 

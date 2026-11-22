@@ -50,20 +50,10 @@
     <!-- 4. MICROCONTRÔLEUR ESP8285 / MCU (CENTRE BAS) -->
     <rect x="36" y="130" width="56" height="48" rx="2" fill="#27272a" stroke="#ffffff" stroke-width="1.5" />
     <circle cx="42" cy="136" r="2" fill="#ffffff" />
-    <text x="64" y="152" text-anchor="middle" font-family="monospace, sans-serif" font-size="7.5" font-weight="900" fill="#ffffff">
-      ESP
-    </text>
-    <text x="64" y="164" text-anchor="middle" font-family="monospace, sans-serif" font-size="6.5" font-weight="bold" fill="#ffffff">
-      8285
-    </text>
+    <circle cx="64" cy="154" r="8" fill="none" stroke="#52525b" stroke-width="1" />
 
     <!-- Puce mémoire / amplificateur LNA à gauche -->
     <rect x="22" y="138" width="10" height="16" rx="1" fill="#ffffff" />
-
-    <!-- 5. SÉRIGRAPHIE VERTICALE IDENTIQUE À RX.PNG -->
-    <text x="106" y="85" font-family="monospace, sans-serif" font-size="6" font-weight="bold" fill="#ffffff" transform="rotate(90 106 85)" letter-spacing="0.5">
-      ELRS2400RX
-    </text>
 
     <!-- 6. LES 4 PADS DE SOUDURE CASTELLÉS AU BAS (RX, TX, 5V, GND) -->
     <g stroke="#000000" stroke-width="1.8">
