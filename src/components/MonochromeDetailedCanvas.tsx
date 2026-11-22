@@ -40,159 +40,159 @@ interface ComponentVisualConfig {
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (780, 580)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (690, 580)
   {
     id: 'frame',
     image: '/images/components/frame.svg',
-    x: 396,
+    x: 306,
     y: 245,
     width: 768,
     height: 670,
-    labelX: 780,
+    labelX: 690,
     labelY: 890,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (430, 490)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (340, 490)
   {
     id: 'fc',
     image: '/images/components/fc.svg',
-    x: 430,
+    x: 340,
     y: 490,
     width: 146,
     height: 148,
-    labelX: 503,
+    labelX: 413,
     labelY: 660,
     label: 'FC F7 30.5x30.5',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (980, 490)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (890, 490)
   {
     id: 'esc',
     image: '/images/components/esc.svg',
-    x: 980,
+    x: 890,
     y: 490,
     width: 165,
     height: 155,
-    labelX: 1062,
+    labelX: 972,
     labelY: 665,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (510, 890)
+  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (420, 890)
   {
     id: 'motor',
     image: '/images/components/motor.svg',
-    x: 510,
+    x: 420,
     y: 890,
     width: 150,
     height: 150,
-    labelX: 585,
+    labelX: 495,
     labelY: 1060,
     label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro : 90 × 112 à (735, 920)
+  // 5. Caméra FPV Micro : 90 × 112 à (645, 920)
   {
     id: 'cam',
     image: '/images/components/camera.svg',
-    x: 735,
+    x: 645,
     y: 920,
     width: 90,
     height: 112,
-    labelX: 780,
-    labelY: 1045,
+    labelX: 690,
+    labelY: 1048,
     label: 'CAMÉRA FPV MICRO',
   },
-  // 6. Émetteur Vidéo VTX : 90 × 145 à (430, 130)
+  // 6. Émetteur Vidéo VTX : 90 × 145 à (340, 130)
   {
     id: 'vtx',
     image: '/images/components/vtx.svg',
-    x: 430,
+    x: 340,
     y: 130,
     width: 90,
     height: 145,
-    labelX: 475,
+    labelX: 385,
     labelY: 295,
     label: 'VTX 5.8GHZ 1W',
   },
-  // 7. Module GPS : 78 × 83 à (741, 115)
+  // 7. Module GPS : 78 × 83 à (651, 115)
   {
     id: 'gps',
     image: '/images/components/gps.svg',
-    x: 741,
+    x: 651,
     y: 115,
     width: 78,
     height: 83,
-    labelX: 780,
+    labelX: 690,
     labelY: 215,
     label: 'GPS M10 & BOUSSOLE',
   },
-  // 8. Récepteur RX ELRS : 70 × 125 à (1010, 130)
+  // 8. Récepteur RX ELRS : 70 × 125 à (920, 130)
   {
     id: 'rx',
     image: '/images/components/rx.svg',
-    x: 1010,
+    x: 920,
     y: 130,
     width: 70,
     height: 125,
-    labelX: 1045,
+    labelX: 955,
     labelY: 275,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (560, 35)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (470, 45)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg',
-    x: 560,
-    y: 35,
+    x: 470,
+    y: 45,
     width: 440,
     height: 110,
-    labelX: 780,
-    labelY: 26,
+    labelX: 690,
+    labelY: 42,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop : 60 × 260 à (1140, 75)
+  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1030, 70)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg',
-    x: 1140,
-    y: 75,
-    width: 60,
-    height: 260,
-    labelX: 1170,
+    x: 1030,
+    y: 70,
+    width: 55,
+    height: 275,
+    labelX: 1057,
     labelY: 355,
     label: 'ANTENNE RHCP VTX',
   },
-  // 11. Condensateur Low ESR : 55 × 55 à (275, 535)
+  // 11. Condensateur Low ESR : 55 × 55 à (185, 535)
   {
     id: 'condo',
     image: '/images/components/condo.svg',
-    x: 275,
+    x: 185,
     y: 535,
     width: 55,
     height: 55,
-    labelX: 302,
+    labelX: 212,
     labelY: 610,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 55 × 95 à (935, 760)
+  // 12. Buzzer ViFly : 55 × 95 à (825, 760)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg',
-    x: 935,
+    x: 825,
     y: 760,
     width: 55,
     height: 95,
-    labelX: 962,
+    labelX: 852,
     labelY: 885,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (1070, 690)
+  // 13. Batterie LiPo 6S : 140 × 320 à (970, 690)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg',
-    x: 1070,
+    x: 970,
     y: 690,
     width: 140,
     height: 320,
-    labelX: 1140,
+    labelX: 1040,
     labelY: 1030,
     label: 'BATTERIE LIPO 6S XT60',
   },
@@ -275,15 +275,15 @@ export function MonochromeDetailedCanvas({
         />
 
         {/* Lignes directrices CAO d'alignement centrées sur le châssis */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="200 40 1600 1050">
-          <line x1="780" y1="40" x2="780" y2="1090" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <line x1="200" y1="580" x2="1800" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <circle cx="780" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="100 20 1560 1060">
+          <line x1="690" y1="20" x2="690" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <line x1="100" y1="580" x2="1660" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <circle cx="690" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
         </svg>
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="200 40 1600 1050"
+          viewBox="100 20 1560 1060"
           className="w-full h-full select-none"
         >
           {/* ====================================================================
@@ -291,35 +291,35 @@ export function MonochromeDetailedCanvas({
              ==================================================================== */}
           <g className="pointer-events-none opacity-40">
             {/* Ligne Standoffs Frame -> FC -> ESC */}
-            <line x1="503" y1="564" x2="780" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-            <line x1="1062" y1="567" x2="780" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="413" y1="564" x2="690" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="972" y1="567" x2="690" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne Moteurs vers Châssis */}
-            <line x1="585" y1="890" x2="497" y2="815" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="495" y1="890" x2="407" y2="815" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
             
             {/* Ligne Caméra vers avant du châssis */}
-            <line x1="780" y1="940" x2="780" y2="680" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="690" y1="920" x2="690" y2="680" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne VTX vers Stack */}
-            <line x1="475" y1="275" x2="780" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="385" y1="275" x2="690" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne GPS vers Châssis arrière */}
-            <line x1="780" y1="198" x2="780" y2="380" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="690" y1="198" x2="690" y2="380" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne RX vers Stack */}
-            <line x1="1045" y1="255" x2="780" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="955" y1="255" x2="690" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Câble d'antenne VTX vers VTX */}
-            <line x1="1140" y1="205" x2="520" y2="202" stroke="#52525b" strokeWidth="1.2" strokeDasharray="4 4" />
+            <line x1="1030" y1="205" x2="430" y2="202" stroke="#52525b" strokeWidth="1.2" strokeDasharray="4 4" />
 
             {/* Câble d'alimentation Condensateur vers ESC (Monochrome) */}
-            <line x1="330" y1="562" x2="980" y2="567" stroke="#18181b" strokeWidth="1.5" strokeDasharray="6 4" />
+            <line x1="240" y1="562" x2="890" y2="567" stroke="#18181b" strokeWidth="1.5" strokeDasharray="6 4" />
 
             {/* Câble ViFly Buzzer vers FC (Monochrome) */}
-            <line x1="935" y1="807" x2="576" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="825" y1="807" x2="486" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
 
             {/* Câble LiPo XT60 vers ESC (Monochrome) */}
-            <line x1="1070" y1="750" x2="1062" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
+            <line x1="970" y1="750" x2="972" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
           </g>
 
           {/* ====================================================================
