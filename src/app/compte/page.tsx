@@ -41,6 +41,7 @@ import {
   PARTNER_REWARDS,
   DetailedFixReport,
   getLevelFromXp,
+  getEcosystemPartnerUrl,
 } from '@/data/pilotGamification';
 
 export default function PilotAccountPage() {
@@ -1179,10 +1180,17 @@ export default function PilotAccountPage() {
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-zinc-200 flex items-center justify-between text-xs font-mono">
-                      <span className="text-zinc-500">Mutualisation active</span>
-                      <span className="text-red-600 font-bold flex items-center gap-1">
-                        Accéder <ExternalLink className="w-3 h-3" />
-                      </span>
+                      <span className="text-zinc-500">Mutualisation active (SSO)</span>
+                      <a
+                        href={getEcosystemPartnerUrl(site.domain, pilot)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-600 hover:text-black font-bold flex items-center gap-1 transition-colors"
+                        title={`Accéder à ${site.name} avec ma session SSO`}
+                      >
+                        <span>Accéder au site</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
                     </div>
                   </div>
                 ))}

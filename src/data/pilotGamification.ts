@@ -711,11 +711,80 @@ export function saveUserToDirectory(account: StoredUserAccount): void {
 }
 
 /**
+ * Génère le lien d'accès SSO vers un site partenaire de l'écosystème
+ */
+export function getEcosystemPartnerUrl(siteDomain: string, currentPilot?: PilotProfile | null): string {
+  const base = `https://${siteDomain}`;
+  if (!currentPilot || !currentPilot.isLoggedIn || !currentPilot.email) {
+    return base;
+  }
+  const ssoParams = new URLSearchParams({
+    sso_source: 'fixmydrone.fr',
+    sso_email: currentPilot.email,
+    sso_name: currentPilot.callsign || '',
+    sso_level: String(currentPilot.level || 1),
+  });
+  return `${base}/?${ssoParams.toString()}`;
+}
+
+/**
+ * Vérifie et applique un jeton ou payload SSO reçu dans l'URL depuis Multi-Motors ou un autre site partenaire
+ * Exemple : ?sso_email=pilote@fpv.fr&sso_name=AlexFPV
+ */
+export function checkAndApplyUrlSso(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ssoEmail = params.get('sso_email') || params.get('email');
+    const ssoName = params.get('sso_name') || params.get('name') || params.get('sso_callsign');
+    const ssoRole = params.get('sso_role') || params.get('role');
+
+    if (ssoEmail && ssoEmail.includes('@')) {
+      const normEmail = ssoEmail.toLowerCase().trim();
+      const callsign = (ssoName || normEmail.split('@')[0]).trim().toUpperCase();
+      
+      const db = getAllRegisteredUsers();
+      const existing = db[normEmail];
+      
+      const profile: PilotProfile = existing ? {
+        ...existing.profile,
+        callsign: callsign || existing.profile.callsign,
+        isLoggedIn: true,
+      } : {
+        ...DEFAULT_PILOT_PROFILE,
+        id: `pilot-${Date.now()}`,
+        callsign,
+        email: normEmail,
+        isLoggedIn: true,
+        xp: 150,
+        level: 2,
+        levelTitle: 'Padawan du Fer',
+        role: ssoRole === 'admin' ? 'Admin' : ssoRole === 'moderator' ? 'Modérateur' : 'Pilote',
+        createdAt: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+      };
+
+      savePilotProfile(profile);
+
+      // Nettoyer les paramètres de l'URL sans recharger la page
+      const cleanUrl = window.location.pathname + (window.location.hash || '');
+      window.history.replaceState({}, document.title, cleanUrl);
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+  return false;
+}
+
+/**
  * Récupère le profil pilote mutualisé (SSO Écosystème)
  */
 export function loadPilotProfile(): PilotProfile {
   if (typeof window === 'undefined') return DEFAULT_PILOT_PROFILE;
   try {
+    // Vérification prioritaire si un SSO arrive via l'URL
+    checkAndApplyUrlSso();
+
     const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('fixmydrone_pilot_profile_v1');
     if (!raw) return DEFAULT_PILOT_PROFILE;
     const parsed = JSON.parse(raw);
