@@ -377,16 +377,16 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
     ]
   },
 
-  // 4. Transmission Vidéo VTX (CamYQuad)
+  // 4. Transmission Vidéo VTX (CammyQuad)
   vtx: {
     id: 'vtx',
     componentName: 'Émetteur Vidéo (VTX)',
     componentSlug: 'vtx',
     frenchTitle: 'Émetteur Vidéo FPV (VTX 5.8GHz / HD Numérique)',
     category: 'video',
-    sisterSiteId: 'camyquad',
+    sisterSiteId: 'cammyquad',
     defaultImage: '/images/components/vtx.svg?v=6',
-    description: 'Transmet le flux vidéo vers vos lunettes. Catalogue des systèmes DJI O3/O4, Walksnail, HDZero et analogiques sur CamYQuad.fr.',
+    description: 'Transmet le flux vidéo vers vos lunettes. Catalogue des systèmes DJI O3/O4, Walksnail, HDZero et analogiques sur CammyQuad.fr.',
     brands: [
       { id: 'dji', name: 'DJI Digital FPV', popularModels: ['O3 Air Unit', 'O4 Air Unit', 'Vista / Runcam Link', 'Air Unit OG'] },
       { id: 'walksnail', name: 'Walksnail Avatar HD', popularModels: ['Avatar V2 Pro', 'Avatar GT 2W', 'Avatar Mini 1S Lite'] },
@@ -493,7 +493,7 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
     componentSlug: 'goggle',
     frenchTitle: 'Lunettes & Masque FPV (OLED, HD Digital & Analogique)',
     category: 'reception',
-    sisterSiteId: 'camyquad',
+    sisterSiteId: 'cammyquad',
     defaultImage: '/images/components/fatshark.svg?v=6',
     description: 'Interface visuelle d immersion du pilote (DJI O3, Walksnail Avatar, HDZero, Analogique). Dépannage des écrans noirs, capteurs de proximité, buée et mises à jour firmware.',
     brands: [
@@ -773,7 +773,7 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
     componentSlug: 'cam',
     frenchTitle: 'Caméra FPV (Analogique & Capteurs Numériques HD)',
     category: 'optique',
-    sisterSiteId: 'camyquad',
+    sisterSiteId: 'cammyquad',
     defaultImage: '/images/components/camera.svg?v=6',
     description: 'Capteur d image FPV capturant le flux en direct. Dépannage des nappes MIPI déboîtées, écrans roses, boucles de masse et rayures optiques.',
     brands: [

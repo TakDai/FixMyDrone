@@ -129,7 +129,7 @@ export function EcosystemAuthModal({
             <span>Compte Unique & Mutualisé (SSO)</span>
           </div>
           <p className="text-[11px] text-neutral-300 leading-snug">
-            Un seul compte pour <strong>FixMyDrone</strong>, <strong>Multi-Motors</strong>, <strong>BindMyQuad</strong>, <strong>CamYQuad</strong>, <strong>MakeMyFrame</strong>, <strong>MakeMyQuad</strong> et <strong>FindMyQuad</strong>.
+            Un seul compte pour <strong>FixMyDrone</strong>, <strong>Multi-Motors</strong>, <strong>BindMyQuad</strong>, <strong>CammyQuad</strong>, <strong>MakeMyFrame</strong>, <strong>MakeMyQuad</strong> et <strong>FindMyQuad</strong>.
           </p>
         </div>
 

@@ -42,6 +42,11 @@ import {
   DetailedFixReport,
   getLevelFromXp,
   getEcosystemPartnerUrl,
+  SITE_SPECIALTIES,
+  SiteSpecialtyConfig,
+  SpecialtyLevelInfo,
+  getSpecialtyLevelInfo,
+  addActivityXp,
 } from '@/data/pilotGamification';
 
 export default function PilotAccountPage() {
@@ -53,6 +58,8 @@ export default function PilotAccountPage() {
   const [badgeFilter, setBadgeFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
   const [selectedOrderNum, setSelectedOrderNum] = useState<number>(1);
   const [levelSearchInput, setLevelSearchInput] = useState<string>('');
+  const [levelViewMode, setLevelViewMode] = useState<'global' | 'specialties'>('global');
+  const [selectedSpecialtyId, setSelectedSpecialtyId] = useState<string>('multi-motors');
 
   const refreshPilot = () => {
     const p = loadPilotProfile();
@@ -316,13 +323,25 @@ export default function PilotAccountPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-6">
                 <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
                   <div className="text-[10px] font-mono text-zinc-500 uppercase font-semibold">
-                    XP Total
+                    XP Général
                   </div>
                   <div className="text-2xl font-mono font-black text-black mt-1">
                     {pilot?.xp || 0}
                   </div>
                   <div className="text-[10px] text-zinc-400 mt-1 font-mono">
-                    Points d atelier
+                    Points cumulés 7 sites
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="text-[10px] font-mono text-zinc-500 uppercase font-semibold">
+                    Avis & Reviews
+                  </div>
+                  <div className="text-2xl font-mono font-black text-black mt-1">
+                    {pilot?.reviewsCount || pilot?.activityMetrics?.reviewsCount || 2}
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1 font-mono">
+                    Multi-Motors & Pièces
                   </div>
                 </div>
 
@@ -334,33 +353,107 @@ export default function PilotAccountPage() {
                     {pilot?.fixesResolvedCount || 0}
                   </div>
                   <div className="text-[10px] text-zinc-400 mt-1 font-mono">
-                    Interventions validées
+                    FixMyDrone Atelier
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
                   <div className="text-[10px] font-mono text-zinc-500 uppercase font-semibold">
-                    Rapports d Atelier
-                  </div>
-                  <div className="text-2xl font-mono font-black text-black mt-1">
-                    {pilot?.detailedReportsCount || 0}
-                  </div>
-                  <div className="text-[10px] text-zinc-400 mt-1 font-mono">
-                    Guides rédigés (+150 XP)
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                  <div className="text-[10px] font-mono text-zinc-500 uppercase font-semibold">
-                    Votes Utiles Reçus
+                    Votes & Entraide
                   </div>
                   <div className="text-2xl font-mono font-black text-black mt-1">
                     {pilot?.communityHelpfulVotes || 0}
                   </div>
                   <div className="text-[10px] text-zinc-400 mt-1 font-mono">
-                    Pilotes aidés
+                    Communauté aidée
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* ENCART : NIVEAUX PAR SITE & SPÉCIALITÉS D'ATELIER */}
+            <div className="bg-white rounded-2xl border-2 border-black p-6 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-zinc-200">
+                <div>
+                  <h3 className="text-base font-mono font-black uppercase text-black flex items-center gap-2">
+                    <span>Vos 7 Niveaux de Spécialités d Atelier</span>
+                    <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold">
+                      Multi-Axes
+                    </span>
+                  </h3>
+                  <p className="text-xs text-zinc-600 mt-0.5 font-normal">
+                    Chaque site possède son propre niveau et ses titres d atelier selon vos actions (avis sur Multi-Motors, résolutions sur FixMyDrone, tuning sur MakeMyQuad...).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLevelViewMode('specialties');
+                    setActiveTab('levels');
+                  }}
+                  className="text-xs font-mono font-bold text-red-600 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+                >
+                  Détails des 7 spécialités <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {Object.values(SITE_SPECIALTIES).map((spec) => {
+                  const siteXp = pilot?.siteXp?.[spec.id] || 0;
+                  const actions =
+                    spec.id === 'multi-motors'
+                      ? pilot?.reviewsCount || 2
+                      : spec.id === 'fixmydrone'
+                      ? pilot?.fixesResolvedCount || 1
+                      : 0;
+                  const specInfo = getSpecialtyLevelInfo(spec.id, siteXp, actions);
+
+                  return (
+                    <div
+                      key={spec.id}
+                      onClick={() => {
+                        setSelectedSpecialtyId(spec.id);
+                        setLevelViewMode('specialties');
+                        setActiveTab('levels');
+                      }}
+                      className="p-3.5 rounded-xl border border-zinc-200 bg-zinc-50/80 hover:bg-white hover:border-black transition-all cursor-pointer flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-lg">{spec.icon}</span>
+                            <span className="font-mono text-xs font-black text-black">
+                              {spec.name}
+                            </span>
+                          </div>
+                          <span className="px-1.5 py-0.5 rounded bg-black text-white font-mono text-[9px] font-bold">
+                            Niv. {specInfo.level}
+                          </span>
+                        </div>
+
+                        <div className="font-mono text-[11px] font-bold text-zinc-800 line-clamp-1 mb-1">
+                          {specInfo.title}
+                        </div>
+                        <p className="text-[10px] font-mono text-zinc-500 line-clamp-1">
+                          {spec.discipline}
+                        </p>
+                      </div>
+
+                      <div className="mt-2.5 pt-2 border-t border-zinc-200">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-zinc-500 mb-1">
+                          <span>{siteXp} XP</span>
+                          <span>{specInfo.maxXp} XP</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-black rounded-full"
+                            style={{ width: `${specInfo.progressPercent}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -424,7 +517,7 @@ export default function PilotAccountPage() {
                 </button>
               </div>
               <p className="text-xs text-zinc-600 mb-4 font-normal">
-                Votre session est partagée automatiquement. Vous pouvez naviguer sur Multi-Motors, BindMyQuad, CamYQuad et les autres sites partenaires sans jamais vous reconnecter.
+                Votre session est partagée automatiquement. Vous pouvez naviguer sur Multi-Motors, BindMyQuad, CammyQuad et les autres sites partenaires sans jamais vous reconnecter.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
                 {ECOSYSTEM_SITES.map((site) => (
@@ -472,10 +565,361 @@ export default function PilotAccountPage() {
 
           const activeOrder = PRESTIGE_ORDERS.find((o) => o.orderNumber === selectedOrderNum) || PRESTIGE_ORDERS[0];
 
+          // Configuration & info de la spécialité active sélectionnée
+          const activeSpecialtyConfig = SITE_SPECIALTIES[selectedSpecialtyId] || SITE_SPECIALTIES['multi-motors'];
+          const specialtySiteXp = pilot?.siteXp?.[selectedSpecialtyId] || 0;
+          const specialtyActionsCount =
+            selectedSpecialtyId === 'multi-motors'
+              ? (pilot?.activityMetrics?.reviewsCount || pilot?.reviewsCount || 0)
+              : selectedSpecialtyId === 'fixmydrone'
+              ? (pilot?.activityMetrics?.fixesCount || pilot?.fixesResolvedCount || 0)
+              : Math.floor(specialtySiteXp / 45);
+
+          const activeSpecialtyInfo = getSpecialtyLevelInfo(
+            selectedSpecialtyId,
+            specialtySiteXp,
+            specialtyActionsCount
+          );
+
+          // Paliers majeurs de la spécialité
+          const milestoneLevels = [1, 2, 3, 5, 10, 25, 50, 100, 250, 500, 750, 1000];
+
+          const handleCreditActivity = (siteId: string, activityType: 'review' | 'fix' | 'vote' | 'tuning' | 'action', amount: number) => {
+            addActivityXp(siteId, activityType, amount);
+            refreshPilot();
+          };
+
           return (
             <div className="space-y-6">
-              {/* Carte Principale 1000 Niveaux */}
-              <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
+              {/* Barre de Bascule Supérieure : Vue Globale 1000 vs 7 Spécialités d'Atelier */}
+              <div className="bg-white rounded-2xl border-2 border-black p-3 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                  <button
+                    type="button"
+                    onClick={() => setLevelViewMode('global')}
+                    className={`px-4 py-2.5 rounded-xl font-mono text-xs font-black uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      levelViewMode === 'global'
+                        ? 'bg-black text-white shadow-sm'
+                        : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                    }`}
+                  >
+                    <span>🌐</span>
+                    <span>Niveau Général Global (1 à 1000)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLevelViewMode('specialties')}
+                    className={`px-4 py-2.5 rounded-xl font-mono text-xs font-black uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      levelViewMode === 'specialties'
+                        ? 'bg-black text-white shadow-sm'
+                        : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                    }`}
+                  >
+                    <span>🛠️</span>
+                    <span>7 Spécialités par Site & Activité</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 px-2">
+                  <div className="text-right">
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">Total Écosystème</span>
+                    <span className="font-mono text-xs font-black text-black">
+                      {pilot?.xp?.toLocaleString('fr-FR') || 0} XP
+                    </span>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-mono font-black text-xs">
+                    {pilot?.level || 1}
+                  </div>
+                </div>
+              </div>
+
+              {/* ================= CONDITION : VUE SPÉCIALITÉS D'ATELIER (PAR SITE & ACTIVITÉ) ================= */}
+              {levelViewMode === 'specialties' && (
+                <div className="space-y-6">
+                  {/* Carte d'Explication de la Gamification Multi-Axes */}
+                  <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-200">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="px-2 py-0.5 rounded bg-black text-white font-mono text-[10px] font-black uppercase tracking-wider">
+                            Gamification Multi-Axes & Multi-Sites
+                          </span>
+                          <span className="text-xs font-mono text-red-600 font-bold uppercase">
+                            7 Arbres Dédiés
+                          </span>
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-mono font-black uppercase text-black">
+                          Spécialités d Atelier : Chaque Action Compte
+                        </h2>
+                        <p className="text-xs text-zinc-600 font-normal mt-1 max-w-2xl">
+                          Chaque site partenaire possède son propre arbre de titres d atelier. Par exemple, rédiger des avis et des bancs d essai sur <strong>Multi-Motors.fr</strong> augmente votre rang de <em>Chroniqueur Moteurs</em>, tandis que résoudre des pannes sur <strong>FixMyDrone.fr</strong> affine votre statut d <em>Urgentiste de Bando</em>. <strong>Tous vos gains d XP alimentent simultanément votre Niveau Général Global !</strong>
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-300 shrink-0">
+                        <span className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">Activité Actuelle Multi-Motors</span>
+                        <div className="flex items-center gap-2 font-mono font-black text-sm text-black">
+                          <span>⭐</span>
+                          <span>{pilot?.activityMetrics?.reviewsCount || pilot?.reviewsCount || 0} avis déposés</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sélecteur des 7 Sites Partenaires */}
+                    <div className="mt-6 mb-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-mono text-xs font-bold uppercase text-black">
+                          Sélectionnez une discipline d atelier :
+                        </span>
+                        <span className="text-[11px] font-mono text-zinc-500">
+                          7 expertises indépendantes et synchronisées
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
+                        {Object.values(SITE_SPECIALTIES).map((spec) => {
+                          const isSelected = selectedSpecialtyId === spec.id;
+                          const siteXp = pilot?.siteXp?.[spec.id] || 0;
+                          const actionsCount =
+                            spec.id === 'multi-motors'
+                              ? (pilot?.activityMetrics?.reviewsCount || pilot?.reviewsCount || 0)
+                              : spec.id === 'fixmydrone'
+                              ? (pilot?.activityMetrics?.fixesCount || pilot?.fixesResolvedCount || 0)
+                              : Math.floor(siteXp / 45);
+                          const specInfo = getSpecialtyLevelInfo(spec.id, siteXp, actionsCount);
+
+                          return (
+                            <button
+                              key={spec.id}
+                              type="button"
+                              onClick={() => setSelectedSpecialtyId(spec.id)}
+                              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                                isSelected
+                                  ? 'border-black bg-black text-white shadow-sm'
+                                  : 'border-zinc-200 bg-white hover:border-black text-zinc-800'
+                              }`}
+                            >
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xl">{spec.icon}</span>
+                                  <span
+                                    className={`font-mono text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
+                                      isSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-700'
+                                    }`}
+                                  >
+                                    Niv. {specInfo.level}
+                                  </span>
+                                </div>
+                                <div className="font-mono text-xs font-bold truncate">
+                                  {spec.name}
+                                </div>
+                                <span
+                                  className={`text-[9px] font-mono block mt-0.5 truncate ${
+                                    isSelected ? 'text-zinc-300' : 'text-zinc-500'
+                                  }`}
+                                >
+                                  {specInfo.title}
+                                </span>
+                              </div>
+
+                              <div className="mt-3 pt-2 border-t border-zinc-200/40">
+                                <span
+                                  className={`text-[9px] font-mono font-bold block ${
+                                    isSelected ? 'text-emerald-400' : 'text-zinc-700'
+                                  }`}
+                                >
+                                  {siteXp} XP
+                                </span>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Fiche Détaillée de la Spécialité Active */}
+                    <div className="p-6 rounded-2xl bg-zinc-50 border-2 border-black">
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-zinc-200">
+                        <div className="flex items-start gap-4">
+                          <div className="w-16 h-16 rounded-2xl bg-white border-2 border-black flex items-center justify-center text-3xl shadow-sm shrink-0">
+                            {activeSpecialtyConfig.icon}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-black uppercase text-red-600">
+                                {activeSpecialtyConfig.domain}
+                              </span>
+                              <span className="px-2 py-0.5 rounded bg-black text-white font-mono text-[10px] font-black uppercase">
+                                Niveau {activeSpecialtyInfo.level}
+                              </span>
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-mono font-black uppercase text-black mt-0.5">
+                              {activeSpecialtyInfo.title}
+                            </h3>
+                            <p className="text-xs font-mono text-zinc-600 mt-1">
+                              Discipline : <strong className="text-zinc-900">{activeSpecialtyConfig.discipline}</strong>
+                            </p>
+                            <p className="text-xs text-zinc-500 mt-0.5 font-normal">
+                              {activeSpecialtyConfig.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Compteurs d'Action et XP locale */}
+                        <div className="p-4 rounded-xl bg-white border border-zinc-300 shrink-0 flex flex-col justify-center min-w-[220px]">
+                          <div className="flex items-center justify-between text-xs font-mono mb-1">
+                            <span className="text-zinc-500">Progression Niv. {activeSpecialtyInfo.level + 1}</span>
+                            <span className="font-black text-black">{activeSpecialtyInfo.progressPercent}%</span>
+                          </div>
+                          <div className="w-full h-2 bg-zinc-200 rounded-full overflow-hidden mb-2">
+                            <div
+                              className="h-full bg-red-600 rounded-full transition-all duration-300"
+                              style={{ width: `${activeSpecialtyInfo.progressPercent}%` }}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                            <span>{activeSpecialtyInfo.currentXp} XP</span>
+                            <span>{activeSpecialtyInfo.maxXp} XP</span>
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between text-xs font-mono font-bold text-zinc-800">
+                            <span>{activeSpecialtyConfig.actionMetricLabel} :</span>
+                            <span className="text-black bg-zinc-100 px-1.5 py-0.5 rounded">
+                              {activeSpecialtyInfo.actionsDone}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions Rapides pour Gagner de l'XP sur cette Spécialité */}
+                      <div className="mt-6 pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <div className="text-xs font-mono text-zinc-600">
+                          {selectedSpecialtyId === 'multi-motors' ? (
+                            <span>💡 Rédigez un avis ou soumettez un relevé de banc d essai pour progresser sur Multi-Motors.fr et sur votre niveau général.</span>
+                          ) : selectedSpecialtyId === 'fixmydrone' ? (
+                            <span>💡 Rédigez une fiche de dépannage détaillée après avoir résolu une panne pour progresser dans l ordre des réparateurs.</span>
+                          ) : (
+                            <span>💡 Partagez vos réglages, configurations et retours d expérience sur {activeSpecialtyConfig.name}.</span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {selectedSpecialtyId === 'multi-motors' && (
+                            <button
+                              type="button"
+                              onClick={() => handleCreditActivity('multi-motors', 'review', 45)}
+                              className="h-9 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <span>⭐</span>
+                              <span>Déposer un avis Multi-Motors (+45 XP)</span>
+                            </button>
+                          )}
+
+                          {selectedSpecialtyId === 'fixmydrone' && (
+                            <button
+                              type="button"
+                              onClick={() => setReportModalOpen(true)}
+                              className="h-9 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <span>🩺</span>
+                              <span>Rédiger un rapport de panne (+150 XP)</span>
+                            </button>
+                          )}
+
+                          {selectedSpecialtyId !== 'multi-motors' && selectedSpecialtyId !== 'fixmydrone' && (
+                            <button
+                              type="button"
+                              onClick={() => handleCreditActivity(selectedSpecialtyId, 'action', 35)}
+                              className="h-9 px-4 rounded-xl bg-black hover:bg-zinc-800 text-white font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <span>⚡</span>
+                              <span>Valider une action (+35 XP)</span>
+                            </button>
+                          )}
+
+                          <a
+                            href={`https://${activeSpecialtyConfig.domain}/`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-9 px-3.5 rounded-xl bg-white border border-zinc-300 hover:border-black text-black font-mono text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Ouvrir {activeSpecialtyConfig.name}</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* Échelle d'Évolution des Titres d'Atelier pour cette Spécialité */}
+                      <div className="mt-8">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="font-mono text-xs font-black uppercase text-black">
+                            Paliers & Titres d Atelier : {activeSpecialtyConfig.name}
+                          </h4>
+                          <span className="text-[11px] font-mono text-zinc-500">
+                            Progression de niveau 1 à 1000
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {milestoneLevels.map((lvl) => {
+                            const milestoneTitle =
+                              activeSpecialtyConfig.milestoneTitles[lvl] ||
+                              activeSpecialtyConfig.generateTitle(lvl);
+                            const isReached = activeSpecialtyInfo.level >= lvl;
+                            const isCurrentMilestone =
+                              activeSpecialtyInfo.level === lvl ||
+                              (activeSpecialtyInfo.level > lvl && lvl === 1000);
+
+                            return (
+                              <div
+                                key={lvl}
+                                className={`p-3.5 rounded-xl border transition-all flex items-start gap-3 ${
+                                  isReached
+                                    ? 'bg-white border-black shadow-sm'
+                                    : 'bg-zinc-100/70 border-zinc-200 opacity-70'
+                                }`}
+                              >
+                                <div
+                                  className={`w-9 h-9 rounded-lg flex items-center justify-center font-mono font-black text-xs shrink-0 ${
+                                    isReached ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-500'
+                                  }`}
+                                >
+                                  {lvl}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="font-mono text-xs font-bold text-black truncate">
+                                      {milestoneTitle}
+                                    </span>
+                                    {isCurrentMilestone && (
+                                      <span className="px-1.5 py-0.2 rounded bg-red-600 text-white font-mono text-[8px] font-black uppercase">
+                                        Actuel
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] font-mono text-zinc-500 block mt-0.5">
+                                    Niveau {lvl} • {isReached ? 'Débloqué' : 'Verrouillé'}
+                                  </span>
+                                </div>
+                                <div className="shrink-0 mt-1">
+                                  {isReached ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                  ) : (
+                                    <Lock className="w-4 h-4 text-zinc-400" />
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ================= CONDITION : VUE GLOBALE 1000 NIVEAUX (AVEC 12 ORDRES DE PRESTIGE) ================= */}
+              {levelViewMode === 'global' && (
+                <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-zinc-200">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
@@ -767,6 +1211,7 @@ export default function PilotAccountPage() {
                   })}
                 </div>
               </div>
+              )}
             </div>
           );
         })()}

@@ -55,10 +55,21 @@ export const ECOSYSTEM_SITES: Record<string, EcosystemSisterSite> = {
     role: 'Catalogue modules GPS M10/M8, buzzers LiPo autonomes & sécurité anti-perte',
     catalogCount: '190+ balises GPS & buzzers'
   },
+  'cammyquad': {
+    id: 'cammyquad',
+    name: 'CammyQuad.fr',
+    domain: 'https://cammyquad.fr',
+    tagline: 'Transmission vidéo HD & analogique, caméras, VTX et masques FPV',
+    badge: 'CATALOGUE VIDÉO HD/ANALOGIQUE',
+    color: 'from-rose-500 to-red-600',
+    components: ['vtx', 'cam', 'antenna-vtx', 'goggle'],
+    role: 'Catalogue DJI O3/O4, Walksnail, HDZero, VTX analogiques 5.8GHz & capteurs caméra',
+    catalogCount: '510+ VTX, caméras & lunettes'
+  },
   'camyquad': {
-    id: 'camyquad',
-    name: 'CamYQuad.fr',
-    domain: 'https://camyquad.fr',
+    id: 'cammyquad',
+    name: 'CammyQuad.fr',
+    domain: 'https://cammyquad.fr',
     tagline: 'Transmission vidéo HD & analogique, caméras, VTX et masques FPV',
     badge: 'CATALOGUE VIDÉO HD/ANALOGIQUE',
     color: 'from-rose-500 to-red-600',

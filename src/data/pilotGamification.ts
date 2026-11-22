@@ -126,7 +126,7 @@ export const PRESTIGE_ORDERS: MajorPrestigeOrder[] = [
     badgeBg: 'bg-indigo-50 text-indigo-800 border-indigo-300',
     icon: '🕶️',
     description: 'Optimisation des flux DJI O3, Walksnail Avatar HD et HDZero avec réglages thermiques d usine.',
-    grandPerk: 'Code -10% CamYQuad Lunettes & VTX + Canal direct d échange avec les fabricants',
+    grandPerk: 'Code -10% CammyQuad Lunettes & VTX + Canal direct d échange avec les fabricants',
   },
   {
     id: 'order-7',
@@ -229,17 +229,370 @@ export interface PilotProfile {
   callsign: string;
   email: string;
   avatar: string;
-  xp: number;
-  level: number;
-  levelTitle: string;
+  xp: number; // XP Total cumulé de l'écosystème
+  level: number; // Niveau Général Global (1 à 1000)
+  levelTitle: string; // Titre du Niveau Général
   role: 'Pilote' | 'Constructeur Vérifié' | 'Modérateur' | 'Admin';
   isLoggedIn: boolean;
   fixesResolvedCount: number;
   detailedReportsCount: number;
   communityHelpfulVotes: number;
+  reviewsCount?: number; // Nombre d'avis postés (ex: Multi-Motors)
+  siteXp?: Record<string, number>; // XP par site
+  activityMetrics?: {
+    reviewsCount: number;
+    fixesCount: number;
+    communityVotesCount: number;
+    tuningPresetsCount: number;
+  };
   unlockedBadges: PilotBadge[];
   historyReports: DetailedFixReport[];
   createdAt: string;
+}
+
+export interface SiteSpecialtyConfig {
+  id: string;
+  name: string;
+  domain: string;
+  icon: string;
+  discipline: string;
+  actionMetricLabel: string;
+  description: string;
+  accentColor: string;
+  badgeBg: string;
+  milestoneTitles: Record<number, string>;
+  generateTitle: (level: number) => string;
+}
+
+export interface SpecialtyLevelInfo {
+  siteId: string;
+  siteName: string;
+  level: number;
+  title: string;
+  discipline: string;
+  minXp: number;
+  maxXp: number;
+  progressPercent: number;
+  currentXp: number;
+  actionsDone: number;
+  actionMetricLabel: string;
+}
+
+// 7 Arbres de Spécialités d'Atelier (1 par site partenaire de l'écosystème FPV)
+export const SITE_SPECIALTIES: Record<string, SiteSpecialtyConfig> = {
+  'multi-motors': {
+    id: 'multi-motors',
+    name: 'Multi-Motors.fr',
+    domain: 'multi-motors.fr',
+    icon: '⚙️',
+    discipline: 'Avis, Bancs d Essai & Moteurs Brushless',
+    actionMetricLabel: 'Avis & Tests Moteurs déposés',
+    description: 'Bancs de poussée dyno, avis sur les cloches, roulements et courbes de puissance.',
+    accentColor: 'text-amber-500',
+    badgeBg: 'bg-amber-50 text-amber-900 border-amber-300',
+    milestoneTitles: {
+      1: 'Apprenti Testeur de Stator',
+      2: 'Observateur de Roulements',
+      3: 'Critique d Atelier Dyno',
+      5: 'Chroniqueur de Moteurs 5 Pouces',
+      10: 'Étalonneur KV & Courbes de Gaz',
+      25: 'Expert Bobinage & Aimants N52SH',
+      50: 'Docteur des Cloches Titane',
+      100: 'Maître des Bancs de Poussée Multi-Motors',
+      250: 'Architecte Rendement Brushless',
+      500: 'Doyen des Bancs d Essai Mondiaux',
+      750: 'Sommité Suprême du Moteur FPV',
+      1000: 'Grand Maître Éternel des Moteurs Brushless',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Grand Maître Éternel des Moteurs Brushless';
+      if (lvl >= 750) return `Sommité du Moteur Brushless (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Doyen des Bancs d Essai (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Architecte Rendement Moteur (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Maître des Bancs de Poussée (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Docteur des Cloches Titane (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Expert Bobinage & Aimants (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Étalonneur KV & Thrust (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Chroniqueur Moteurs 5" (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Critique d Atelier Dyno';
+      if (lvl >= 2) return 'Observateur de Roulements';
+      return 'Apprenti Testeur de Stator';
+    },
+  },
+  'fixmydrone': {
+    id: 'fixmydrone',
+    name: 'FixMyDrone.fr',
+    domain: 'fixmydrone.fr',
+    icon: '🩺',
+    discipline: 'Résolutions de Pannes & Diagnostics IA',
+    actionMetricLabel: 'Pannes Diagnostiquées & Résolues',
+    description: 'Protocoles de dépannage, guides d atelier validés et fiches de réparation.',
+    accentColor: 'text-red-600',
+    badgeBg: 'bg-red-50 text-red-900 border-red-300',
+    milestoneTitles: {
+      1: 'Apprenti Dépanneur',
+      2: 'Urgentiste de Bando',
+      3: 'Chirurgien de l Étain',
+      5: 'Sauveur de Pads Arrachement',
+      10: 'Expert Continuité Multimètre',
+      25: 'Spécialiste Micro-Soudures CMS',
+      50: 'Docteur Chef d Atelier FPV',
+      100: 'Grand Résolveur Homologué',
+      250: 'Grand Médecin Chef des Circuits',
+      500: 'Chirurgien de l Extrême FPV',
+      750: 'Sommité Mondiale du Diagnostic Drone',
+      1000: 'Démiurge du Fer & Résolveur Suprême',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Démiurge du Fer & Résolveur Suprême';
+      if (lvl >= 750) return `Sommité Mondiale du Diagnostic (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Chirurgien de l Extrême FPV (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Grand Médecin Chef des Circuits (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Grand Résolveur Homologué (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Docteur Chef d Atelier FPV (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Spécialiste Micro-Soudures CMS (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Expert Continuité Multimètre (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Sauveur de Pads Arrachement (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Chirurgien de l Étain';
+      if (lvl >= 2) return 'Urgentiste de Bando';
+      return 'Apprenti Dépanneur';
+    },
+  },
+  'bindmyquad': {
+    id: 'bindmyquad',
+    name: 'BindMyQuad.fr',
+    domain: 'bindmyquad.fr',
+    icon: '📡',
+    discipline: 'Protocoles Radio, Télémétrie & RX',
+    actionMetricLabel: 'Liaisons RF & RX configurés',
+    description: 'Paramétrage ExpressLRS, TBS Crossfire, antennes dipôles et liaisons longue distance.',
+    accentColor: 'text-blue-600',
+    badgeBg: 'bg-blue-50 text-blue-900 border-blue-300',
+    milestoneTitles: {
+      1: 'Apprenti Binder',
+      2: 'Opérateur Hertzien 2.4GHz',
+      3: 'Architecte Packet Rate 500Hz',
+      5: 'Dompteur ExpressLRS Gemini',
+      10: 'Maître des Antennes Dipôles Immortal-T',
+      25: 'Spécialiste Long-Range 868MHz',
+      50: 'Ingénieur Liaison Télémétrique',
+      100: 'Commandant des Fréquences Radio',
+      250: 'Grand Amiral du Long-Range',
+      500: 'Architecte RF Zéro Failsafe',
+      750: 'Doyen des Ondes Hertziennes FPV',
+      1000: 'Maître Cosmique des Ondes Radio',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Maître Cosmique des Ondes Radio';
+      if (lvl >= 750) return `Doyen des Ondes Hertziennes (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Architecte RF Zéro Failsafe (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Grand Amiral du Long-Range (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Commandant des Fréquences (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Ingénieur Liaison Télémétrique (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Spécialiste Long-Range 868MHz (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Maître des Antennes Dipôles (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Dompteur ExpressLRS Gemini (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Architecte Packet Rate 500Hz';
+      if (lvl >= 2) return 'Opérateur Hertzien 2.4GHz';
+      return 'Apprenti Binder';
+    },
+  },
+  'cammyquad': {
+    id: 'cammyquad',
+    name: 'CammyQuad.fr',
+    domain: 'cammyquad.fr',
+    icon: '🕶️',
+    discipline: 'Vidéo HD, Masques, VTX & Optique',
+    actionMetricLabel: 'Systèmes Vidéo & Caméras réglés',
+    description: 'Transmission numérique DJI O3/O4, Walksnail, HDZero et caméras Starlight.',
+    accentColor: 'text-purple-600',
+    badgeBg: 'bg-purple-50 text-purple-900 border-purple-300',
+    milestoneTitles: {
+      1: 'Cadreur Analogique 5.8GHz',
+      2: 'Étalonneur Numérique 1080p',
+      3: 'Opticien Starlight 1200TVL',
+      5: 'Spécialiste Flux DJI O3 / Walksnail',
+      10: 'Dompteur de Latence Zéro HDZero',
+      25: 'Directeur Photo Haute Définition',
+      50: 'Ingénieur Refroidissement VTX 2W',
+      100: 'Maître des Écrans Micro-OLED',
+      250: 'Grand Visionnaire de l Immersion',
+      500: 'Architecte Optique Plein Champ',
+      750: 'Sommité Mondiale de la Vidéo FPV',
+      1000: 'Démiurge de la Vision Céleste',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Démiurge de la Vision Céleste';
+      if (lvl >= 750) return `Sommité de la Vidéo FPV (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Architecte Optique Plein Champ (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Grand Visionnaire de l Immersion (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Maître des Écrans Micro-OLED (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Ingénieur Refroidissement VTX (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Directeur Photo HD (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Dompteur Latence Zéro HDZero (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Spécialiste Flux Numérique (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Opticien Starlight 1200TVL';
+      if (lvl >= 2) return 'Étalonneur Numérique 1080p';
+      return 'Cadreur Analogique 5.8GHz';
+    },
+  },
+  'makemyframe': {
+    id: 'makemyframe',
+    name: 'MakeMyFrame.fr',
+    domain: 'makemyframe.fr',
+    icon: '🧱',
+    discipline: 'Châssis Carbone, TPU & Crash-Resistance',
+    actionMetricLabel: 'Châssis & Impressions 3D assemblés',
+    description: 'Résistance carbone Toray T700, géométrie Deadcat et protections TPU anti-choc.',
+    accentColor: 'text-emerald-600',
+    badgeBg: 'bg-emerald-50 text-emerald-900 border-emerald-300',
+    milestoneTitles: {
+      1: 'Monteur de Bras Carbone',
+      2: 'Imprimeur TPU 95A',
+      3: 'Ajusteur Géométrie True-X / DeadCat',
+      5: 'Forgeron Carbone Toray T700',
+      10: 'Concepteur Crash-Proof Bando',
+      25: 'Modeleur Pièces Aérodynamiques',
+      50: 'Maître Découpeur CNC & Chanfrein',
+      100: 'Architecte Structurel Bando Master',
+      250: 'Concepteur de Châssis de Course',
+      500: 'Titan Indestructible du Carbone',
+      750: 'Doyen Mondial des Matériaux Composites',
+      1000: 'Créateur Suprême des Châssis FPV',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Créateur Suprême des Châssis FPV';
+      if (lvl >= 750) return `Doyen des Matériaux Composites (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Titan Indestructible du Carbone (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Concepteur Châssis de Course (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Architecte Structurel Bando (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Maître Découpeur CNC (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Modeleur Pièces Aéro (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Concepteur Crash-Proof (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Forgeron Carbone Toray T700 (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Ajusteur Géométrie True-X / DeadCat';
+      if (lvl >= 2) return 'Imprimeur TPU 95A';
+      return 'Monteur de Bras Carbone';
+    },
+  },
+  'makemyquad': {
+    id: 'makemyquad',
+    name: 'MakeMyQuad.fr',
+    domain: 'makemyquad.fr',
+    icon: '💻',
+    discipline: 'Stacks FC/ESC, Betaflight CLI & Tuning PID',
+    actionMetricLabel: 'Stacks réglées & Presets CLI partagés',
+    description: 'Configuration Betaflight, filtres RPM dynamiques, flash AM32 et analyse Blackbox.',
+    accentColor: 'text-orange-600',
+    badgeBg: 'bg-orange-50 text-orange-900 border-orange-300',
+    milestoneTitles: {
+      1: 'Câbleur Propre en Alvéole',
+      2: 'Flasheur de Firmwares ESC AM32',
+      3: 'Sorcier du CLI Betaflight',
+      5: 'Dompteur de Filtres RPM Bidirectionnels',
+      10: 'Accordeur PID Master',
+      25: 'Analyste Spectrogramme Blackbox',
+      50: 'Optimiseur DMA & Timers MCU',
+      100: 'Grand Alchimiste du Vol',
+      250: 'Maître des Trajectoires Millimétrées',
+      500: 'Oracle du Contrôle de Vol FPV',
+      750: 'Sommité Mondiale de la Dynamique de Vol',
+      1000: 'Architecte Quantique du Vol FPV',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Architecte Quantique du Vol FPV';
+      if (lvl >= 750) return `Sommité de la Dynamique de Vol (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Oracle du Contrôle de Vol (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Maître des Trajectoires (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Grand Alchimiste du Vol (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Optimiseur DMA & Timers MCU (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Analyste Spectrogramme Blackbox (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Accordeur PID Master (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Dompteur Filtres RPM (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Sorcier du CLI Betaflight';
+      if (lvl >= 2) return 'Flasheur de Firmwares ESC AM32';
+      return 'Câbleur Propre en Alvéole';
+    },
+  },
+  'findmyquad': {
+    id: 'findmyquad',
+    name: 'FindMyQuad.fr',
+    domain: 'findmyquad.fr',
+    icon: '🛰️',
+    discipline: 'GPS Rescue, Sécurité & Buzzers Autonomes',
+    actionMetricLabel: 'Sauvetages GPS & Failsafes paramétrés',
+    description: 'Sauvetage automatique GPS Rescue, balises autonomes Vifly et repérage de crash.',
+    accentColor: 'text-cyan-600',
+    badgeBg: 'bg-cyan-50 text-cyan-900 border-cyan-300',
+    milestoneTitles: {
+      1: 'Pisteur de Bando',
+      2: 'Vigie des Failsafes',
+      3: 'Installateur Buzzer LiPo Autonome',
+      5: 'Navigateur GNSS M10 Multi-Constellations',
+      10: 'Calibreur Barométrique & Compas',
+      25: 'Sauveur de Quads Perdus',
+      50: 'Commandant des RTH Automatiques',
+      100: 'Gardien des Vols Longue Distance',
+      250: 'Grand Guide des Cieux Inexplorés',
+      500: 'Sentinelle Infaillible du Sauvetage',
+      750: 'Doyen de la Sécurité Aérienne FPV',
+      1000: 'Sentinelle Éternelle de l Espace Aérien',
+    },
+    generateTitle: (lvl: number) => {
+      if (lvl >= 1000) return 'Sentinelle Éternelle de l Espace Aérien';
+      if (lvl >= 750) return `Doyen de la Sécurité Aérienne (Échelon ${lvl - 749})`;
+      if (lvl >= 500) return `Sentinelle Infaillible du Sauvetage (Échelon ${lvl - 499})`;
+      if (lvl >= 250) return `Grand Guide des Cieux Inexplorés (Échelon ${lvl - 249})`;
+      if (lvl >= 100) return `Gardien des Vols Longue Distance (Échelon ${lvl - 99})`;
+      if (lvl >= 50) return `Commandant des RTH Automatiques (Rang ${Math.floor((lvl - 50) / 5) + 1})`;
+      if (lvl >= 25) return `Sauveur de Quads Perdus (Rang ${Math.floor((lvl - 25) / 3) + 1})`;
+      if (lvl >= 10) return `Calibreur Barométrique & Compas (Rang ${lvl - 9})`;
+      if (lvl >= 5) return `Navigateur GNSS M10 (Rang ${lvl - 4})`;
+      if (lvl >= 3) return 'Installateur Buzzer LiPo Autonome';
+      if (lvl >= 2) return 'Vigie des Failsafes';
+      return 'Pisteur de Bando';
+    },
+  },
+};
+
+/**
+ * Calcule le niveau et les informations pour une spécialité donnée (site de l'écosystème)
+ */
+export function getSpecialtyLevelInfo(siteId: string, siteXp: number, actionsCount: number = 0): SpecialtyLevelInfo {
+  const specialty = SITE_SPECIALTIES[siteId] || SITE_SPECIALTIES['fixmydrone'];
+  
+  // Échelle de niveau pour cette spécialité (courbe équilibrée)
+  let lvl = 1;
+  let minXp = 0;
+  let maxXp = 99;
+
+  // Progression : chaque palier demande un peu plus d'XP
+  while (lvl < 1000) {
+    const step = Math.round(75 + Math.pow(lvl, 1.25) * 20);
+    maxXp = minXp + step - 1;
+    if (siteXp <= maxXp) break;
+    minXp = maxXp + 1;
+    lvl++;
+  }
+
+  const range = Math.max(1, maxXp - minXp);
+  const progressPercent = Math.min(100, Math.max(5, ((siteXp - minXp) / range) * 100));
+
+  const title = specialty.milestoneTitles[lvl] || specialty.generateTitle(lvl);
+
+  return {
+    siteId: specialty.id,
+    siteName: specialty.name,
+    level: lvl,
+    title,
+    discipline: specialty.discipline,
+    minXp,
+    maxXp,
+    progressPercent,
+    currentXp: siteXp,
+    actionsDone: actionsCount,
+    actionMetricLabel: specialty.actionMetricLabel,
+  };
 }
 
 export interface EcosystemSiteInfo {
@@ -282,9 +635,9 @@ export const ECOSYSTEM_SITES: EcosystemSiteInfo[] = [
     color: '#3b82f6',
   },
   {
-    id: 'camyquad',
-    name: 'CamYQuad.fr',
-    domain: 'camyquad.fr',
+    id: 'cammyquad',
+    name: 'CammyQuad.fr',
+    domain: 'cammyquad.fr',
     role: 'Catalogue et comparateur vidéo HD / Analogique, VTX et optiques',
     components: ['VTX HD / O3', 'Lunettes FPV', 'Caméras', 'Antennes VTX'],
     status: 'Connecté (SSO)',
@@ -588,11 +941,11 @@ export const PARTNER_REWARDS: PartnerReward[] = [
     isUnlocked: false,
   },
   {
-    id: 'rew-camyquad-7',
-    partnerName: 'CamYQuad.fr',
-    partnerDomain: 'camyquad.fr',
+    id: 'rew-cammyquad-7',
+    partnerName: 'CammyQuad.fr',
+    partnerDomain: 'cammyquad.fr',
     discountLabel: '-7% sur les VTX, caméras & antennes',
-    promoCode: 'CAMYHD7',
+    promoCode: 'CAMMYHD7',
     minLevelRequired: 3,
     description: 'Valable sur DJI O3, Walksnail Avatar, Caddx et Foxeer.',
     isUnlocked: false,
@@ -620,7 +973,7 @@ export const PARTNER_REWARDS: PartnerReward[] = [
   {
     id: 'rew-ecosystem-vip-10',
     partnerName: 'Écosystème FPV Partenaires',
-    partnerDomain: 'makemyquad.fr / camyquad.fr',
+    partnerDomain: 'makemyquad.fr / cammyquad.fr',
     discountLabel: '-10% VIP Permanent',
     promoCode: 'FPVDOCTOR10',
     minLevelRequired: 4,
@@ -655,18 +1008,91 @@ export const DEFAULT_PILOT_PROFILE: PilotProfile = {
   callsign: 'ROOKIE_PILOTE',
   email: 'pilote@fixmydrone.fr',
   avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80',
-  xp: 120,
-  level: 1,
-  levelTitle: 'Rookie Pilote',
+  xp: 150,
+  level: 2,
+  levelTitle: 'Padawan du Fer',
   role: 'Pilote',
   isLoggedIn: false,
   fixesResolvedCount: 1,
   detailedReportsCount: 0,
   communityHelpfulVotes: 3,
+  reviewsCount: 2,
+  siteXp: {
+    'fixmydrone': 80,
+    'multi-motors': 40,
+    'bindmyquad': 15,
+    'cammyquad': 15,
+    'makemyframe': 0,
+    'makemyquad': 0,
+    'findmyquad': 0,
+  },
+  activityMetrics: {
+    reviewsCount: 2,
+    fixesCount: 1,
+    communityVotesCount: 3,
+    tuningPresetsCount: 0,
+  },
   unlockedBadges: [ALL_PILOT_BADGES[0]],
   historyReports: [],
   createdAt: 'Novembre 2026',
 };
+
+/**
+ * Ajoute de l'XP sur un site spécifique (ex: reviews sur Multi-Motors)
+ * et synchronise automatiquement le Niveau Général Global
+ */
+export function addActivityXp(
+  siteId: string,
+  activityType: 'review' | 'fix' | 'community' | 'tuning' | 'vote' | 'action',
+  amount: number
+): PilotProfile {
+  const current = loadPilotProfile();
+  const currentSiteXp = current.siteXp || {
+    fixmydrone: 0,
+    'multi-motors': 0,
+    bindmyquad: 0,
+    cammyquad: 0,
+    makemyframe: 0,
+    makemyquad: 0,
+    findmyquad: 0,
+  };
+
+  const updatedSiteXp = {
+    ...currentSiteXp,
+    [siteId]: (currentSiteXp[siteId] || 0) + amount,
+  };
+
+  const metrics = current.activityMetrics || {
+    reviewsCount: 0,
+    fixesCount: 0,
+    communityVotesCount: 0,
+    tuningPresetsCount: 0,
+  };
+
+  if (activityType === 'review') metrics.reviewsCount = (metrics.reviewsCount || 0) + 1;
+  if (activityType === 'fix') metrics.fixesCount = (metrics.fixesCount || 0) + 1;
+  if (activityType === 'community' || activityType === 'vote') metrics.communityVotesCount = (metrics.communityVotesCount || 0) + 1;
+  if (activityType === 'tuning') metrics.tuningPresetsCount = (metrics.tuningPresetsCount || 0) + 1;
+
+  // Calcul du nouvel XP Général total rassemblant tous les sites
+  const totalXp = Object.values(updatedSiteXp).reduce((sum, val) => sum + val, 0);
+  const generalLvl = getLevelFromXp(totalXp);
+
+  const updated: PilotProfile = {
+    ...current,
+    xp: totalXp,
+    level: generalLvl.level,
+    levelTitle: generalLvl.title,
+    siteXp: updatedSiteXp,
+    activityMetrics: metrics,
+    reviewsCount: metrics.reviewsCount,
+    fixesResolvedCount: metrics.fixesCount,
+    communityHelpfulVotes: metrics.communityVotesCount,
+  };
+
+  savePilotProfile(updated);
+  return updated;
+}
 
 /**
  * Calcule le niveau et les métriques de progression à partir des points d'XP
@@ -789,8 +1215,26 @@ export function loadPilotProfile(): PilotProfile {
     if (!raw) return DEFAULT_PILOT_PROFILE;
     const parsed = JSON.parse(raw);
     const lvl = getLevelFromXp(parsed.xp || 0);
+    const siteXp = parsed.siteXp || {
+      fixmydrone: Math.round((parsed.xp || 150) * 0.55),
+      'multi-motors': Math.round((parsed.xp || 150) * 0.25),
+      bindmyquad: Math.round((parsed.xp || 150) * 0.10),
+      cammyquad: Math.round((parsed.xp || 150) * 0.10),
+      makemyframe: 0,
+      makemyquad: 0,
+      findmyquad: 0,
+    };
+    const activityMetrics = parsed.activityMetrics || {
+      reviewsCount: parsed.reviewsCount || 2,
+      fixesCount: parsed.fixesResolvedCount || 1,
+      communityVotesCount: parsed.communityHelpfulVotes || 3,
+      tuningPresetsCount: 0,
+    };
     return {
       ...parsed,
+      siteXp,
+      activityMetrics,
+      reviewsCount: activityMetrics.reviewsCount,
       level: lvl.level,
       levelTitle: lvl.title,
     };

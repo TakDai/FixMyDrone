@@ -218,7 +218,7 @@ export const CATALOG_PRODUCTS: ProductCatalogItem[] = [
   },
 
   // ==========================================
-  // 3. SYSTÈMES VIDÉO & VTX (CamYQuad.fr)
+  // 3. SYSTÈMES VIDÉO & VTX (CammyQuad.fr)
   // ==========================================
   {
     id: 'prod-dji-o3-air-unit',
@@ -310,7 +310,7 @@ export const CATALOG_PRODUCTS: ProductCatalogItem[] = [
   },
 
   // ==========================================
-  // 4. LUNETTES & MASQUES FPV (CamYQuad.fr)
+  // 4. LUNETTES & MASQUES FPV (CammyQuad.fr)
   // ==========================================
   {
     id: 'prod-walksnail-goggles-x',
@@ -497,7 +497,7 @@ export const CATALOG_PRODUCTS: ProductCatalogItem[] = [
   },
 
   // ==========================================
-  // 7. CAMÉRAS FPV (CamYQuad.fr)
+  // 7. CAMÉRAS FPV (CammyQuad.fr)
   // ==========================================
   {
     id: 'prod-caddx-ratel-2',
