@@ -444,7 +444,7 @@ export function MonochromeDetailedCanvas({
                 onClick={(e) => e.stopPropagation()}
                 className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2 border-r border-zinc-200">
+                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
                   Marques :
                 </span>
                 {GOGGLE_BRANDS.map((gb, i) => (
@@ -511,7 +511,7 @@ export function MonochromeDetailedCanvas({
                 onClick={(e) => e.stopPropagation()}
                 className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2 border-r border-zinc-200">
+                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
                   Marques :
                 </span>
                 {RADIO_BRANDS.map((rb, i) => (
@@ -578,7 +578,7 @@ export function MonochromeDetailedCanvas({
                 onClick={(e) => e.stopPropagation()}
                 className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white border-2 border-black rounded-2xl p-2 shadow-2xl z-50 flex items-center gap-1.5 animate-in fade-in slide-in-from-right-3 duration-150 before:absolute before:inset-y-0 before:-right-4 before:w-4 before:content-['']"
               >
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2 border-r border-zinc-200">
+                <span className="text-[9px] font-mono font-bold uppercase text-zinc-400 pl-1 pr-2.5 border-r border-zinc-200 whitespace-nowrap shrink-0">
                   Marques :
                 </span>
                 {CONFIGURATOR_BRANDS.map((cb, i) => (
