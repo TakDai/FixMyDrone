@@ -260,7 +260,7 @@
          ====================================================================== -->
     <g id="top-plate-cutouts" fill="#ffffff" stroke="#000000" stroke-width="1.8" stroke-linejoin="round">
       
-      <!-- --- SECTION AVANT (CAMÉRA & SANGLE HD) --- -->
+      <!-- SECTION AVANT (CAMÉRA & SANGLE HD) -->
       <!-- Fentes longitudinales de sangle / caméra -->
       <rect x="268" y="52" width="7" height="42" rx="3.5" />
       <rect x="325" y="52" width="7" height="42" rx="3.5" />
@@ -269,7 +269,7 @@
       <polygon points="284,55 316,55 300,72" />
       <polygon points="300,75 316,92 284,92" />
 
-      <!-- --- SECTION CENTRALE (STACK FC / ESC 30.5x30.5 & 20x20) --- -->
+      <!-- SECTION CENTRALE (STACK FC / ESC 30.5x30.5 & 20x20) -->
       <!-- Découpe en 'X' supérieure au-dessus du contrôleur -->
       <polygon points="280,165 294,185 280,205 290,205 300,190 310,205 320,205 306,185 320,165 310,165 300,180 290,165" />
 
@@ -285,7 +285,7 @@
       <!-- Découpe en 'X' inférieure sous le contrôleur -->
       <polygon points="280,315 294,335 280,355 290,355 300,340 310,355 320,355 306,335 320,315 310,315 300,330 290,315" />
 
-      <!-- --- SECTION ARRIÈRE (BATTERIE LIPO & VTX) --- -->
+      <!-- SECTION ARRIÈRE (BATTERIE LIPO & VTX) -->
       <!-- Découpe triangulaire supérieure arrière -->
       <polygon points="285,385 315,385 300,402" />
 
