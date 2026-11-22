@@ -158,16 +158,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 360,
     label: 'ANTENNE',
   },
-  // 11. Condensateur : 68 × 68 à (75, 400) - Flanc mi-gauche
+  // 11. Condensateur Low ESR (Vue couchée) : 125 × 58 à (55, 405) - Flanc mi-gauche
   {
     id: 'condo',
-    image: '/images/components/condo.svg?v=6',
-    x: 75,
-    y: 400,
-    width: 68,
-    height: 68,
-    labelX: 109,
-    labelY: 492,
+    image: '/images/components/condo.svg?v=7',
+    x: 55,
+    y: 405,
+    width: 125,
+    height: 58,
+    labelX: 117,
+    labelY: 485,
     label: 'CONDENSATEUR',
   },
   // 12. Buzzer : 50 × 80 à (740, 680) - Alvéole arrière
