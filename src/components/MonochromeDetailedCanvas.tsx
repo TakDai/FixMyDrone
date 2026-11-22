@@ -11,14 +11,10 @@ import {
 } from '@/data/figmaComponents';
 import { BrandLogo } from '@/components/BrandLogos';
 import {
-  CheckCircle2,
-  Crosshair,
-  ArrowUpRight,
   Radio,
   Glasses,
   Cpu,
   ChevronRight,
-  Flame,
 } from 'lucide-react';
 
 interface MonochromeDetailedCanvasProps {
@@ -273,8 +269,6 @@ export function MonochromeDetailedCanvas({
     onSelectComponent(comp);
   };
 
-  const hoveredComp = hoveredId ? getComp(hoveredId) : null;
-
   return (
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
@@ -304,20 +298,18 @@ export function MonochromeDetailedCanvas({
                 onMouseLeave={() => setHoveredId(null)}
                 className="cursor-pointer transition-all duration-200"
               >
-                {/* Zone réactive cliquable (Zero ombres / pur trait Multi-Motors) */}
+                {/* Zone réactive cliquable invisible : aucun encadré au survol */}
                 <rect
                   x={comp.x - 6}
                   y={comp.y - 6}
                   width={comp.width + 12}
                   height={comp.height + 12}
-                  rx="10"
-                  fill={isSelected ? 'rgba(0, 0, 0, 0.06)' : isHov ? 'rgba(0, 0, 0, 0.03)' : 'transparent'}
-                  stroke={isSelected ? '#000000' : isHov ? '#000000' : 'transparent'}
-                  strokeWidth={isSelected ? '3' : '1.5'}
-                  className="transition-colors duration-150"
+                  fill="transparent"
+                  stroke="none"
+                  pointerEvents="all"
                 />
 
-                {/* VECTEUR AUTHENTIQUE (Moteur Multi-Motors ou Tracé Figma) */}
+                {/* VECTEUR AUTHENTIQUE : Surbrillance du contour de l'objet au survol & sélection */}
                 <image
                   href={comp.image}
                   x={comp.x}
@@ -325,7 +317,14 @@ export function MonochromeDetailedCanvas({
                   width={comp.width}
                   height={comp.height}
                   preserveAspectRatio="xMidYMid meet"
-                  className="select-none pointer-events-none"
+                  className="select-none pointer-events-none transition-all duration-150"
+                  style={{
+                    filter: isSelected
+                      ? 'drop-shadow(0 0 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 7px rgba(0, 0, 0, 0.45))'
+                      : isHov
+                      ? 'drop-shadow(0 0 2.5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.35))'
+                      : 'none',
+                  }}
                 />
 
                 {/* Étiquette technique style Multi-Motors (pill noir / blanc à contour précis) */}
@@ -580,52 +579,6 @@ export function MonochromeDetailedCanvas({
 
         </div>
 
-      </div>
-
-      {/* Barre d'état technique interactive : readout au survol & équipements actifs */}
-      <div className="w-full max-w-[1780px] mt-4 flex items-center justify-between gap-3 text-xs text-zinc-600 border-t border-zinc-200 pt-3">
-        {hoveredComp ? (
-          <div className="flex items-center gap-3 min-w-0 animate-in fade-in duration-150">
-            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black text-white font-mono text-[11px] font-bold shrink-0">
-              <Crosshair className="w-3.5 h-3.5" />
-              {hoveredComp.category}
-            </span>
-            <span className="font-bold text-black text-sm shrink-0">
-              {hoveredComp.name}
-            </span>
-            <span className="text-zinc-500 text-xs hidden lg:inline truncate max-w-md xl:max-w-lg">
-              — {hoveredComp.role}
-            </span>
-            <span className="text-zinc-400 text-xs hidden sm:inline">•</span>
-            <span className="text-xs font-semibold text-zinc-700 hidden sm:inline shrink-0">
-              {hoveredComp.commonIssues.length} pannes
-            </span>
-            <span className="text-[11px] font-bold text-black bg-zinc-100 hover:bg-zinc-200 px-2.5 py-0.5 rounded border border-zinc-300 ml-1 flex items-center gap-1 shrink-0">
-              <span>Diagnostic</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="font-bold text-black uppercase tracking-wider text-[11px] shrink-0">
-              Équipements actifs :
-            </span>
-            <span className="italic text-[11px] truncate">
-              Lunettes : <b className="text-black">{currentGoggle.name}</b> • Radio : <b className="text-black">{currentRadio.name}</b> • Firmware : <b className="text-black">{currentConfig.name}</b>
-            </span>
-          </div>
-        )}
-
-        <div className="flex items-center gap-4 text-[11px] text-black font-semibold shrink-0">
-          <span className="flex items-center gap-1.5 text-zinc-700 hidden sm:flex">
-            <Flame className="w-3.5 h-3.5 text-black" />
-            Style Multi-Motors.fr • 100% Vectoriel CAD
-          </span>
-          <span className="flex items-center gap-1.5 text-black">
-            <CheckCircle2 className="w-3.5 h-3.5 text-black" />
-            14 Vrais Logos Officiels
-          </span>
-        </div>
       </div>
     </section>
   );
