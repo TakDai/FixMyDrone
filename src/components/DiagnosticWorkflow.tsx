@@ -479,6 +479,9 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 <img
                   src={def.defaultImage}
                   alt={def.componentName}
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/components/fc.svg?v=6';
+                  }}
                   className="max-h-full max-w-full object-contain filter drop-shadow-xs"
                 />
               </div>
@@ -608,7 +611,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-2 py-0.5 rounded bg-black text-white text-[10px] font-black uppercase tracking-wider">
-                  PRÉ-DIAGNOSTIC SUR CE MOTEUR
+                  PRÉ-DIAGNOSTIC SUR {isMotor ? 'CE MOTEUR' : 'CET ÉQUIPEMENT'}
                 </span>
                 {renderRarityBadge(currentRarityIndex, currentRarityLabel)}
                 <span className="text-xs font-bold text-neutral-900">
@@ -1036,7 +1039,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   </div>
                   <p className="text-[11px] text-neutral-500">
                     {guideStep === 1 && 'Renseignez la marque, la gamme et le modèle recherché'}
-                    {guideStep === 2 && 'Sélectionnez le moteur tiré de Multi-Motors'}
+                    {guideStep === 2 && (isMotor ? 'Sélectionnez le moteur tiré de Multi-Motors' : 'Sélectionnez le modèle exact')}
                     {guideStep === 3 && 'Précisez les circonstances et le symptôme de panne'}
                     {guideStep === 4 && 'Résolution par post existant ou intelligence artificielle (1 à 10)'}
                   </p>
@@ -1072,10 +1075,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 <div className="space-y-5">
                   <div>
                     <h3 className="text-base font-black text-neutral-900">
-                      1. Renseignez la Marque, la Gamme et le Modèle du moteur
+                      1. Renseignez la Marque et le Modèle {isMotor ? 'du moteur' : `(${def.componentName})`}
                     </h3>
                     <p className="text-xs text-neutral-500 mt-0.5">
-                      Indiquez les caractéristiques de votre pièce pour extraire les moteurs répertoriés sur Multi-Motors.
+                      Indiquez les caractéristiques de votre pièce pour extraire les références répertoriées {isMotor ? 'sur Multi-Motors' : `(${def.frenchTitle})`}.
                     </p>
                   </div>
 
@@ -1083,7 +1086,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-black uppercase tracking-wider text-neutral-700">
-                        A. Marque du moteur :
+                        A. Marque {isMotor ? 'du moteur' : `(${def.componentName})`} :
                       </label>
                       <span className="text-[11px] text-neutral-500">
                         {selectedBrand ? `Sélectionnée : ${selectedBrand}` : 'Cliquez pour choisir'}
@@ -1177,14 +1180,14 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               )}
 
               {/* =========================================================================
-                  ÉTAPE 2 : MOTEURS TIRÉS DE MULTI-MOTORS
+                  ÉTAPE 2 : MOTEURS TIRÉS DE MULTI-MOTORS OU MODÈLES RÉPERTORIÉS
                   ========================================================================= */}
               {guideStep === 2 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-base font-black text-neutral-900">
-                        2. Moteurs correspondants tirés de Multi-Motors.fr
+                        2. {isMotor ? 'Moteurs correspondants tirés de Multi-Motors.fr' : `Modèles et références répertoriés (${selectedBrand || def.componentName})`}
                       </h3>
                       <p className="text-xs text-neutral-500">
                         Critères : <span className="font-bold text-black">{selectedBrand}</span> {selectedGamme ? `• Gamme ${selectedGamme}` : ''} {inputModelQuery ? `• « ${inputModelQuery} »` : ''}
@@ -1199,8 +1202,8 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     </button>
                   </div>
 
-                  {/* Liste des moteurs tirés de Multi-Motors */}
-                  {proposedMotorsFromMultiMotors.length > 0 ? (
+                  {/* Cas Moteurs Multi-Motors */}
+                  {isMotor && proposedMotorsFromMultiMotors.length > 0 ? (
                     <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                       {proposedMotorsFromMultiMotors.map((m) => {
                         const isSelected = selectedMotor?.id === m.id;
@@ -1250,17 +1253,59 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                         );
                       })}
                     </div>
+                  ) : !isMotor && (def.brands.find((b) => b.name === selectedBrand)?.popularModels || []).length > 0 ? (
+                    /* Cas Non-moteurs : modèles répertoriés pour la marque sélectionnée */
+                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                      {(def.brands.find((b) => b.name === selectedBrand)?.popularModels || []).map((modelName) => {
+                        const isSelected = customModelFallback === modelName;
+                        return (
+                          <div
+                            key={modelName}
+                            onClick={() => {
+                              setCustomModelFallback(modelName);
+                              setSelectedMotor(null);
+                            }}
+                            className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                              isSelected
+                                ? 'border-black bg-neutral-50 ring-2 ring-black shadow-xs'
+                                : 'border-neutral-200 bg-white hover:border-black'
+                            }`}
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-black text-neutral-900">{selectedBrand} {modelName}</span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-900 border border-blue-500/30">
+                                  {def.componentName}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-neutral-500">
+                                Modèle officiel avec fiches de panne et diagnostic IA optimisé
+                              </p>
+                            </div>
+                            <div className="shrink-0">
+                              {isSelected ? (
+                                <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs">
+                                  <Check className="w-3.5 h-3.5" />
+                                </span>
+                              ) : (
+                                <span className="text-xs font-bold text-neutral-400">Choisir</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   ) : (
                     <div className="p-4 rounded-xl border border-dashed border-neutral-300 text-center space-y-2 bg-neutral-50">
                       <p className="text-xs font-bold text-neutral-700">
-                        Aucun moteur ne correspond exactement à ce filtre dans Multi-Motors.
+                        {isMotor ? 'Aucun moteur ne correspond exactement à ce filtre dans Multi-Motors.' : `Modèle spécifique pour ${selectedBrand || def.componentName} :`}
                       </p>
                       <p className="text-[11px] text-neutral-500">
                         Vous pouvez saisir le modèle exact manuellement ci-dessous pour poursuivre le diagnostic :
                       </p>
                       <input
                         type="text"
-                        placeholder="Ex: T-Motor F60 PRO V 1950KV"
+                        placeholder={isMotor ? 'Ex: T-Motor F60 PRO V 1950KV' : `Ex: ${selectedBrand} Modèle V2`}
                         value={customModelFallback}
                         onChange={(e) => {
                           setCustomModelFallback(e.target.value);
@@ -1300,10 +1345,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-base font-black text-neutral-900">
-                      3. Quel problème rencontrez-vous sur ce moteur ?
+                      3. Quel problème rencontrez-vous sur {isMotor ? 'ce moteur' : 'cet équipement'} ?
                     </h3>
                     <p className="text-xs text-neutral-500">
-                      Moteur : <span className="font-bold text-black">{selectedMotor?.fullName || customModelFallback || selectedBrand}</span>
+                      {isMotor ? 'Moteur' : 'Équipement'} : <span className="font-bold text-black">{selectedMotor?.fullName || customModelFallback || selectedBrand}</span>
                     </p>
                   </div>
 
@@ -1698,7 +1743,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     disabled={!selectedBrand}
                     className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>Voir les moteurs Multi-Motors correspondants</span>
+                    <span>{isMotor ? 'Voir les moteurs Multi-Motors correspondants' : 'Sélectionner le modèle correspondant'}</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 )}
@@ -1709,7 +1754,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     disabled={!selectedMotor && !customModelFallback}
                     className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>Diagnostiquer ce moteur</span>
+                    <span>{isMotor ? 'Diagnostiquer ce moteur' : 'Diagnostiquer cet équipement'}</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 )}
@@ -1739,7 +1784,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     onClick={handleSkipGuide}
                     className="px-6 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 transition-all shadow-xs"
                   >
-                    Voir les discussions du forum sur ce moteur
+                    Voir les discussions du forum sur {isMotor ? 'ce moteur' : 'ce composant'}
                   </button>
                 )}
               </div>
@@ -1790,7 +1835,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   <label className="text-[11px] font-bold text-neutral-700">Titre du sujet :</label>
                   <input
                     type="text"
-                    defaultValue={`[Aide] ${selectedMotor?.fullName || customModelFallback || selectedBrand || 'Moteur'} - ${currentSymptom?.title || 'Anomalie de fonctionnement'}`}
+                    defaultValue={`[Aide] ${selectedMotor?.fullName || customModelFallback || selectedBrand || def.componentName} - ${currentSymptom?.title || 'Anomalie de fonctionnement'}`}
                     className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-lg focus:outline-none focus:border-black font-medium"
                   />
                 </div>
@@ -1799,7 +1844,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   <label className="text-[11px] font-bold text-neutral-700">Détails & Diagnostic IA :</label>
                   <textarea
                     rows={6}
-                    defaultValue={`Bonjour à tous,\n\nMoteur Multi-Motors : ${selectedMotor?.fullName || customModelFallback || selectedBrand || ''} ${selectedMotor?.ref ? `(Réf : ${selectedMotor.ref})` : ''} ${serialNumber ? `(S/N : ${serialNumber})` : ''}\n\nSymptôme : ${currentSymptom?.title || 'Anomalie constatée'}\nIndice de rareté estimé par l'IA : ${currentRarityIndex}/10 (${currentRarityLabel})\n\nPré-diagnostic IA : ${currentSymptom?.aiDiagnostic.rootCause || ''}\n\nQuelqu'un a déjà rencontré ce cas sur ce moteur ? Merci d'avance pour vos conseils !`}
+                    defaultValue={`Bonjour à tous,\n\n${isMotor ? 'Moteur Multi-Motors' : `Composant (${def.componentName})`} : ${selectedMotor?.fullName || customModelFallback || selectedBrand || ''} ${selectedMotor?.ref ? `(Réf : ${selectedMotor.ref})` : ''} ${serialNumber ? `(S/N : ${serialNumber})` : ''}\n\nSymptôme : ${currentSymptom?.title || 'Anomalie constatée'}\nIndice de rareté estimé par l'IA : ${currentRarityIndex}/10 (${currentRarityLabel})\n\nPré-diagnostic IA : ${currentSymptom?.aiDiagnostic.rootCause || ''}\n\nQuelqu'un a déjà rencontré ce cas sur ${isMotor ? 'ce moteur' : 'cet équipement'} ? Merci d'avance pour vos conseils !`}
                     className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-lg focus:outline-none focus:border-black font-mono text-[11px]"
                   />
                 </div>

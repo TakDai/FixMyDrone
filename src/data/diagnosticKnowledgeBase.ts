@@ -494,7 +494,7 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
     frenchTitle: 'Lunettes & Masque FPV (OLED, HD Digital & Analogique)',
     category: 'reception',
     sisterSiteId: 'camyquad',
-    defaultImage: '/images/components/goggle.svg?v=6',
+    defaultImage: '/images/components/fatshark.svg?v=6',
     description: 'Interface visuelle d immersion du pilote (DJI O3, Walksnail Avatar, HDZero, Analogique). Dépannage des écrans noirs, capteurs de proximité, buée et mises à jour firmware.',
     brands: [
       { id: 'dji', name: 'DJI FPV', popularModels: ['Goggles 2', 'Goggles Integra', 'Goggles V2', 'Goggles 3'] },
@@ -579,7 +579,7 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
     frenchTitle: 'Radiocommande & Émetteur TX (EdgeTX, ExpressLRS & Crossfire)',
     category: 'commande',
     sisterSiteId: 'bindmyquad',
-    defaultImage: '/images/components/radio.svg?v=6',
+    defaultImage: '/images/components/tango.svg?v=6',
     description: 'Poste de pilotage au sol : manettes gimbals, système d exploitation EdgeTX et module RF d émission. Dépannage des alertes Emergency Mode, calibrations gimbals et Dynamic Power.',
     brands: [
       { id: 'radiomaster', name: 'RadioMaster', popularModels: ['Boxer (ELRS / 4-in-1)', 'Pocket ELRS', 'TX16S MKII', 'Zorro', 'TX12 MKII'] },
