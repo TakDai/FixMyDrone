@@ -78,24 +78,19 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
         aria-label="Navigation principale"
         className={`w-full flex items-center justify-between px-2.5 sm:px-6 py-2 z-30 transition-all ${className}`}
       >
-        {/* Logo & Titre Multi-Motors Style */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        {/* Titre Multi-Motors Style (Épuré sans badge logo) */}
+        <div className="flex items-center shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-2 group transition-transform active:scale-95"
+            className="flex flex-col group transition-transform active:scale-95"
             title="FixMyDrone — Accueil"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 border-black bg-black text-white flex items-center justify-center font-mono font-black text-xs sm:text-sm tracking-tighter shadow-sm group-hover:bg-zinc-800 transition-colors">
-              FD
-            </div>
-            <div className="flex flex-col">
-              <span className="font-mono font-black text-xs sm:text-base tracking-tight text-black group-hover:text-zinc-700 transition-colors">
-                FixMyDrone<span className="text-red-600">.fr</span>
-              </span>
-              <span className="hidden sm:inline-block text-[9px] font-mono text-zinc-600 font-semibold uppercase tracking-wider -mt-0.5">
-                Écosystème FPV France
-              </span>
-            </div>
+            <span className="font-mono font-black text-xs sm:text-base tracking-tight text-black group-hover:text-zinc-700 transition-colors">
+              FixMyDrone<span className="text-red-600">.fr</span>
+            </span>
+            <span className="hidden sm:inline-block text-[9px] font-mono text-zinc-600 font-semibold uppercase tracking-wider -mt-0.5">
+              Écosystème FPV France
+            </span>
           </Link>
         </div>
 
