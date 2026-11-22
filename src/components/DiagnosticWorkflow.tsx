@@ -1160,16 +1160,16 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     </div>
                   )}
 
-                  {/* C. Recherche du Modèle / Stator */}
+                  {/* C. Recherche du Modèle */}
                   <div className="space-y-1.5 pt-1 border-t border-neutral-100">
                     <label className="text-xs font-black uppercase tracking-wider text-neutral-700">
-                      C. Modèle ou Format Stator (facultatif ou précis) :
+                      C. Modèle {isMotor ? 'ou Format Stator' : 'ou Référence'} (facultatif ou précis) :
                     </label>
                     <div className="relative">
                       <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                       <input
                         type="text"
-                        placeholder="Ex: F60 PRO V, 2207, 1950KV, ECO II 2004, GTS V3..."
+                        placeholder={isMotor ? "Ex: F60 PRO V, 2207, 1950KV, ECO II 2004, GTS V3..." : `Ex: ${selectedBrand || 'Modèle'} Série V2, Pro, HD...`}
                         value={inputModelQuery}
                         onChange={(e) => setInputModelQuery(e.target.value)}
                         className="w-full pl-9 pr-3 py-2.5 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black bg-white"
