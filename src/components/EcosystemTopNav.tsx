@@ -25,7 +25,7 @@ import { EcosystemAuthModal } from '@/components/EcosystemAuthModal';
 
 interface EcosystemTopNavProps {
   className?: string;
-  activeTab?: 'home' | 'news' | 'account' | 'diagnostic';
+  activeTab?: 'home' | 'news' | 'account' | 'diagnostic' | 'catalogue';
 }
 
 export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavProps) {
@@ -94,7 +94,24 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
         )}
 
         {/* Pilules de Navigation Style Multi-Motors */}
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Onglet Catalogue Matériel */}
+          <Link
+            href="/catalogue"
+            className={`inline-flex items-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 px-2 sm:px-3.5 border-2 rounded-[13px] font-mono text-[10.5px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-[0.12em] transition-all duration-150 ${
+              activeTab === 'catalogue'
+                ? 'border-solid border-black bg-black text-white shadow-sm'
+                : 'border-dashed border-black/35 hover:border-solid hover:border-black bg-white text-black/80 hover:text-black hover:shadow-xs'
+            }`}
+          >
+            <span className="hidden sm:inline">Catalogue</span>
+            <span className={`px-1.5 py-0.5 rounded-[6px] text-[8.5px] sm:text-[9.5px] font-mono font-black tracking-normal uppercase ${
+              activeTab === 'catalogue' ? 'bg-amber-400 text-black' : 'bg-black text-white'
+            }`}>
+              Matériel
+            </span>
+          </Link>
+
           {/* Onglet Actualités / News (Dashboard Forum) */}
           <Link
             href="/forum"

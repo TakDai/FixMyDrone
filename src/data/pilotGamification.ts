@@ -142,7 +142,7 @@ export const ECOSYSTEM_SITES: EcosystemSiteInfo[] = [
   },
 ];
 
-// 2. Échelles de niveaux de pilotes (Gamification progressive avec paliers)
+// 2. Échelles de 10 niveaux de pilotes (Paliers FPV progressifs & prestige atelier)
 export const PILOT_LEVELS: PilotLevelInfo[] = [
   {
     level: 1,
@@ -152,9 +152,9 @@ export const PILOT_LEVELS: PilotLevelInfo[] = [
     colorClass: 'text-neutral-600',
     badgeBg: 'bg-neutral-100 text-neutral-800 border-neutral-300',
     perks: [
-      'Accès au diagnostic IA et forum d entraide',
-      'Consultation des 3 138 moteurs Multi-Motors',
-      'Compte unifié actif sur les 7 sites partenaires',
+      'Accès au diagnostic IA et fiches de dépannage',
+      'Consultation des 13 824 moteurs Multi-Motors',
+      'Compte SSO mutualisé actif sur les 7 sites partenaires',
     ],
   },
   {
@@ -165,9 +165,10 @@ export const PILOT_LEVELS: PilotLevelInfo[] = [
     colorClass: 'text-blue-600',
     badgeBg: 'bg-blue-50 text-blue-800 border-blue-300',
     perks: [
-      'Badge "Padawan" visible sur le forum',
-      'Code -5% Multi-Motors.fr (Code FIXMYDRONE5)',
-      'Code -5% BindMyQuad (Code BINDRESCUE5)',
+      'Badge "Padawan" visible sur le forum communautaire',
+      'Code -5% Multi-Motors.fr (Code : FIXMYDRONE5)',
+      'Code -5% BindMyQuad récepteurs & radio (Code : BINDRESCUE5)',
+      'Droit de vote utile (+10 XP) sur les pannes résolues',
     ],
   },
   {
@@ -179,8 +180,9 @@ export const PILOT_LEVELS: PilotLevelInfo[] = [
     badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-300',
     perks: [
       'Badge "Tech Builder" certifié sur votre profil',
-      'Code -8% + Frais de port offerts dès 4 moteurs (Code TECHBUILDER8)',
-      'Dépôt de tutoriels et fiches d atelier en tête de forum',
+      'Code -8% + Frais de port offerts dès 4 moteurs (Code : TECHBUILDER8)',
+      'Code -7% CamYQuad VTX & Caméras (Code : CAMYHD7)',
+      'Publication de tutoriels et fiches d atelier en tête de forum',
     ],
   },
   {
@@ -191,9 +193,10 @@ export const PILOT_LEVELS: PilotLevelInfo[] = [
     colorClass: 'text-purple-600',
     badgeBg: 'bg-purple-50 text-purple-800 border-purple-300',
     perks: [
-      'Mention "Expert Résolution" sur vos réponses',
-      'Code -10% VIP Permanent sur l ensemble de l écosystème (Code FPVDOCTOR10)',
-      'Accès prioritaire aux Giveaways mensuels de matos FPV',
+      'Mention "Expert Résolution" sur vos interventions',
+      'Code -10% VIP Permanent multi-boutiques (Code : FPVDOCTOR10)',
+      'Code -8% MakeMyQuad Stacks & LiPos (Code : MAKEMYSTACK8)',
+      'Accès aux analyses avancées de télémétrie Blackbox',
     ],
   },
   {
@@ -205,26 +208,84 @@ export const PILOT_LEVELS: PilotLevelInfo[] = [
     badgeBg: 'bg-amber-50 text-amber-800 border-amber-300',
     perks: [
       'Statut Modérateur Technique sur le forum',
-      'Accès direct aux fiches constructeurs et réclamations de lot',
-      'Invitation annuelle aux rencontres d ateliers FPV',
+      'Accès direct aux fiches constructeurs & bulletins de séries',
+      'Code -10% MakeMyFrame Carbone & TPU (Code : FRAMEPRO10)',
+      'Validation officielle des solutions signalées par la communauté',
     ],
   },
   {
     level: 6,
-    title: 'Légende de l Atelier FPV',
+    title: 'Accordeur PID & Maître Blackbox',
     minXp: 3500,
-    maxXp: 99999,
-    colorClass: 'text-rose-600',
-    badgeBg: 'bg-rose-50 text-rose-800 border-rose-300',
+    maxXp: 5999,
+    colorClass: 'text-orange-600',
+    badgeBg: 'bg-orange-50 text-orange-800 border-orange-300',
     perks: [
-      'Place permanente au Hall of Fame FixMyDrone',
-      'Testeur VIP de prototypes avant mise sur le marché',
-      'Badge ornemental gravé sur toutes vos interventions',
+      'Badge "PID Master" ornemental et distinctif',
+      'Code -12% Multi-Motors.fr (Code : MULTIVIP12)',
+      'Accès anticipé aux calculateurs de filtres RPM dynamiques',
+      'Buzzer Vifly autonome offert dès 35€ d achat (Code : BUZZERFREE)',
+    ],
+  },
+  {
+    level: 7,
+    title: 'Ingénieur Course & Bando',
+    minXp: 6000,
+    maxXp: 9999,
+    colorClass: 'text-cyan-600',
+    badgeBg: 'bg-cyan-50 text-cyan-800 border-cyan-300',
+    perks: [
+      'Accès prioritaire aux Giveaways mensuels de pièces neuves',
+      'Canal direct d échange avec les fabricants (SpeedyBee, T-Motor)',
+      'Code -10% CamYQuad Lunettes & VTX (Code : CAMYPRO10)',
+      'Testeur privilégié de firmwares beta (Betaflight / EdgeTX)',
+    ],
+  },
+  {
+    level: 8,
+    title: 'Maître d Atelier Émérite',
+    minXp: 10000,
+    maxXp: 16999,
+    colorClass: 'text-indigo-600',
+    badgeBg: 'bg-indigo-50 text-indigo-800 border-indigo-300',
+    perks: [
+      'Certification officielle "Atelier Agréé FixMyDrone"',
+      'Attribution de la médaille d étain virtuelle gravée',
+      'Pouvoir d homologation des guides d atelier communautaires',
+      'Invitation VIP aux rencontres annuelles des builders FPV',
+    ],
+  },
+  {
+    level: 9,
+    title: 'Sommité Mondiale FPV',
+    minXp: 17000,
+    maxXp: 29999,
+    colorClass: 'text-fuchsia-600',
+    badgeBg: 'bg-fuchsia-50 text-fuchsia-800 border-fuchsia-300',
+    perks: [
+      'Droit de vote sur le référencement des nouvelles marques',
+      'Dotation trimestrielle de pièces d essai par nos partenaires',
+      'Participation au jury des meilleurs builds de l année',
+      'Accès illimité à vie à tous les services pro de l écosystème',
+    ],
+  },
+  {
+    level: 10,
+    title: 'Légende Vivante FPV',
+    minXp: 30000,
+    maxXp: 99999,
+    colorClass: 'text-red-600',
+    badgeBg: 'bg-gradient-to-r from-red-50 to-amber-50 text-red-900 border-red-400',
+    perks: [
+      'Inscription éternelle au Hall of Fame mondial FixMyDrone',
+      'Prototypes d usine envoyés avant commercialisation publique',
+      'Statut Administrateur d Honneur sur l ensemble de l écosystème',
+      'Cadre physique personnalisé gravé au laser offert à l atelier',
     ],
   },
 ];
 
-// 3. Badges de distinction
+// 3. Badges de distinction (12 badges variés et prestigieux)
 export const ALL_PILOT_BADGES: PilotBadge[] = [
   {
     id: 'first-fix',
@@ -268,9 +329,51 @@ export const ALL_PILOT_BADGES: PilotBadge[] = [
     icon: '🔥',
     category: 'expertise',
   },
+  {
+    id: 'rf-longrange',
+    name: 'Spécialiste RF & Long-Range',
+    description: 'A dépanné des liaisons ExpressLRS, Crossfire ou configurations d antennes.',
+    icon: '📡',
+    category: 'expertise',
+  },
+  {
+    id: 'hd-visionary',
+    name: 'Visionnaire HD',
+    description: 'Expertise prouvée sur les systèmes vidéo DJI O3, Walksnail ou HDZero.',
+    icon: '🕶️',
+    category: 'expertise',
+  },
+  {
+    id: 'cli-wizard',
+    name: 'Sorcier du CLI',
+    description: 'A résolu des conflits DMA, problèmes DFU ou configurations Betaflight poussées.',
+    icon: '💻',
+    category: 'expertise',
+  },
+  {
+    id: 'workshop-veteran',
+    name: 'Vétéran de l Atelier',
+    description: 'A franchi le cap des 10 réparations validées et adoptées par la commu.',
+    icon: '🚁',
+    category: 'resolution',
+  },
+  {
+    id: 'ecosystem-pilot',
+    name: 'Pilote de l Écosystème',
+    description: 'Compte mutualisé SSO actif et synchronisé sur les sites du réseau FPV.',
+    icon: '🌐',
+    category: 'community',
+  },
+  {
+    id: 'hall-of-fame',
+    name: 'Légende FPV',
+    description: 'A accumulé plus de 3 500 points d XP d atelier et d entraide.',
+    icon: '🏆',
+    category: 'rare',
+  },
 ];
 
-// 4. Récompenses & Codes Promos Partenaires Déblocables
+// 4. Récompenses & Codes Promos Partenaires Déblocables (Écosystème FPV)
 export const PARTNER_REWARDS: PartnerReward[] = [
   {
     id: 'rew-multimotors-5',
@@ -279,17 +382,27 @@ export const PARTNER_REWARDS: PartnerReward[] = [
     discountLabel: '-5% sur votre commande de moteurs',
     promoCode: 'FIXMYDRONE5',
     minLevelRequired: 2,
-    description: 'Valable sur plus de 13 800 références de moteurs FPV.',
+    description: 'Valable sur plus de 13 824 références de moteurs FPV.',
     isUnlocked: false,
   },
   {
     id: 'rew-bindmyquad-5',
-    partnerName: 'BindMyQuad',
+    partnerName: 'BindMyQuad.fr',
     partnerDomain: 'bindmyquad.fr',
     discountLabel: '-5% sur les récepteurs & antennes RX',
     promoCode: 'BINDRESCUE5',
     minLevelRequired: 2,
     description: 'Valable sur RadioMaster, BETAFPV, TBS Crossfire et ELRS.',
+    isUnlocked: false,
+  },
+  {
+    id: 'rew-camyquad-7',
+    partnerName: 'CamYQuad.fr',
+    partnerDomain: 'camyquad.fr',
+    discountLabel: '-7% sur les VTX, caméras & antennes',
+    promoCode: 'CAMYHD7',
+    minLevelRequired: 3,
+    description: 'Valable sur DJI O3, Walksnail Avatar, Caddx et Foxeer.',
     isUnlocked: false,
   },
   {
@@ -303,6 +416,16 @@ export const PARTNER_REWARDS: PartnerReward[] = [
     isUnlocked: false,
   },
   {
+    id: 'rew-makemyquad-8',
+    partnerName: 'MakeMyQuad.fr',
+    partnerDomain: 'makemyquad.fr',
+    discountLabel: '-8% sur les stacks FC/ESC & LiPos',
+    promoCode: 'MAKEMYSTACK8',
+    minLevelRequired: 4,
+    description: 'Valable sur SpeedyBee, T-Motor, CNHL et Tattu.',
+    isUnlocked: false,
+  },
+  {
     id: 'rew-ecosystem-vip-10',
     partnerName: 'Écosystème FPV Partenaires',
     partnerDomain: 'makemyquad.fr / camyquad.fr',
@@ -310,6 +433,26 @@ export const PARTNER_REWARDS: PartnerReward[] = [
     promoCode: 'FPVDOCTOR10',
     minLevelRequired: 4,
     description: 'Accès VIP sur l ensemble des shops de l écosystème quad.',
+    isUnlocked: false,
+  },
+  {
+    id: 'rew-makemyframe-10',
+    partnerName: 'MakeMyFrame.fr',
+    partnerDomain: 'makemyframe.fr',
+    discountLabel: '-10% sur les châssis carbone & pièces TPU',
+    promoCode: 'FRAMEPRO10',
+    minLevelRequired: 5,
+    description: 'Valable sur ImpulseRC, GEPRC et impressions 3D TPU haute résistance.',
+    isUnlocked: false,
+  },
+  {
+    id: 'rew-multimotors-12',
+    partnerName: 'Multi-Motors.fr',
+    partnerDomain: 'multi-motors.fr',
+    discountLabel: '-12% VIP sur toute la boutique',
+    promoCode: 'MULTIVIP12',
+    minLevelRequired: 6,
+    description: 'Remise maximale accordée aux maîtres d atelier et accordeurs PID.',
     isUnlocked: false,
   },
 ];

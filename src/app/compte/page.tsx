@@ -32,6 +32,7 @@ import {
   loadPilotProfile,
   savePilotProfile,
   PILOT_LEVELS,
+  ALL_PILOT_BADGES,
   ECOSYSTEM_SITES,
   PARTNER_REWARDS,
   DetailedFixReport,
@@ -43,7 +44,8 @@ export default function PilotAccountPage() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'profile' | 'levels' | 'ecosystem' | 'rewards' | 'reports'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'levels' | 'badges' | 'ecosystem' | 'rewards' | 'reports'>('profile');
+  const [badgeFilter, setBadgeFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
 
   const refreshPilot = () => {
     const p = loadPilotProfile();
@@ -56,10 +58,10 @@ export default function PilotAccountPage() {
     window.addEventListener('storage', handleSync);
     window.addEventListener('fpv_ecosystem_account_updated', handleSync);
 
-    // Si une ancre est présente dans l'URL (#rewards, #reports, etc.)
+    // Si une ancre est présente dans l'URL (#rewards, #reports, #badges, etc.)
     if (typeof window !== 'undefined' && window.location.hash) {
       const hash = window.location.hash.replace('#', '');
-      if (['profile', 'levels', 'ecosystem', 'rewards', 'reports'].includes(hash)) {
+      if (['profile', 'levels', 'badges', 'ecosystem', 'rewards', 'reports'].includes(hash)) {
         setActiveTab(hash as any);
       }
     }
@@ -178,7 +180,17 @@ export default function PilotAccountPage() {
                   : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
               }`}
             >
-              6 Paliers & Niveaux XP
+              10 Paliers & Niveaux XP
+            </button>
+            <button
+              onClick={() => setActiveTab('badges')}
+              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'badges'
+                  ? 'bg-black text-white shadow-sm'
+                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+              }`}
+            >
+              12 Badges & Trophées ({pilot?.unlockedBadges?.length || 1}/12)
             </button>
             <button
               onClick={() => setActiveTab('rewards')}
@@ -348,12 +360,21 @@ export default function PilotAccountPage() {
             {/* Badges débloqués */}
             <div className="bg-white rounded-2xl border-2 border-black p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-mono font-black uppercase text-black">
-                  Badges & Distinctions ({pilot?.unlockedBadges?.length || 0})
-                </h3>
-                <span className="text-xs font-mono text-zinc-500">
-                  Distinction publique sur le forum
-                </span>
+                <div>
+                  <h3 className="text-base font-mono font-black uppercase text-black">
+                    Badges & Distinctions ({pilot?.unlockedBadges?.length || 0}/12)
+                  </h3>
+                  <span className="text-xs font-mono text-zinc-500">
+                    Distinction publique sur le forum et l écosystème
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('badges')}
+                  className="text-xs font-mono font-bold text-red-600 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  Voir les 12 trophées <ChevronRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -361,7 +382,7 @@ export default function PilotAccountPage() {
                   pilot.unlockedBadges.map((badge) => (
                     <div
                       key={badge.id}
-                      className="p-3 rounded-xl border border-zinc-200 bg-zinc-50 flex items-start gap-3"
+                      className="p-3 rounded-xl border border-zinc-200 bg-zinc-50 flex items-start gap-3 hover:border-black transition-colors"
                     >
                       <div className="text-2xl shrink-0">{badge.icon}</div>
                       <div>
@@ -426,9 +447,14 @@ export default function PilotAccountPage() {
         {activeTab === 'levels' && (
           <div className="space-y-6">
             <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-mono font-black uppercase text-black mb-1">
-                La Voie de l Atelier : 6 Paliers d Évolution
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
+                <h2 className="text-xl font-mono font-black uppercase text-black">
+                  La Voie de l Atelier : 10 Paliers d Évolution
+                </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-black text-white font-mono text-[10px] font-black uppercase tracking-wider">
+                  Progression 0 à 30 000+ XP
+                </span>
+              </div>
               <p className="text-xs text-zinc-600 font-normal mb-6">
                 Chaque panne diagnostiquée, chaque rapport d atelier validé et chaque aide apportée sur le forum vous rapporte de l XP. Plus votre niveau est élevé, plus votre voix fait autorité et plus vos récompenses partenaires augmentent.
               </p>
@@ -502,6 +528,156 @@ export default function PilotAccountPage() {
                             <span>{perk}</span>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= 3. BADGES & TROPHÉES D'ATELIER (12 BADGES) ================= */}
+        {activeTab === 'badges' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+                <div>
+                  <h2 className="text-xl font-mono font-black uppercase text-black">
+                    12 Trophées & Badges de Distinction
+                  </h2>
+                  <p className="text-xs text-zinc-600 font-normal mt-0.5">
+                    Affichés publiquement à côté de votre pseudo sur le forum, le catalogue et vos fiches de dépannage pour certifier votre expertise.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-xl bg-black text-white font-mono text-xs font-black uppercase tracking-wider">
+                    {pilot?.unlockedBadges?.length || 1} / {ALL_PILOT_BADGES.length} Débloqués
+                  </span>
+                </div>
+              </div>
+
+              {/* Jauge de collection de badges */}
+              <div className="mt-4 mb-6 p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <div className="flex items-center justify-between text-xs font-mono mb-1.5">
+                  <span className="text-zinc-600 font-bold uppercase">Progression Trophées Atelier</span>
+                  <span className="text-black font-black">
+                    {Math.round(((pilot?.unlockedBadges?.length || 1) / ALL_PILOT_BADGES.length) * 100)}%
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-zinc-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-600 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.max(8, ((pilot?.unlockedBadges?.length || 1) / ALL_PILOT_BADGES.length) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Filtres de Badges */}
+              <div className="flex items-center gap-2 mb-6">
+                <button
+                  type="button"
+                  onClick={() => setBadgeFilter('all')}
+                  className={`h-8 px-3 rounded-lg font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
+                    badgeFilter === 'all'
+                      ? 'bg-black text-white'
+                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                  }`}
+                >
+                  Tous ({ALL_PILOT_BADGES.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBadgeFilter('unlocked')}
+                  className={`h-8 px-3 rounded-lg font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
+                    badgeFilter === 'unlocked'
+                      ? 'bg-black text-white'
+                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                  }`}
+                >
+                  Débloqués ({pilot?.unlockedBadges?.length || 1})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBadgeFilter('locked')}
+                  className={`h-8 px-3 rounded-lg font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
+                    badgeFilter === 'locked'
+                      ? 'bg-black text-white'
+                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                  }`}
+                >
+                  À Débloquer ({ALL_PILOT_BADGES.length - (pilot?.unlockedBadges?.length || 1)})
+                </button>
+              </div>
+
+              {/* Grille des 12 Badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {ALL_PILOT_BADGES.filter((badge) => {
+                  const isUnlocked = pilot?.unlockedBadges?.some((b) => b.id === badge.id) || badge.id === 'first-fix';
+                  if (badgeFilter === 'unlocked') return isUnlocked;
+                  if (badgeFilter === 'locked') return !isUnlocked;
+                  return true;
+                }).map((badge) => {
+                  const isUnlocked = pilot?.unlockedBadges?.some((b) => b.id === badge.id) || badge.id === 'first-fix';
+
+                  return (
+                    <div
+                      key={badge.id}
+                      className={`p-5 rounded-2xl border-2 transition-all flex flex-col justify-between ${
+                        isUnlocked
+                          ? 'border-black bg-white shadow-sm hover:shadow-md'
+                          : 'border-zinc-200 bg-zinc-50/70 opacity-70'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl border ${
+                            isUnlocked ? 'bg-zinc-50 border-black' : 'bg-zinc-200/60 border-zinc-300'
+                          }`}>
+                            {badge.icon}
+                          </div>
+                          <div>
+                            {isUnlocked ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Débloqué
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 font-mono text-[10px] font-bold">
+                                <Lock className="w-3 h-3" /> Verrouillé
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-semibold">
+                            {badge.category === 'resolution' && 'Résolution Atelier'}
+                            {badge.category === 'expertise' && 'Expertise Technique'}
+                            {badge.category === 'rare' && 'Rareté & Défi'}
+                            {badge.category === 'community' && 'Communauté & Partage'}
+                          </span>
+                        </div>
+
+                        <h3 className="font-mono font-black text-sm uppercase text-black mb-1.5">
+                          {badge.name}
+                        </h3>
+                        <p className="text-xs text-zinc-600 leading-relaxed font-normal">
+                          {badge.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-zinc-200 text-[11px] font-mono">
+                        {isUnlocked ? (
+                          <span className="text-emerald-700 font-bold flex items-center gap-1">
+                            ✓ Actif sur votre profil public
+                          </span>
+                        ) : (
+                          <span className="text-zinc-500 flex items-center gap-1">
+                            Obtention via atelier & diagnostic
+                          </span>
+                        )}
                       </div>
                     </div>
                   );
