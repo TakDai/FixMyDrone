@@ -220,6 +220,16 @@ export function MonochromeDetailedCanvas({
   selectedCompId,
 }: MonochromeDetailedCanvasProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Index actifs pour l'animation de fondu enchaîné sans survol
   const [goggleIdx, setGoggleIdx] = useState(0);
@@ -305,11 +315,11 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className="relative w-full max-w-[1980px] aspect-[1980/1020] bg-white flex items-center justify-center overflow-visible">
+      <div className={`relative w-full ${isMobile ? 'max-w-[650px] aspect-[1120/1020]' : 'max-w-[1980px] aspect-[1980/1020]'} bg-white flex items-center justify-center overflow-visible`}>
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="0 0 1980 1020"
+          viewBox={isMobile ? '0 0 1120 1020' : '0 0 1980 1020'}
           className="w-full h-full select-none"
         >
           {/* ====================================================================
@@ -674,7 +684,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'goggle' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 left-0 sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
@@ -747,7 +757,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'radio' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
@@ -820,7 +830,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'config' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[168px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
