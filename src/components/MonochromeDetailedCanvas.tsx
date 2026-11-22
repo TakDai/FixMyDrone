@@ -148,15 +148,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 42,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1060, 70)
+  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1090, 70)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=5',
-    x: 1060,
+    x: 1090,
     y: 70,
     width: 55,
     height: 275,
-    labelX: 1087,
+    labelX: 1117,
     labelY: 360,
     label: 'ANTENNE RHCP VTX',
   },
@@ -184,15 +184,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 885,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (1015, 690)
+  // 13. Batterie LiPo 6S : 140 × 320 à (1025, 690)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
-    x: 1015,
+    x: 1025,
     y: 690,
     width: 140,
     height: 320,
-    labelX: 1085,
+    labelX: 1095,
     labelY: 1030,
     label: 'BATTERIE LIPO 6S XT60',
   },
@@ -319,7 +319,7 @@ export function MonochromeDetailedCanvas({
             <line x1="825" y1="807" x2="486" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
 
             {/* Câble LiPo XT60 vers ESC (Monochrome) */}
-            <line x1="1035" y1="705" x2="972" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
+            <line x1="1045" y1="705" x2="972" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
           </g>
 
           {/* ====================================================================
