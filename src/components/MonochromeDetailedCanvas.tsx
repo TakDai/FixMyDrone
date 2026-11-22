@@ -560,7 +560,7 @@ export function MonochromeDetailedCanvas({
                     Radio
                   </span>
                   <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
-                    {currentRadio.brand} • TBS • ELRS
+                    {currentRadio.brand} • ELRS
                   </span>
                 </div>
               </div>
@@ -640,7 +640,7 @@ export function MonochromeDetailedCanvas({
                     Config
                   </span>
                   <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
-                    {currentConfig.brand} • EdgeTX • ESC
+                    {currentConfig.brand} • EdgeTX
                   </span>
                 </div>
               </div>
