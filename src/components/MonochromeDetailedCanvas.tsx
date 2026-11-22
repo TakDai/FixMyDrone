@@ -37,40 +37,40 @@ interface ComponentVisualConfig {
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 // Disposition éclatée CAD sans aucune superposition interne ni au survol
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (640, 545)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (640, 565)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=5',
     x: 256,
-    y: 210,
+    y: 230,
     width: 768,
     height: 670,
     labelX: 640,
-    labelY: 725,
+    labelY: 745,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (320, 415)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (320, 425)
   {
     id: 'fc',
     image: '/images/components/fc.svg?v=3',
     x: 320,
-    y: 415,
+    y: 425,
     width: 146,
     height: 148,
     labelX: 393,
-    labelY: 590,
+    labelY: 600,
     label: 'FC F7 30.5x30.5',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (814, 415)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (814, 425)
   {
     id: 'esc',
     image: '/images/components/esc.svg?v=3',
     x: 814,
-    y: 415,
+    y: 425,
     width: 165,
     height: 155,
     labelX: 896,
-    labelY: 595,
+    labelY: 605,
     label: 'ESC 4-EN-1 55A',
   },
   // 4. Moteur Brushless 2207 : 150 × 150 à (130, 750) - Éclaté hors du bras
@@ -85,16 +85,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 925,
     label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro : 88 × 110 à (596, 98) - Éclatée au-dessus du nez
+  // 5. Caméra FPV Micro : 84 × 105 à (598, 75) - Éclatée au-dessus du nez
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=3',
-    x: 596,
-    y: 98,
-    width: 88,
-    height: 110,
+    x: 598,
+    y: 75,
+    width: 84,
+    height: 105,
     labelX: 640,
-    labelY: 228,
+    labelY: 198,
     label: 'CAMÉRA FPV MICRO',
   },
   // 6. Émetteur Vidéo VTX : 90 × 145 à (90, 190)
@@ -133,16 +133,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 225,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 70 à (420, 30)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 50 à (420, 18)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=3',
     x: 420,
-    y: 30,
+    y: 18,
     width: 440,
-    height: 70,
+    height: 50,
     labelX: 640,
-    labelY: 20,
+    labelY: 13,
     label: 'ANTENNE IMMORTAL-T',
   },
   // 10. Antenne VTX RHCP Lollipop : 55 × 260 à (1030, 130)
@@ -169,28 +169,28 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 570,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 50 × 85 à (615, 890)
+  // 12. Buzzer ViFly : 48 × 80 à (616, 915)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=3',
-    x: 615,
-    y: 890,
-    width: 50,
-    height: 85,
+    x: 616,
+    y: 915,
+    width: 48,
+    height: 80,
     labelX: 640,
-    labelY: 990,
+    labelY: 1010,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 135 × 290 à (990, 620)
+  // 13. Batterie LiPo 6S : 135 × 290 à (990, 630)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
     x: 990,
-    y: 620,
+    y: 630,
     width: 135,
     height: 290,
     labelX: 1057,
-    labelY: 935,
+    labelY: 945,
     label: 'BATTERIE LIPO 6S XT60',
   },
 ];
@@ -304,11 +304,11 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className="relative w-full max-w-[1780px] aspect-[1780/1020] bg-white flex items-center justify-center overflow-visible">
+      <div className="relative w-full max-w-[1780px] aspect-[1780/1035] bg-white flex items-center justify-center overflow-visible">
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="0 0 1780 1020"
+          viewBox="0 0 1780 1035"
           className="w-full h-full select-none"
         >
           {/* ====================================================================
