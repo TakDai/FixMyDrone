@@ -21,16 +21,24 @@ interface BrandLogoProps {
   brandId: string;
   className?: string;
   size?: number;
+  width?: number | string;
+  height?: number | string;
 }
 
-export function BrandLogo({ brandId, className = '', size = 36 }: BrandLogoProps) {
+export function BrandLogo({ brandId, className = '', size = 36, width, height }: BrandLogoProps) {
   const src = BRAND_LOGOS[brandId];
   if (!src) return null;
+
+  const w = width ?? size;
+  const h = height ?? size;
 
   return (
     <div
       className={`flex items-center justify-center overflow-hidden shrink-0 ${className}`}
-      style={{ width: `${size}px`, height: `${size}px` }}
+      style={{
+        width: typeof w === 'number' ? `${w}px` : w,
+        height: typeof h === 'number' ? `${h}px` : h,
+      }}
     >
       <img
         src={src}

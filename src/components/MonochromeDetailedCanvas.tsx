@@ -400,8 +400,8 @@ export function MonochromeDetailedCanvas({
               onClick={() => handleComponentClick('fatshark')}
               className="flex items-center gap-2.5 p-2 bg-zinc-50 hover:bg-zinc-100 rounded-xl cursor-pointer border border-zinc-200 transition-colors mb-2.5"
             >
-              <div className="w-12 h-10 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
-                <BrandLogo brandId={selectedGoggleBrand} size={34} />
+              <div className="w-14 h-11 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
+                <BrandLogo brandId={selectedGoggleBrand} width={48} height={32} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-black truncate">
@@ -423,15 +423,15 @@ export function MonochromeDetailedCanvas({
                     onClick={() => {
                       setSelectedGoggleBrand(gb.id);
                     }}
-                    className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all cursor-pointer border ${
+                    className={`flex flex-col items-center justify-center h-10 px-0.5 rounded-lg transition-all cursor-pointer border ${
                       isSelected
                         ? 'bg-zinc-100 border-2 border-black shadow-xs ring-1 ring-black scale-105'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={gb.name}
                   >
-                    <div className="w-9 h-8 flex items-center justify-center">
-                      <BrandLogo brandId={gb.id} size={26} />
+                    <div className="w-full h-7 flex items-center justify-center">
+                      <BrandLogo brandId={gb.id} width={38} height={24} />
                     </div>
                   </button>
                 );
@@ -465,8 +465,8 @@ export function MonochromeDetailedCanvas({
               onClick={() => handleComponentClick('tango')}
               className="flex items-center gap-2.5 p-2 bg-zinc-50 hover:bg-zinc-100 rounded-xl cursor-pointer border border-zinc-200 transition-colors mb-2.5"
             >
-              <div className="w-12 h-10 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
-                <BrandLogo brandId={selectedRadioBrand} size={34} />
+              <div className="w-14 h-11 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
+                <BrandLogo brandId={selectedRadioBrand} width={48} height={32} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-black truncate">
@@ -488,15 +488,15 @@ export function MonochromeDetailedCanvas({
                     onClick={() => {
                       setSelectedRadioBrand(rb.id);
                     }}
-                    className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all cursor-pointer border ${
+                    className={`flex flex-col items-center justify-center h-10 px-0.5 rounded-lg transition-all cursor-pointer border ${
                       isSelected
                         ? 'bg-zinc-100 border-2 border-black shadow-xs ring-1 ring-black scale-105'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={rb.name}
                   >
-                    <div className="w-11 h-8 flex items-center justify-center">
-                      <BrandLogo brandId={rb.id} size={28} />
+                    <div className="w-full h-7 flex items-center justify-center">
+                      <BrandLogo brandId={rb.id} width={42} height={24} />
                     </div>
                   </button>
                 );
@@ -530,8 +530,8 @@ export function MonochromeDetailedCanvas({
               onClick={() => handleComponentClick('betaflight')}
               className="flex items-center gap-2.5 p-2 bg-zinc-50 hover:bg-zinc-100 rounded-xl cursor-pointer border border-zinc-200 transition-colors mb-2.5"
             >
-              <div className="w-12 h-10 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
-                <BrandLogo brandId={selectedConfigBrand} size={34} />
+              <div className="w-14 h-11 bg-white border border-zinc-200 rounded-lg flex items-center justify-center p-1 shrink-0">
+                <BrandLogo brandId={selectedConfigBrand} width={48} height={32} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-black truncate">
@@ -553,15 +553,15 @@ export function MonochromeDetailedCanvas({
                     onClick={() => {
                       setSelectedConfigBrand(cb.id);
                     }}
-                    className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all cursor-pointer border ${
+                    className={`flex flex-col items-center justify-center h-10 px-0.5 rounded-lg transition-all cursor-pointer border ${
                       isSelected
                         ? 'bg-zinc-100 border-2 border-black shadow-xs ring-1 ring-black scale-105'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={cb.name}
                   >
-                    <div className="w-9 h-8 flex items-center justify-center">
-                      <BrandLogo brandId={cb.id} size={26} />
+                    <div className="w-full h-7 flex items-center justify-center">
+                      <BrandLogo brandId={cb.id} width={38} height={24} />
                     </div>
                   </button>
                 );
@@ -574,41 +574,41 @@ export function MonochromeDetailedCanvas({
       </div>
 
       {/* Barre d'état technique interactive : readout au survol & équipements actifs */}
-      <div className="w-full max-w-[1780px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t border-zinc-200 pt-3">
+      <div className="w-full max-w-[1780px] mt-4 flex items-center justify-between gap-3 text-xs text-zinc-600 border-t border-zinc-200 pt-3">
         {hoveredComp ? (
-          <div className="flex items-center gap-3 animate-in fade-in duration-150">
-            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black text-white font-mono text-[11px] font-bold">
+          <div className="flex items-center gap-3 min-w-0 animate-in fade-in duration-150">
+            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black text-white font-mono text-[11px] font-bold shrink-0">
               <Crosshair className="w-3.5 h-3.5" />
               {hoveredComp.category}
             </span>
-            <span className="font-bold text-black text-sm">
+            <span className="font-bold text-black text-sm shrink-0">
               {hoveredComp.name}
             </span>
-            <span className="text-zinc-500 text-xs hidden md:inline">
+            <span className="text-zinc-500 text-xs hidden lg:inline truncate max-w-md xl:max-w-lg">
               — {hoveredComp.role}
             </span>
             <span className="text-zinc-400 text-xs hidden sm:inline">•</span>
-            <span className="text-xs font-semibold text-zinc-700 hidden sm:inline">
-              {hoveredComp.commonIssues.length} pannes répertoriées
+            <span className="text-xs font-semibold text-zinc-700 hidden sm:inline shrink-0">
+              {hoveredComp.commonIssues.length} pannes
             </span>
-            <span className="text-[11px] font-bold text-black bg-zinc-100 px-2.5 py-0.5 rounded border border-zinc-300 ml-2 flex items-center gap-1">
-              <span>Cliquer pour diagnostiquer</span>
+            <span className="text-[11px] font-bold text-black bg-zinc-100 hover:bg-zinc-200 px-2.5 py-0.5 rounded border border-zinc-300 ml-1 flex items-center gap-1 shrink-0">
+              <span>Diagnostic</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </span>
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-black uppercase tracking-wider text-[11px]">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="font-bold text-black uppercase tracking-wider text-[11px] shrink-0">
               Équipements actifs :
             </span>
-            <span className="italic text-[11px]">
+            <span className="italic text-[11px] truncate">
               Lunettes : <b className="text-black">{currentGoggle.name}</b> • Radio : <b className="text-black">{currentRadio.name}</b> • Firmware : <b className="text-black">{currentConfig.name}</b>
             </span>
           </div>
         )}
 
-        <div className="flex items-center gap-4 text-[11px] text-black font-semibold">
-          <span className="flex items-center gap-1.5 text-zinc-700">
+        <div className="flex items-center gap-4 text-[11px] text-black font-semibold shrink-0">
+          <span className="flex items-center gap-1.5 text-zinc-700 hidden sm:flex">
             <Flame className="w-3.5 h-3.5 text-black" />
             Style Multi-Motors.fr • 100% Vectoriel CAD
           </span>
