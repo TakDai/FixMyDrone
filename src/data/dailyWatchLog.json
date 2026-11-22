@@ -1,6 +1,104 @@
 [
   {
     "date": "2026-11-22",
+    "timestamp": "2026-11-22T17:54:59.804Z",
+    "issuesAddedCount": 7,
+    "issues": [
+      {
+        "id": "post-watch-1795370099801-474",
+        "component": "DJI O3 Air Unit HD",
+        "category": "vtx",
+        "brand": "DJI FPV",
+        "model": "O3 Air Unit",
+        "title": "[VEILLE Reddit r/fpv] DJI O3 Air Unit : Bloqué en \"Low Power State\" permanent et 0.0V affiché dans l OSD",
+        "rarity": "Erreur de câblage très courante (9/10)",
+        "rarityIndex": 9,
+        "source": "Reddit r/fpv & RCGroups",
+        "url": "https://reddit.com/r/fpv/comments/dji-o3-low-power-state-stuck-solved",
+        "solution": "L O3 ne reçoit pas la télémétrie MSP d armement depuis la FC. Cause : inversion des fils série ou mauvais UART. Brancher impérativement FC TX vers O3 RX et FC RX vers O3 TX. Dans l onglet Ports de Betaflight, activer \"VTX (MSP + Displayport)\" sur l UART correspondant à 115200 bauds. Si la tension OSD indique 0.0V, la liaison série est rompue."
+      },
+      {
+        "id": "post-watch-1795370099801-797",
+        "component": "RadioMaster Boxer / TX16S ELRS 2.4G",
+        "category": "radio",
+        "brand": "RadioMaster",
+        "model": "Boxer ELRS / Pocket",
+        "title": "[VEILLE ExpressLRS] RadioMaster / ELRS 2.4GHz : Fausses alertes répétées \"Telemetry Lost\" en vol avec Dynamic Power",
+        "rarity": "Panne fréquente (8/10)",
+        "rarityIndex": 8,
+        "source": "ExpressLRS GitHub & IntoFPV",
+        "url": "https://github.com/ExpressLRS/ExpressLRS/wiki/Dynamic-Power-Troubleshooting",
+        "solution": "Asymétrie de puissance de transmission entre le TX radio (250mW+) et le petit récepteur (10-50mW) : la liaison montante reste à 100% mais la liaison descendante de télémétrie décroche. Dans le script LUA ExpressLRS de la radio, régler le Telemetry Ratio sur \"Std\" ou \"1:64\" (éviter Race ou Off avec le Dynamic Power). Vérifier que l interrupteur d armement est bien sur AUX1 High."
+      },
+      {
+        "id": "post-watch-1795370099801-72",
+        "component": "Matek Systems SAM-M10Q GPS",
+        "category": "gps",
+        "brand": "Matek",
+        "model": "M10Q-5883",
+        "title": "[VEILLE RCGroups] Matek M10Q GPS : 0 satellites captés et icône GPS éteinte sous Betaflight 4.4 / 4.5",
+        "rarity": "Panne fréquente (8/10)",
+        "rarityIndex": 8,
+        "source": "Betaflight GitHub & RCGroups",
+        "url": "https://rcgroups.com/forums/showthread.php?t-matek-m10q-gps-fix-betaflight-45",
+        "solution": "Incompatibilité du protocole binaire M10 sous ancien firmware et interférences VTX. Mettre à jour vers Betaflight 4.5 qui gère nativement l Auto-Config M10. Dans le CLI : `set gps_provider = UBLOX`, `set gps_auto_config = ON`, `set gps_ublox_use_galileo = ON`. Si l acquisition échoue sur F405, forcer la vitesse du port UART à 57600 bauds au lieu de 115200 et éloigner le GPS du VTX d au moins 4cm."
+      },
+      {
+        "id": "post-watch-1795370099801-41",
+        "component": "Walksnail Avatar HD Goggles X",
+        "category": "goggle",
+        "brand": "Walksnail",
+        "model": "Goggles X (OLED 1080p)",
+        "title": "[VEILLE Walksnail] Walksnail Goggles X : Écran noir subit au décollage causé par le capteur de proximité infrarouge",
+        "rarity": "Panne connue (7/10)",
+        "rarityIndex": 7,
+        "source": "Walksnail Wiki & Reddit r/fpv",
+        "url": "https://walksnail.wiki/goggles-x-proximity-sensor-black-screen",
+        "solution": "Le capteur infrarouge entre les lentilles est trompé par la mousse faciale aftermarket ou la transpiration et éteint les dalles OLED. Séquence de déblocage à l aveugle via le joystick 5D (sans écran) : Bas (clic) -> Droite -> Droite -> Bas (clic) -> Bas (clic) -> Gauche -> Bas (clic) -> Avant -> Bas (clic) pour désactiver le sensor. Pour les versions chauffantes, contacter Caddx pour le kit dissipateur thermique noir."
+      },
+      {
+        "id": "post-watch-1795370099801-706",
+        "component": "RadioMaster TX16S MKII / Boxer / Pocket",
+        "category": "radio",
+        "brand": "RadioMaster",
+        "model": "TX16S MKII / Boxer",
+        "title": "[VEILLE EdgeTX] RadioMaster Boxer / Pocket / TX16S : Crash en boucle \"Emergency Mode\" au démarrage",
+        "rarity": "Panne très fréquente (9/10)",
+        "rarityIndex": 9,
+        "source": "EdgeTX GitHub & RCGroups",
+        "url": "https://github.com/EdgeTX/edgetx/wiki/Emergency-Mode-Recovery",
+        "solution": "Corruption des fichiers système sur la carte MicroSD d origine fournie avec la radio. Remplacer impérativement la carte par une SanDisk ou Samsung classe 10 (16 ou 32Go max formatée en FAT32). Télécharger le pack \"SD Card Contents\" correspondant exactement à la version EdgeTX (ex: v2.10.x), copier les dossiers `MODELS`, `RADIO`, `SOUNDS` et `THEMES`. Vérifier également l absence de nappe interne débranchée."
+      },
+      {
+        "id": "post-watch-1795370099801-814",
+        "component": "Foxeer Reaper 65A Slim / 4-in-1 AM32",
+        "category": "esc",
+        "brand": "Foxeer",
+        "model": "Reaper 65A AM32",
+        "title": "[VEILLE WEareFPV] Foxeer Reaper 65A / AM32 ESC : Moteur qui broute / saccade au ralenti et désarmement intempestif",
+        "rarity": "Panne de firmware (6/10)",
+        "rarityIndex": 6,
+        "source": "AM32 GitHub & WEareFPV",
+        "url": "https://forum.wearefpv.fr/topic/am32-foxeer-reaper-startup-twitching",
+        "solution": "Bug connu lors de l application d une mélodie personnalisée dans le configurateur AM32 qui réinitialise la puissance de démarrage (Startup Ramp-Up Power) à 0.4% au lieu de 16%. Reconnecter l ESC à l ESC-Configurator pour AM32, réajuster la valeur \"Ramp-up Power\" à 16% et vérifier que le \"Motor Timing\" est positionné sur \"Auto\" ou 22.5° pour les moteurs 2207 1950KV."
+      },
+      {
+        "id": "post-watch-1795370099801-852",
+        "component": "Caddx Ratel 2 / Foxeer T-Rex Micro",
+        "category": "cam",
+        "brand": "Caddx",
+        "model": "Ratel 2 Starlight",
+        "title": "[VEILLE RCGroups] Caméra FPV Analogique (Caddx Ratel 2 / Foxeer Toothless) : Écran rose et barres parasites horizontales",
+        "rarity": "Panne électrique fréquente (7/10)",
+        "rarityIndex": 7,
+        "source": "RCGroups & WEareFPV",
+        "url": "https://rcgroups.com/forums/showthread.php?t-fpv-analog-camera-pink-screen-ground-loop",
+        "solution": "Boucle de masse (Ground Loop) entre la caméra et le VTX branchés sur deux pads GND distants, combinée à des parasites de commutation ESC. Relier impérativement la masse de la caméra et la masse du VTX sur le même pad GND de la FC. Vérifier que la vis de fixation de la caméra ne touche pas le châssis carbone conducteur et torsader ensemble les fils 5V/GND/Vidéo."
+      }
+    ]
+  },
+  {
+    "date": "2026-11-22",
     "timestamp": "2026-11-22T15:54:26.756Z",
     "issuesAddedCount": 6,
     "issues": [

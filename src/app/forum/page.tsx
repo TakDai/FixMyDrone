@@ -173,10 +173,14 @@ export default function ForumDashboardPage() {
         if (selectedCategory === 'fc' && cat !== 'fc') return false;
         if (selectedCategory === 'esc' && cat !== 'esc') return false;
         if (selectedCategory === 'rx' && !['rx', 'antenna-rx'].includes(cat)) return false;
+        if (selectedCategory === 'radio' && !['radio', 'tango', 'tx'].includes(cat)) return false;
+        if (selectedCategory === 'goggle' && !['goggle', 'goggles', 'lunettes'].includes(cat)) return false;
+        if (selectedCategory === 'configurator' && !['configurator', 'betaflight', 'config'].includes(cat)) return false;
         if (selectedCategory === 'vtx' && !['vtx', 'antenna-vtx'].includes(cat)) return false;
-        if (selectedCategory === 'cam' && cat !== 'cam') return false;
-        if (selectedCategory === 'frame' && cat !== 'frame') return false;
-        if (selectedCategory === 'gps' && !['gps', 'vifly'].includes(cat)) return false;
+        if (selectedCategory === 'cam' && !['cam', 'camera'].includes(cat)) return false;
+        if (selectedCategory === 'lipo' && !['lipo', 'battery', 'power'].includes(cat)) return false;
+        if (selectedCategory === 'frame' && !['frame', 'chassis', 'props'].includes(cat)) return false;
+        if (selectedCategory === 'gps' && !['gps', 'vifly', 'compass'].includes(cat)) return false;
       }
 
       // 3. Filtre Indice de rareté
@@ -189,7 +193,12 @@ export default function ForumDashboardPage() {
 
       // 4. Filtre Onglet Dashboard
       if (selectedTab === 'ai-resolved' && !post.resolvedWithAI) return false;
-      if (selectedTab === 'daily-watch' && !post.tags?.some((t) => ['RCGroups', 'GitHub', 'IntoFPV', 'Veille'].includes(t))) return false;
+      if (selectedTab === 'daily-watch') {
+        const isWatch = post.title.includes('[VEILLE') || 
+          post.createdAt?.toLowerCase().includes('veille') ||
+          post.tags?.some((t) => ['RCGroups', 'GitHub', 'IntoFPV', 'Veille', 'Reddit r/fpv', 'WEareFPV', 'Walksnail', 'EdgeTX', 'ExpressLRS'].includes(t));
+        if (!isWatch) return false;
+      }
 
       return true;
     }).sort((a, b) => {
@@ -198,7 +207,7 @@ export default function ForumDashboardPage() {
         const votesB = (helpfulVotes[b.id] || 0) + (b.replies || 0) * 2;
         return votesB - votesA;
       }
-      if (selectedTab === 'new') {
+      if (selectedTab === 'new' || selectedTab === 'daily-watch') {
         return (b.id || '').localeCompare(a.id || '');
       }
       return 0;
@@ -210,11 +219,15 @@ export default function ForumDashboardPage() {
     { id: 'motors', label: 'Moteurs Brushless' },
     { id: 'fc', label: 'Contrôleur (FC)' },
     { id: 'esc', label: 'ESC & Stack' },
-    { id: 'rx', label: 'Récepteur (RX)' },
     { id: 'vtx', label: 'Émetteur (VTX)' },
     { id: 'cam', label: 'Caméra FPV' },
+    { id: 'rx', label: 'Récepteur (RX)' },
+    { id: 'radio', label: 'Radios & TX' },
+    { id: 'goggle', label: 'Lunettes & Masques' },
+    { id: 'configurator', label: 'Configurateurs (BF/EdgeTX)' },
+    { id: 'gps', label: 'GPS & Compas' },
+    { id: 'lipo', label: 'LiPo & Alimentation' },
     { id: 'frame', label: 'Châssis (Frame)' },
-    { id: 'gps', label: 'GPS & Buzzer' },
   ];
 
   return (
