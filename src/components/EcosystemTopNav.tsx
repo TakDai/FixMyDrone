@@ -78,21 +78,20 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
         aria-label="Navigation principale"
         className={`w-full flex items-center justify-between px-2.5 sm:px-6 py-2 z-30 transition-all ${className}`}
       >
-        {/* Titre Multi-Motors Style (Épuré sans badge logo) */}
-        <div className="flex items-center shrink-0">
-          <Link
-            href="/"
-            className="flex flex-col group transition-transform active:scale-95"
-            title="FixMyDrone — Accueil"
-          >
-            <span className="font-mono font-black text-xs sm:text-base tracking-tight text-black group-hover:text-zinc-700 transition-colors">
-              FixMyDrone<span className="text-red-600">.fr</span>
-            </span>
-            <span className="hidden sm:inline-block text-[9px] font-mono text-zinc-600 font-semibold uppercase tracking-wider -mt-0.5">
-              Écosystème FPV France
-            </span>
-          </Link>
-        </div>
+        {/* Espace gauche : totalement épuré sur l'accueil, lien retour sur les pages secondaires */}
+        {activeTab !== 'home' ? (
+          <div className="flex items-center shrink-0">
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-black hover:text-red-600 transition-colors"
+              title="Retour à l'accueil"
+            >
+              <span>← Accueil</span>
+            </Link>
+          </div>
+        ) : (
+          <div className="shrink-0" />
+        )}
 
         {/* Pilules de Navigation Style Multi-Motors */}
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
