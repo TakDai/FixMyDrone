@@ -86,16 +86,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 830,
     label: 'MOTEUR',
   },
-  // 5. Caméra FPV : 84 × 78 à (578, 58) - Éclatée au-dessus du nez
+  // 5. Caméra FPV : 84 × 76 à (578, 60) - Éclatée au-dessus du nez
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=6',
     x: 578,
-    y: 58,
+    y: 60,
     width: 84,
-    height: 78,
+    height: 76,
     labelX: 620,
-    labelY: 152,
+    labelY: 153,
     label: 'CAMÉRA',
   },
   // 6. Émetteur Vidéo VTX : 95 × 145 à (60, 110) - Flanc haut-gauche
@@ -134,16 +134,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 175,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 26) - Centrée au sommet
+  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 32) - Centrée au sommet avec marge haute
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=6',
     x: 400,
-    y: 26,
+    y: 32,
     width: 440,
     height: 35,
     labelX: 620,
-    labelY: 11,
+    labelY: 17,
     label: 'ANTENNE',
   },
   // 10. Antenne VTX : 58 × 260 à (1050, 75) - Flanc haut-droit
@@ -230,14 +230,14 @@ export function MonochromeDetailedCanvas({
       setIsMobile(mobile);
 
       if (!mobile) {
-        // Marges d'aération minimales garantissant 0 barre de défilement
+        // Marges d'aération minimales garantissant 0 barre de défilement et 0 rognage
         const paddingX = 24;
-        const paddingY = 16;
+        const paddingY = 20;
         const availW = window.innerWidth - paddingX;
         const availH = window.innerHeight - paddingY;
 
         // Utilisation maximale de la hauteur de l'écran sans restriction artificielle
-        const targetScale = Math.min(availW / 1540, availH / 880);
+        const targetScale = Math.min(availW / 1540, availH / 892);
         setScale(Math.max(0.55, targetScale));
       } else {
         setScale(1);
@@ -430,32 +430,32 @@ export function MonochromeDetailedCanvas({
         <div
           style={{
             width: `${1540 * scale}px`,
-            height: `${880 * scale}px`,
+            height: `${892 * scale}px`,
           }}
           className="relative flex items-center justify-center overflow-visible select-none"
         >
           <div
             style={{
               width: '1540px',
-              height: '880px',
+              height: '892px',
               transform: `scale(${scale})`,
               transformOrigin: 'top left',
             }}
             className="absolute top-0 left-0 bg-white overflow-visible"
           >
-            {/* SVG 1540 × 880 (Drone et ligne de séparation CAD) */}
+            {/* SVG 1540 × 892 avec marge de sécurité haute & basse */}
             <svg
-              viewBox="0 0 1540 880"
+              viewBox="0 0 1540 892"
               width="1540"
-              height="880"
+              height="892"
               className="w-full h-full select-none"
             >
               {/* Ligne directrice technique blueprint discrète sur desktop */}
               <line
                 x1="1260"
-                y1="25"
+                y1="10"
                 x2="1260"
-                y2="855"
+                y2="875"
                 stroke="#000000"
                 strokeWidth="1.2"
                 strokeDasharray="4 6"
@@ -466,14 +466,14 @@ export function MonochromeDetailedCanvas({
               {renderDroneComponents()}
             </svg>
 
-            {/* STATIONS SOL À DROITE : Fixées en coordonnées exactes 1540 × 880 */}
+            {/* STATIONS SOL À DROITE : Fixées en coordonnées exactes 1540 × 892 */}
             <div
               style={{
                 position: 'absolute',
-                top: '30px',
+                top: '15px',
                 right: '35px',
                 width: '148px',
-                height: '820px',
+                height: '850px',
               }}
               className="flex flex-col justify-between items-center z-40 select-none"
             >
