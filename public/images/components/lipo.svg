@@ -5,9 +5,9 @@
     <!-- 1. GROS CÂBLES D'ALIMENTATION SILICONE 12AWG COURBÉS NATURELLEMENT (COMME DANS LIPO.PNG) -->
     <!-- Câble Négatif (-) Noir courbé vers la prise XT60 -->
     <path
-      d="M 52 145 
-         C 45 105, 30 70, 48 35 
-         C 58 18, 75 16, 95 18"
+      d="M 56 145 
+         C 48 95, 34 58, 48 35 
+         C 54 24, 60 21, 69 21"
       fill="none"
       stroke="#000000"
       stroke-width="10"
@@ -15,9 +15,9 @@
     />
     <!-- Liseré de contraste interne blanc sur le câble noir -->
     <path
-      d="M 52 145 
-         C 45 105, 30 70, 48 35 
-         C 58 18, 75 16, 95 18"
+      d="M 56 145 
+         C 48 95, 34 58, 48 35 
+         C 54 24, 60 21, 69 21"
       fill="none"
       stroke="#ffffff"
       stroke-width="2.5"
@@ -26,18 +26,18 @@
 
     <!-- Câble Positif (+) Rouge courbé vers la prise XT60 (en monochrome : hachuré / gris foncé) -->
     <path
-      d="M 108 145 
-         C 115 105, 128 65, 108 35 
-         C 98 20, 80 18, 62 18"
+      d="M 104 145 
+         C 112 95, 116 58, 100 36 
+         C 88 25, 78 28, 72 31"
       fill="none"
       stroke="#000000"
       stroke-width="10"
       stroke-linecap="round"
     />
     <path
-      d="M 108 145 
-         C 115 105, 128 65, 108 35 
-         C 98 20, 80 18, 62 18"
+      d="M 104 145 
+         C 112 95, 116 58, 100 36 
+         C 88 25, 78 28, 72 31"
       fill="none"
       stroke="#27272a"
       stroke-width="6"
@@ -45,8 +45,8 @@
       stroke-dasharray="6 3"
     />
 
-    <!-- 2. CONNECTEUR AMASS XT60 FEMELLE ORIENTÉ EN HAUT À GAUCHE (COMME DANS LIPO.PNG) -->
-    <g transform="translate(18, 5) rotate(-22)">
+    <!-- 2. CONNECTEUR AMASS XT60 FEMELLE PARFAITEMENT INTÉGRÉ DANS LE VIEWBOX SANS AUCUN ROGNAGE -->
+    <g transform="translate(24, 25) rotate(-12)">
       <!-- Corps de la prise XT60 avec chanfrein anti-inversion -->
       <path
         d="M 0 0 L 36 0 L 36 22 L 8 22 L 0 14 Z"

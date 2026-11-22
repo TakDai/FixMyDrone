@@ -182,16 +182,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 785,
     label: 'BUZZER',
   },
-  // 13. Batterie LiPo : 125 × 265 à (950, 530) - Flanc bas-droit
+  // 13. Batterie LiPo : 125 × 265 à (965, 540) - Flanc bas-droit dégagé
   {
     id: 'lipo',
-    image: '/images/components/lipo.svg?v=6',
-    x: 950,
-    y: 530,
+    image: '/images/components/lipo.svg?v=7',
+    x: 965,
+    y: 540,
     width: 125,
     height: 265,
-    labelX: 1012,
-    labelY: 820,
+    labelX: 1027,
+    labelY: 825,
     label: 'BATTERIE',
   },
 ];
