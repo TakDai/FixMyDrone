@@ -442,8 +442,8 @@ export function MonochromeDetailedCanvas({
               style={{
                 position: 'absolute',
                 top: '110px',
-                right: '32px',
-                width: '215px',
+                right: '28px',
+                width: '232px',
                 height: '670px',
               }}
               className="flex flex-col justify-around items-end z-40 select-none"
@@ -479,7 +479,7 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Lunettes
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
                     {currentGoggle.brand} • DJI • HD
                   </span>
                 </div>
@@ -559,7 +559,7 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Radio
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
                     {currentRadio.brand} • TBS • ELRS
                   </span>
                 </div>
@@ -639,7 +639,7 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Config
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
                     {currentConfig.brand} • EdgeTX • ESC
                   </span>
                 </div>
