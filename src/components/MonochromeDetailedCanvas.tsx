@@ -134,16 +134,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 175,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 20) - Centrée au sommet
+  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 26) - Centrée au sommet
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=6',
     x: 400,
-    y: 20,
+    y: 26,
     width: 440,
     height: 35,
     labelX: 620,
-    labelY: 14,
+    labelY: 11,
     label: 'ANTENNE',
   },
   // 10. Antenne VTX : 58 × 260 à (1050, 75) - Flanc haut-droit
