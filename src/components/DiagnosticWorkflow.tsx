@@ -328,11 +328,15 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-black text-white">
                     FORUM COMMUNAUTAIRE & IA
                   </span>
-                  {isMotor && (
+                  {isMotor ? (
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-amber-500/10 text-amber-900 border border-amber-500/30">
                       CATALOGUE MULTI-MOTORS (13 824 RÉF)
                     </span>
-                  )}
+                  ) : sisterSite ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-blue-500/10 text-blue-900 border border-blue-500/30">
+                      RÉFÉRENCES {sisterSite.name.toUpperCase()}
+                    </span>
+                  ) : null}
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-purple-500/10 text-purple-900 border border-purple-500/30">
                     INDICE DE RARETÉ 1 À 10
                   </span>
@@ -341,7 +345,9 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   Dépannage & Solutions : {def.frenchTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-neutral-600 mt-0.5">
-                  Recherchez votre moteur par marque, gamme et modèle, puis laissez l IA et la communauté identifier la panne avec indice de rareté de 1 à 10.
+                  {isMotor
+                    ? "Recherchez votre moteur par marque, gamme et modèle tirés de Multi-Motors, puis laissez l IA et la communauté identifier la panne avec indice de rareté de 1 à 10."
+                    : `Consultez les procédures & guides techniques par modèle (ex: appairage BindMyQuad), ou laissez l IA et le forum diagnostiquer votre panne.`}
                 </p>
               </div>
             </div>
