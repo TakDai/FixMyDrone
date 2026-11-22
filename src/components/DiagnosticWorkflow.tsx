@@ -29,7 +29,11 @@ import {
   Info,
   Check,
   ThumbsUp,
-  BarChart3
+  BarChart3,
+  FileText,
+  Gift,
+  Award,
+  User
 } from 'lucide-react';
 import { getDiagnosticDefinition } from '@/data/diagnosticKnowledgeBase';
 import { getSisterSiteForComponent } from '@/data/ecosystem';
@@ -37,6 +41,16 @@ import { MULTI_MOTORS_FPV_BRANDS } from '@/data/multiMotorsFpvBrands';
 import { MULTI_MOTORS_CATALOGUE, MOTOR_GAMMES_BY_BRAND, MultiMotorsItem } from '@/data/multiMotorsCatalogueList';
 import { getGeneralGuidesForComponent, ComponentGeneralGuide, ModelGuideExample } from '@/data/componentGenericsGuides';
 import { getComponentReliabilityStats, ComponentReliabilityData } from '@/data/componentReliabilityStats';
+import {
+  PilotProfile,
+  DetailedFixReport,
+  loadPilotProfile,
+  savePilotProfile,
+  getLevelFromXp,
+  ALL_PILOT_BADGES
+} from '@/data/pilotGamification';
+import { DetailedFixReportModal } from './DetailedFixReportModal';
+import { PilotProfileModal } from './PilotProfileModal';
 import { FORUM_POSTS } from '@/data/forumPosts';
 import { CommunityPost } from '@/types';
 
@@ -84,6 +98,12 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
   const [newTopicModalOpen, setNewTopicModalOpen] = useState(false);
   const [newTopicPublished, setNewTopicPublished] = useState(false);
 
+  // Profil Pilote, Niveaux de Gamification & Récompenses
+  const [pilotProfile, setPilotProfile] = useState<PilotProfile>(() => loadPilotProfile());
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [detailedReportModalOpen, setDetailedReportModalOpen] = useState(false);
+  const [xpToast, setXpToast] = useState<{ amount: number; message: string } | null>(null);
+
   // Évaluation de la résolution par l'utilisateur & suivi d'efficacité
   const [resolutionVote, setResolutionVote] = useState<'resolved' | 'partial' | 'unresolved' | null>(null);
   const [resolutionComment, setResolutionComment] = useState('');
@@ -103,6 +123,30 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
 
   const handleVoteResolution = (type: 'resolved' | 'partial' | 'unresolved') => {
     setResolutionVote(type);
+
+    if (type === 'resolved') {
+      // Gain immédiat de +50 XP pour la confirmation de résolution
+      setPilotProfile((prev) => {
+        const newXp = prev.xp + 50;
+        const lvl = getLevelFromXp(newXp);
+        const updated: PilotProfile = {
+          ...prev,
+          xp: newXp,
+          level: lvl.level,
+          levelTitle: lvl.title,
+          fixesResolvedCount: prev.fixesResolvedCount + 1,
+        };
+        savePilotProfile(updated);
+        return updated;
+      });
+
+      setXpToast({
+        amount: 50,
+        message: 'Panne validée ! +50 XP ajoutés à votre Profil Pilote.',
+      });
+      setTimeout(() => setXpToast(null), 4000);
+    }
+
     if (typeof window !== 'undefined') {
       try {
         const key = `fmd_eval_${componentId}_${selectedMotor?.id || 'gen'}`;
@@ -111,6 +155,46 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
         // ignore
       }
     }
+  };
+
+  const handleDetailedReportSubmitted = (
+    reportData: Omit<DetailedFixReport, 'id' | 'createdAt' | 'xpEarned'>
+  ) => {
+    const newReport: DetailedFixReport = {
+      ...reportData,
+      id: `rep-${Date.now()}`,
+      createdAt: 'À l instant',
+      xpEarned: 150,
+    };
+
+    setPilotProfile((prev) => {
+      const newXp = prev.xp + 150;
+      const lvl = getLevelFromXp(newXp);
+      const eliteBadge = ALL_PILOT_BADGES.find((b) => b.id === 'detailed-master');
+      const hasEliteBadge = prev.unlockedBadges.some((b) => b.id === 'detailed-master');
+      const updatedBadges =
+        hasEliteBadge || !eliteBadge
+          ? prev.unlockedBadges
+          : [...prev.unlockedBadges, eliteBadge];
+
+      const updated: PilotProfile = {
+        ...prev,
+        xp: newXp,
+        level: lvl.level,
+        levelTitle: lvl.title,
+        detailedReportsCount: prev.detailedReportsCount + 1,
+        unlockedBadges: updatedBadges,
+        historyReports: [newReport, ...prev.historyReports],
+      };
+      savePilotProfile(updated);
+      return updated;
+    });
+
+    setXpToast({
+      amount: 150,
+      message: 'Rapport d Atelier complet validé ! +150 XP et Badge Élite débloqué !',
+    });
+    setTimeout(() => setXpToast(null), 5000);
   };
 
   const handleToggleHelpfulPost = (postId: string) => {
@@ -328,13 +412,31 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setGuideModalOpen(true)}
               className="flex items-center gap-2 text-xs font-bold px-3.5 py-1.5 rounded-full border-2 border-black bg-black text-white hover:bg-neutral-800 transition-all shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Ouvrir l Assistant Diagnostic</span>
+              <span>Assistant Diagnostic</span>
+            </button>
+
+            {/* Widget Compte Pilote, Niveaux & Récompenses */}
+            <button
+              onClick={() => setProfileModalOpen(true)}
+              className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full border border-black bg-white hover:bg-neutral-100 transition-all shadow-2xs group"
+              title="Consulter mon Profil Pilote, Niveau & Codes Récompenses"
+            >
+              <div className="w-5 h-5 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                {pilotProfile.level}
+              </div>
+              <span className="text-neutral-900 font-black hidden sm:inline">
+                {pilotProfile.callsign}
+              </span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-900 border border-amber-500/30">
+                {pilotProfile.xp} XP
+              </span>
+              <Gift className="w-3.5 h-3.5 text-purple-600" />
             </button>
 
             {sisterSite && (
@@ -342,7 +444,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 href={sisterSite.domain}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full border border-black/20 bg-neutral-50 hover:border-black text-neutral-800 transition-all"
+                className="hidden lg:flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full border border-black/20 bg-neutral-50 hover:border-black text-neutral-800 transition-all"
                 title={`Catalogue géré par ${sisterSite.name}`}
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -354,6 +456,19 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
           </div>
         </div>
       </header>
+
+      {/* TOAST FLOTTANT DE GAIN D'XP ET RÉCOMPENSES */}
+      {xpToast && (
+        <div className="fixed top-20 right-4 z-50 bg-black text-white p-4 rounded-2xl border-2 border-amber-400 shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 duration-200">
+          <div className="w-10 h-10 rounded-xl bg-amber-400 text-black flex items-center justify-center font-black text-sm shrink-0">
+            +{xpToast.amount}
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase text-amber-300">XP Pilote Encaissé !</div>
+            <div className="text-xs font-semibold text-white">{xpToast.message}</div>
+          </div>
+        </div>
+      )}
 
       {/* 2. BANNIÈRE DU HUB */}
       <div className="w-full border-b border-neutral-200 bg-neutral-50/80 py-6 sm:py-7">
@@ -1488,12 +1603,40 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                           <Check className="w-4 h-4 text-emerald-600" />
                           <span>
                             {resolutionVote === 'resolved'
-                              ? 'Super ! Votre confirmation a été enregistrée pour ce modèle et valide ce protocole.'
+                              ? 'Super ! Votre confirmation a été enregistrée pour ce modèle (+50 XP encaissés sur votre Profil Pilote).'
                               : resolutionVote === 'partial'
                               ? 'Merci pour votre retour. Nos modérateurs et l IA affinent les étapes.'
                               : 'Merci. Nous vous conseillons de publier votre cas spécifique sur le forum avec vos logs.'}
                           </span>
                         </div>
+
+                        {/* CARTE GAMIFICATION / RAPPORT D'ATELIER DÉTAILLÉ */}
+                        {resolutionVote === 'resolved' && (
+                          <div className="p-4 rounded-2xl bg-neutral-900 text-white space-y-3 shadow-xs">
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                              <div className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-amber-400" />
+                                <span className="text-xs font-black uppercase tracking-wider text-amber-300">
+                                  Rapport d Atelier Pilote (+150 XP & Récompenses)
+                                </span>
+                              </div>
+                              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-400 text-black">
+                                Rentable & Récompensé
+                              </span>
+                            </div>
+                            <p className="text-xs text-neutral-300 leading-relaxed">
+                              Renseignez la cause chirurgicale, les outils utilisés et vos conseils pour faire monter votre niveau, débloquer des <strong>réductions partenaires exclusives (Multi-Motors, BindMyQuad)</strong> et être distingué sur le forum !
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => setDetailedReportModalOpen(true)}
+                              className="w-full py-2.5 px-4 rounded-xl bg-white text-black hover:bg-neutral-100 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                            >
+                              <FileText className="w-4 h-4 text-black" />
+                              <span>Renseigner le Rapport d Atelier Détaillé (+150 XP)</span>
+                            </button>
+                          </div>
+                        )}
 
                         {!resolutionCommentSent ? (
                           <div className="space-y-2 pt-1 border-t border-neutral-100">
@@ -1681,6 +1824,24 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
           </div>
         </div>
       )}
+
+      {/* 5. MODALE DU RAPPORT D'ATELIER DÉTAILLÉ (+150 XP) */}
+      <DetailedFixReportModal
+        isOpen={detailedReportModalOpen}
+        onClose={() => setDetailedReportModalOpen(false)}
+        componentName={def.frenchTitle}
+        componentCategory={componentId}
+        modelExact={selectedMotor?.fullName || customModelFallback || selectedBrand}
+        serialNumber={serialNumber}
+        onReportSubmitted={handleDetailedReportSubmitted}
+      />
+
+      {/* 6. MODALE DU PROFIL PILOTE, NIVEAUX & CODES RÉCOMPENSES */}
+      <PilotProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        profile={pilotProfile}
+      />
     </div>
   );
 }
