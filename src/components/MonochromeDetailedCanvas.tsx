@@ -43,7 +43,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 1. Châssis Carbone True-X : 768 × 670, centre (690, 580)
   {
     id: 'frame',
-    image: '/images/components/frame.svg',
+    image: '/images/components/frame.svg?v=3',
     x: 306,
     y: 245,
     width: 768,
@@ -55,7 +55,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 2. Contrôleur de Vol FC : 146 × 148 à (340, 490)
   {
     id: 'fc',
-    image: '/images/components/fc.svg',
+    image: '/images/components/fc.svg?v=3',
     x: 340,
     y: 490,
     width: 146,
@@ -67,7 +67,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 3. Variateur ESC 4-en-1 : 165 × 155 à (890, 490)
   {
     id: 'esc',
-    image: '/images/components/esc.svg',
+    image: '/images/components/esc.svg?v=3',
     x: 890,
     y: 490,
     width: 165,
@@ -79,7 +79,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (420, 890)
   {
     id: 'motor',
-    image: '/images/components/motor.svg',
+    image: '/images/components/motor.svg?v=3',
     x: 420,
     y: 890,
     width: 150,
@@ -91,7 +91,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 5. Caméra FPV Micro : 90 × 112 à (645, 920)
   {
     id: 'cam',
-    image: '/images/components/camera.svg',
+    image: '/images/components/camera.svg?v=3',
     x: 645,
     y: 920,
     width: 90,
@@ -103,7 +103,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 6. Émetteur Vidéo VTX : 90 × 145 à (340, 130)
   {
     id: 'vtx',
-    image: '/images/components/vtx.svg',
+    image: '/images/components/vtx.svg?v=3',
     x: 340,
     y: 130,
     width: 90,
@@ -115,7 +115,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 7. Module GPS : 78 × 83 à (651, 115)
   {
     id: 'gps',
-    image: '/images/components/gps.svg',
+    image: '/images/components/gps.svg?v=3',
     x: 651,
     y: 115,
     width: 78,
@@ -127,7 +127,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 8. Récepteur RX ELRS : 70 × 125 à (920, 130)
   {
     id: 'rx',
-    image: '/images/components/rx.svg',
+    image: '/images/components/rx.svg?v=3',
     x: 920,
     y: 130,
     width: 70,
@@ -139,7 +139,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (470, 45)
   {
     id: 'antenna-rx',
-    image: '/images/components/antenna-rx.svg',
+    image: '/images/components/antenna-rx.svg?v=3',
     x: 470,
     y: 45,
     width: 440,
@@ -151,7 +151,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1030, 70)
   {
     id: 'antenna-vtx',
-    image: '/images/components/antenna-vtx.svg',
+    image: '/images/components/antenna-vtx.svg?v=3',
     x: 1030,
     y: 70,
     width: 55,
@@ -163,7 +163,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 11. Condensateur Low ESR : 55 × 55 à (185, 535)
   {
     id: 'condo',
-    image: '/images/components/condo.svg',
+    image: '/images/components/condo.svg?v=3',
     x: 185,
     y: 535,
     width: 55,
@@ -175,7 +175,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 12. Buzzer ViFly : 55 × 95 à (825, 760)
   {
     id: 'vifly',
-    image: '/images/components/vifly.svg',
+    image: '/images/components/vifly.svg?v=3',
     x: 825,
     y: 760,
     width: 55,
@@ -187,7 +187,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 13. Batterie LiPo 6S : 140 × 320 à (970, 690)
   {
     id: 'lipo',
-    image: '/images/components/lipo.svg',
+    image: '/images/components/lipo.svg?v=3',
     x: 970,
     y: 690,
     width: 140,
