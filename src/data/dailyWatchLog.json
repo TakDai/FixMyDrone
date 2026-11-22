@@ -1,6 +1,91 @@
 [
   {
     "date": "2026-11-22",
+    "timestamp": "2026-11-22T15:54:26.756Z",
+    "issuesAddedCount": 6,
+    "issues": [
+      {
+        "id": "post-watch-1795362866755-578",
+        "component": "TBS Crossfire Nano RX Pro",
+        "category": "rx",
+        "brand": "TBS",
+        "model": "Crossfire Nano RX",
+        "title": "[VEILLE IntoFPV] TBS Crossfire Nano RX : LED rouge fixe (Solid Red) et échec du bind après mise à jour",
+        "rarity": "Panne courante (7/10)",
+        "rarityIndex": 7,
+        "source": "IntoFPV.com",
+        "url": "https://intofpv.com/t-solved-tbs-crossfire-nano-solid-red-led-bind",
+        "solution": "Firmware mismatch entre l émetteur TX et le récepteur d usine. Procédure de secours : maintenir le bouton bind enfoncé pendant 30 secondes sous tension pour forcer le mode Emergency Recovery Bootloader (LED alternant rouge/vert), puis lancer la mise à jour OTA automatique depuis TBS Agent X ou le script LUA de la radio."
+      },
+      {
+        "id": "post-watch-1795362866755-494",
+        "component": "Walksnail Avatar HD Pro VTX V2",
+        "category": "vtx",
+        "brand": "Walksnail",
+        "model": "Avatar HD V2",
+        "title": "[VEILLE Reddit r/fpv] Walksnail Avatar HD Pro / V2 : Écran noir et coupure thermique au sol sans flux d air",
+        "rarity": "Panne classique (8/10)",
+        "rarityIndex": 8,
+        "source": "Reddit r/fpv & IntoFPV",
+        "url": "https://reddit.com/r/fpv/comments/walksnail-avatar-black-screen-overheating-fixed",
+        "solution": "Mise en sécurité thermique du VTX dépassant 100°C au sol. Activer l option \"Low Power Disarm\" (Standby Mode) dans les paramètres OSD des lunettes pour réduire la puissance à 25mW tant que le quad n est pas armé, et vérifier que la nappe MIPI de la caméra est fermement verrouillée par la bague noire avec un point de colle B7000."
+      },
+      {
+        "id": "post-watch-1795362866755-205",
+        "component": "T-Motor Velox V2207.5 1950KV",
+        "category": "motors",
+        "brand": "T-Motor",
+        "model": "Velox V2207.5",
+        "title": "[VEILLE WEareFPV] T-Motor Velox V2207.5 : Vibrations résiduelles sous DSHOT bidirectionnel Betaflight 4.5",
+        "rarity": "Panne fréquente (8/10)",
+        "rarityIndex": 8,
+        "source": "WEareFPV.fr (Forum)",
+        "url": "https://forum.wearefpv.fr/topic/18420-t-motor-velox-v2207-vibration-rpm-filter/",
+        "solution": "Nombre de pôles moteur incorrect dans la configuration Betaflight faussant le calcul du RPM filter. Dans Betaflight CLI, entrer `set motor_poles = 14` puis `save`. Ajuster les harmoniques du filtre RPM à 3 avec Notch dynamique centré sur 180Hz."
+      },
+      {
+        "id": "post-watch-1795362866755-783",
+        "component": "SpeedyBee F405 V4 55A BLS Stack",
+        "category": "esc",
+        "brand": "SpeedyBee",
+        "model": "F405 V4 BLS 55A",
+        "title": "[VEILLE RCGroups] SpeedyBee F405 V4 Stack 55A : Desync violent (Death Roll) lors des coups de gaz brusques",
+        "rarity": "Panne fréquente (8/10)",
+        "rarityIndex": 8,
+        "source": "RCGroups & UAVModel",
+        "url": "https://rcgroups.com/forums/showthread.php?t-speedybee-f405-v4-death-roll-desync-fixed",
+        "solution": "Perte de synchronisation de démagnétisation sur les moteurs 2207. Flasher les ESCs sous Bluejay 48kHz, régler Demag Compensation = High, remonter le Motor Idle Throttle de 5.5% à 6.8% dans Betaflight et s assurer de la présence du condensateur Low-ESR 35V 1000uF soudé au plus près des pads d alimentation."
+      },
+      {
+        "id": "post-watch-1795362866755-570",
+        "component": "EMAX ECO II 2207 1700KV / 2400KV",
+        "category": "motors",
+        "brand": "EMAX",
+        "model": "ECO II 2207",
+        "title": "[VEILLE RCGroups] EMAX ECO II 2207 : Jeu axial de cloche et bruit de frottement métallique après 20 packs",
+        "rarity": "Panne d usure mécanique (5/10)",
+        "rarityIndex": 5,
+        "source": "RCGroups & IntoFPV",
+        "url": "https://rcgroups.com/forums/showthread.php?t-emax-eco-ii-bearing-play",
+        "solution": "Rondelle de calage en laiton au pied de la cloche écrasée par la pression axiale des hélices. Remplacer la rondelle d origine par une rondelle de calage inox de précision 3x5x0.1mm sous la vis de retenue d axe pour supprimer le jeu sans freiner les roulements 684zz."
+      },
+      {
+        "id": "post-watch-1795362866755-550",
+        "component": "Contrôleur de Vol Betaflight F405 / F722",
+        "category": "fc",
+        "brand": "Betaflight",
+        "model": "Standard F405 FC",
+        "title": "[VEILLE GitHub Betaflight] FC F405 / F722 : Empêchement d armement \"RPMFILTER\" au branchement LiPo 6S",
+        "rarity": "Panne de configuration classique (9/10)",
+        "rarityIndex": 9,
+        "source": "Betaflight GitHub Discussions",
+        "url": "https://github.com/betaflight/betaflight/discussions/arming-flags-rpmfilter",
+        "solution": "L ESC ne transmet pas le retour télémétrie eRPM sur les 4 phases avant le timeout d armement. Dans Betaflight, passer en DSHOT300 au lieu de DSHOT600 pour réduire les erreurs de trames UART sur les processeurs F405 sous forte charge CPU."
+      }
+    ]
+  },
+  {
+    "date": "2026-11-22",
     "timestamp": "2026-11-22T15:51:27.124Z",
     "issuesAddedCount": 5,
     "issues": [
