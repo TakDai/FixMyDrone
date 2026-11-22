@@ -260,68 +260,16 @@ export function MonochromeDetailedCanvas({
   const isCurrent = (id: string) => selectedCompId === id || hoveredId === id;
 
   return (
-    <section className="flex-1 w-full flex flex-col items-center justify-center p-1 sm:p-4 select-none bg-white">
+    <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
-      {/* Conteneur principal style Multi-Motors : fond papier pur, bordure pointillée, typo technique */}
-      <div className="relative w-full max-w-[1562px] aspect-[1562/904] bg-[#ffffff] border-[1.5px] border-dashed border-black/75 rounded-3xl p-2 sm:p-4 flex items-center justify-center overflow-visible shadow-xs">
-        
-        {/* Grille technique d'atelier FPV style SEEWORLD & Multi-Motors */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-20 rounded-3xl overflow-hidden"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #71717a 0.8px, transparent 0)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-
-        {/* Lignes directrices CAO d'alignement centrées sur le châssis */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="100 20 1560 1060">
-          <line x1="690" y1="20" x2="690" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <line x1="100" y1="580" x2="1660" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <circle cx="690" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
-        </svg>
+      {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
+      <div className="relative w-full max-w-[1780px] aspect-[1560/960] bg-white flex items-center justify-center overflow-visible">
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
           viewBox="100 20 1560 1060"
           className="w-full h-full select-none"
         >
-          {/* ====================================================================
-              LIGNES DE CÂBLAGE & REPÉRAGE TECHNIQUE DU BLUEPRINT (MONOCHROME STRICT)
-             ==================================================================== */}
-          <g className="pointer-events-none opacity-40">
-            {/* Ligne Standoffs Frame -> FC -> ESC */}
-            <line x1="413" y1="564" x2="690" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-            <line x1="972" y1="567" x2="690" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-
-            {/* Ligne Moteurs vers Châssis */}
-            <line x1="495" y1="890" x2="407" y2="815" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-            
-            {/* Ligne Caméra vers avant du châssis */}
-            <line x1="690" y1="920" x2="690" y2="680" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-
-            {/* Ligne VTX vers Stack */}
-            <line x1="385" y1="275" x2="690" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-
-            {/* Ligne GPS vers Châssis arrière */}
-            <line x1="690" y1="198" x2="690" y2="380" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-
-            {/* Ligne RX vers Stack */}
-            <line x1="955" y1="255" x2="690" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-
-            {/* Câble d'antenne VTX vers VTX */}
-            <line x1="1030" y1="205" x2="430" y2="202" stroke="#52525b" strokeWidth="1.2" strokeDasharray="4 4" />
-
-            {/* Câble d'alimentation Condensateur vers ESC (Monochrome) */}
-            <line x1="240" y1="562" x2="890" y2="567" stroke="#18181b" strokeWidth="1.5" strokeDasharray="6 4" />
-
-            {/* Câble ViFly Buzzer vers FC (Monochrome) */}
-            <line x1="825" y1="807" x2="486" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
-
-            {/* Câble LiPo XT60 vers ESC (Monochrome) */}
-            <line x1="1045" y1="705" x2="972" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
-          </g>
-
           {/* ====================================================================
               13 COMPOSANTS DU DRONE VECTORISÉS (STYLE MULTI-MOTORS PUR SANS OMBRE)
              ==================================================================== */}
@@ -350,7 +298,6 @@ export function MonochromeDetailedCanvas({
                   fill={isSelected ? 'rgba(0, 0, 0, 0.06)' : isHov ? 'rgba(0, 0, 0, 0.03)' : 'transparent'}
                   stroke={isSelected ? '#000000' : isHov ? '#000000' : 'transparent'}
                   strokeWidth={isSelected ? '3' : '1.5'}
-                  strokeDasharray={isHov && !isSelected ? '4 4' : undefined}
                   className="transition-colors duration-150"
                 />
 
@@ -434,7 +381,7 @@ export function MonochromeDetailedCanvas({
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+              <div className="mt-2 flex items-center justify-between border-t border-zinc-100 pt-2">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded bg-white border border-zinc-200 flex items-center justify-center p-0.5">
                     <BrandLogo brandId={selectedGoggleBrand} size={20} />
@@ -511,7 +458,7 @@ export function MonochromeDetailedCanvas({
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+              <div className="mt-2 flex items-center justify-between border-t border-zinc-100 pt-2">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded bg-white border border-zinc-200 flex items-center justify-center p-0.5">
                     <BrandLogo brandId={selectedRadioBrand} size={20} />
@@ -588,7 +535,7 @@ export function MonochromeDetailedCanvas({
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center justify-between border-t border-dashed border-zinc-300/40 pt-2">
+              <div className="mt-2 flex items-center justify-between border-t border-zinc-100 pt-2">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded bg-white border border-zinc-200 flex items-center justify-center p-0.5">
                     <BrandLogo brandId={selectedConfigBrand} size={20} />
@@ -641,7 +588,7 @@ export function MonochromeDetailedCanvas({
 
         {/* Infobulle technique dynamique au survol des composants du drone */}
         {hoveredId && (
-          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border-[1.5px] border-dashed border-black rounded-2xl p-4 shadow-2xl pointer-events-none animate-in fade-in duration-150 max-w-sm z-30">
+          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border border-black rounded-xl p-4 shadow-2xl pointer-events-none animate-in fade-in duration-150 max-w-sm z-30">
             <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 uppercase">
               <span className="flex items-center gap-1.5 text-black font-bold">
                 <Crosshair className="w-3.5 h-3.5 text-black" />
@@ -657,7 +604,7 @@ export function MonochromeDetailedCanvas({
             <p className="text-xs text-zinc-600 italic mt-1 leading-snug">
               {getComp(hoveredId).role}
             </p>
-            <div className="mt-3 pt-2.5 border-t border-dashed border-zinc-300 flex items-center justify-between text-[11px] text-black font-semibold">
+            <div className="mt-3 pt-2.5 border-t border-zinc-200 flex items-center justify-between text-[11px] text-black font-semibold">
               <span className="text-zinc-600">Cliquer pour ouvrir le diagnostic</span>
               <ArrowUpRight className="w-4 h-4 text-black" />
             </div>
@@ -667,7 +614,7 @@ export function MonochromeDetailedCanvas({
       </div>
 
       {/* Barre d'état sous le schéma */}
-      <div className="w-full max-w-[1562px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t-[1.5px] border-dashed border-black/30 pt-3">
+      <div className="w-full max-w-[1780px] mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 border-t border-zinc-200 pt-3">
         <div className="flex items-center gap-3">
           <span className="font-bold text-black uppercase tracking-wider text-[11px]">
             Équipements actifs :
