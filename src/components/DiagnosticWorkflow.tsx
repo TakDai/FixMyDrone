@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -23,16 +23,16 @@ import {
   Flame,
   Zap,
   Tag,
-  ThumbsUp,
   Clock,
   Layers,
-  SlidersHorizontal,
   ChevronDown,
-  Info
+  Info,
+  Check
 } from 'lucide-react';
 import { getDiagnosticDefinition } from '@/data/diagnosticKnowledgeBase';
 import { getSisterSiteForComponent } from '@/data/ecosystem';
 import { MULTI_MOTORS_FPV_BRANDS } from '@/data/multiMotorsFpvBrands';
+import { MULTI_MOTORS_CATALOGUE, MOTOR_GAMMES_BY_BRAND, MultiMotorsItem } from '@/data/multiMotorsCatalogueList';
 import { FORUM_POSTS } from '@/data/forumPosts';
 import { CommunityPost } from '@/types';
 
@@ -45,34 +45,42 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
   const sisterSite = useMemo(() => getSisterSiteForComponent(componentId), [componentId]);
   const isMotor = componentId === 'motors' || componentId === 'motor';
 
-  // État de la POP-UP GUIDE (ouverte par défaut au premier chargement, fermable/passable à tout moment)
+  // État de la POP-UP GUIDE
   const [guideModalOpen, setGuideModalOpen] = useState(true);
   const [guideStep, setGuideStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // Filtres actifs sélectionnés dans le guide ou sur la page
+  // Étape 1 : Renseignement utilisateur (Marque, Gamme, Modèle recherché)
   const [selectedBrand, setSelectedBrand] = useState<string>('');
-  const [selectedModel, setSelectedModel] = useState<string>('');
-  const [customModel, setCustomModel] = useState<string>('');
+  const [selectedGamme, setSelectedGamme] = useState<string>('');
+  const [inputModelQuery, setInputModelQuery] = useState<string>('');
+  const [brandSearch, setBrandSearch] = useState('');
+
+  // Étape 2 : Moteur exact sélectionné tiré de Multi-Motors
+  const [selectedMotor, setSelectedMotor] = useState<MultiMotorsItem | null>(null);
+  const [customModelFallback, setCustomModelFallback] = useState<string>('');
   const [serialNumber, setSerialNumber] = useState<string>('');
-  const [selectedKV, setSelectedKV] = useState<string>('');
+
+  // Étape 3 : Questions courtes sur le problème & circonstances
   const [selectedCircumstance, setSelectedCircumstance] = useState<string>('');
   const [selectedSymptomId, setSelectedSymptomId] = useState<string>('');
   const [checkedObservations, setCheckedObservations] = useState<Record<string, boolean>>({});
   const [userNotes, setUserNotes] = useState<string>('');
-  const [brandSearch, setBrandSearch] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Filtres forum sur la page sous-jacente
+  // Filtres du forum sous-jacent
   const [forumSearchQuery, setForumSearchQuery] = useState('');
   const [rarityFilter, setRarityFilter] = useState<'all' | 'rare' | 'moderate' | 'frequent'>('all');
   const [forumTab, setForumTab] = useState<'all' | 'ai-resolved' | 'unresolved'>('all');
 
-  // Modale de nouveau sujet forum
+  // Modale nouveau sujet forum
   const [newTopicModalOpen, setNewTopicModalOpen] = useState(false);
   const [newTopicPublished, setNewTopicPublished] = useState(false);
 
-  // Données de la marque moteur issue du catalogue Multi-Motors
-  const motorBrandData = isMotor && selectedBrand ? MULTI_MOTORS_FPV_BRANDS[selectedBrand] : null;
+  // Gammes disponibles pour la marque sélectionnée (issues de Multi-Motors)
+  const availableGammes = useMemo(() => {
+    if (!selectedBrand) return [];
+    return MOTOR_GAMMES_BY_BRAND[selectedBrand] || ['Standard', 'Pro Series'];
+  }, [selectedBrand]);
 
   // Filtrage des marques
   const filteredBrands = useMemo(() => {
@@ -89,21 +97,49 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
     );
   }, [isMotor, def.brands, brandSearch]);
 
+  // Moteurs proposés tirés du catalogue Multi-Motors selon Marque, Gamme et Modèle
+  const proposedMotorsFromMultiMotors = useMemo(() => {
+    if (!isMotor || !selectedBrand) return [];
+
+    let list = MULTI_MOTORS_CATALOGUE.filter(
+      (m) => m.brand.toLowerCase() === selectedBrand.toLowerCase()
+    );
+
+    if (selectedGamme && selectedGamme !== 'Toutes') {
+      list = list.filter(
+        (m) => m.gamme.toLowerCase() === selectedGamme.toLowerCase()
+      );
+    }
+
+    if (inputModelQuery) {
+      const q = inputModelQuery.toLowerCase();
+      list = list.filter(
+        (m) =>
+          m.model.toLowerCase().includes(q) ||
+          m.fullName.toLowerCase().includes(q) ||
+          m.classe.toLowerCase().includes(q) ||
+          m.ref.toLowerCase().includes(q) ||
+          m.kv.includes(q)
+      );
+    }
+
+    return list.slice(0, 30); // Limite à 30 résultats ultra-pertinents
+  }, [isMotor, selectedBrand, selectedGamme, inputModelQuery]);
+
   // Symptôme actif
   const currentSymptom = useMemo(() => {
     return def.symptoms.find((s) => s.id === selectedSymptomId) || def.symptoms[0];
   }, [def.symptoms, selectedSymptomId]);
 
-  // Calcul dynamique de l'indice de rareté (1 à 10)
-  // 1 = Panne très très rare / exotique
-  // 10 = Panne très courante / classique
+  // Indice de rareté (1 à 10)
   const currentRarityIndex = currentSymptom?.rarityIndex || 8;
   const currentRarityLabel = currentSymptom?.rarityLabel || `${currentRarityIndex}/10`;
 
-  // Posts forum filtrés selon les critères inscrits
+  // Recherche des posts forum existants sur ce moteur ou ce composant
   const filteredForumPosts = useMemo(() => {
+    const motorName = selectedMotor ? selectedMotor.model : customModelFallback;
     return FORUM_POSTS.filter((post) => {
-      // Filtre catégorie de composant
+      // Filtre catégorie
       const matchCat =
         post.category === componentId ||
         (isMotor && (post.category === 'motors' || post.category === 'esc-stack'));
@@ -111,25 +147,32 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
       // Filtre marque
       const matchBrand =
         !selectedBrand ||
-        (post.brand && post.brand.toLowerCase() === selectedBrand.toLowerCase()) ||
+        Boolean(post.brand && post.brand.toLowerCase() === selectedBrand.toLowerCase()) ||
         post.title.toLowerCase().includes(selectedBrand.toLowerCase()) ||
         post.tags.some((t) => t.toLowerCase() === selectedBrand.toLowerCase());
 
-      // Filtre modèle
-      const activeModel = selectedModel || customModel;
-      const matchModel =
-        !activeModel ||
-        (post.model && post.model.toLowerCase().includes(activeModel.toLowerCase())) ||
-        post.title.toLowerCase().includes(activeModel.toLowerCase());
+      // Filtre modèle / moteur exact
+      let matchModel = true;
+      if (motorName) {
+        const mn = motorName.toLowerCase();
+        matchModel = Boolean(
+          (post.model && post.model.toLowerCase().includes(mn)) ||
+          post.title.toLowerCase().includes(mn) ||
+          (post.productName && post.productName.toLowerCase().includes(mn))
+        );
+      }
 
-      // Filtre recherche textuelle
-      const matchSearch =
-        !forumSearchQuery ||
-        post.title.toLowerCase().includes(forumSearchQuery.toLowerCase()) ||
-        post.solutionSummary?.toLowerCase().includes(forumSearchQuery.toLowerCase()) ||
-        post.tags.some((t) => t.toLowerCase().includes(forumSearchQuery.toLowerCase()));
+      // Filtre texte forum
+      let matchSearch = true;
+      if (forumSearchQuery) {
+        const sq = forumSearchQuery.toLowerCase();
+        matchSearch =
+          post.title.toLowerCase().includes(sq) ||
+          Boolean(post.solutionSummary && post.solutionSummary.toLowerCase().includes(sq)) ||
+          post.tags.some((t) => t.toLowerCase().includes(sq));
+      }
 
-      // Filtre onglet résolution
+      // Filtre onglet
       let matchTab = true;
       if (forumTab === 'ai-resolved') matchTab = Boolean(post.resolvedWithAI);
       if (forumTab === 'unresolved') matchTab = !post.isResolved;
@@ -143,9 +186,19 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
 
       return matchCat && matchBrand && matchModel && matchSearch && matchTab && matchRarity;
     });
-  }, [componentId, isMotor, selectedBrand, selectedModel, customModel, forumSearchQuery, forumTab, rarityFilter]);
+  }, [componentId, isMotor, selectedBrand, selectedMotor, customModelFallback, forumSearchQuery, forumTab, rarityFilter]);
 
-  // Déclenchement de l'analyse IA
+  // Posts forum existants spécifiquement sur le moteur sélectionné
+  const exactMotorForumPosts = useMemo(() => {
+    if (!selectedMotor && !customModelFallback) return [];
+    const query = (selectedMotor?.model || customModelFallback).toLowerCase();
+    return FORUM_POSTS.filter((p) => {
+      const full = `${p.title} ${p.productName || ''} ${p.model || ''} ${p.tags.join(' ')}`.toLowerCase();
+      return full.includes(query);
+    });
+  }, [selectedMotor, customModelFallback]);
+
+  // Déclenchement de l'IA
   const handleTriggerAI = () => {
     setIsAnalyzing(true);
     setTimeout(() => {
@@ -154,7 +207,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
     }, 600);
   };
 
-  // Passer le guide et accéder directement au forum filtré
+  // Passer le guide
   const handleSkipGuide = () => {
     setGuideModalOpen(false);
   };
@@ -163,17 +216,18 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
   const handleResetGuide = () => {
     setGuideStep(1);
     setSelectedBrand('');
-    setSelectedModel('');
-    setCustomModel('');
+    setSelectedGamme('');
+    setInputModelQuery('');
+    setSelectedMotor(null);
+    setCustomModelFallback('');
     setSerialNumber('');
-    setSelectedKV('');
     setSelectedCircumstance('');
     setSelectedSymptomId('');
     setCheckedObservations({});
     setUserNotes('');
   };
 
-  // Rendu de la jauge de rareté (1 à 10)
+  // Rendu de la jauge de rareté
   const renderRarityBadge = (index: number, label?: string) => {
     const isUltraRare = index <= 2;
     const isRare = index >= 3 && index <= 4;
@@ -226,18 +280,14 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Bouton pour réouvrir la pop-up guide */}
             <button
-              onClick={() => {
-                setGuideModalOpen(true);
-              }}
+              onClick={() => setGuideModalOpen(true)}
               className="flex items-center gap-2 text-xs font-bold px-3.5 py-1.5 rounded-full border-2 border-black bg-black text-white hover:bg-neutral-800 transition-all shadow-xs"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Ouvrir le Guide de Diagnostic</span>
+              <span>Ouvrir l Assistant Diagnostic</span>
             </button>
 
-            {/* Badge Partenaire */}
             {sisterSite && (
               <a
                 href={sisterSite.domain}
@@ -256,7 +306,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
         </div>
       </header>
 
-      {/* 2. BANNIÈRE PRINCIPALE DU HUB FORUM & DÉPANNAGE */}
+      {/* 2. BANNIÈRE DU HUB */}
       <div className="w-full border-b border-neutral-200 bg-neutral-50/80 py-6 sm:py-7">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -286,7 +336,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   Dépannage & Solutions : {def.frenchTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-neutral-600 mt-0.5">
-                  Explorez les pannes résolues par la communauté et l IA, ou lancez le questionnaire pop-up guidé pour diagnostiquer votre pièce pas-à-pas.
+                  Recherchez votre moteur par marque, gamme et modèle, puis laissez l IA et la communauté identifier la panne avec indice de rareté de 1 à 10.
                 </p>
               </div>
             </div>
@@ -309,52 +359,43 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             </div>
           </div>
 
-          {/* BARRE DE FILTRES ACTIFS (SI LE GUIDE A ÉTÉ PASSÉ OU REMPLI) */}
+          {/* BARRE DE FILTRES ACTIFS */}
           <div className="mt-5 pt-4 border-t border-neutral-200/80 flex flex-wrap items-center gap-2 text-xs">
             <span className="text-neutral-500 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 mr-1">
               <Filter className="w-3.5 h-3.5 text-neutral-400" />
-              <span>Filtres appliqués :</span>
+              <span>Filtres actifs :</span>
             </span>
 
             {/* Pill Composant */}
-            <span className="px-2.5 py-1 rounded-lg bg-black text-white font-bold text-[11px] flex items-center gap-1">
-              <span>{def.componentName}</span>
+            <span className="px-2.5 py-1 rounded-lg bg-black text-white font-bold text-[11px]">
+              {def.componentName}
             </span>
 
-            {/* Pill Marque si sélectionnée */}
-            {selectedBrand ? (
+            {/* Pill Marque */}
+            {selectedBrand && (
               <span className="px-2.5 py-1 rounded-lg bg-white border border-black text-black font-bold text-[11px] flex items-center gap-1.5 shadow-2xs">
                 <span>Marque : {selectedBrand}</span>
                 <button
                   onClick={() => {
                     setSelectedBrand('');
-                    setSelectedModel('');
+                    setSelectedGamme('');
+                    setSelectedMotor(null);
                   }}
                   className="hover:text-red-600 font-black ml-0.5"
                 >
                   ✕
                 </button>
               </span>
-            ) : (
-              <button
-                onClick={() => {
-                  setGuideStep(1);
-                  setGuideModalOpen(true);
-                }}
-                className="px-2.5 py-1 rounded-lg bg-white border border-dashed border-neutral-300 text-neutral-600 hover:border-black hover:text-black font-medium text-[11px]"
-              >
-                + Filtrer par marque
-              </button>
             )}
 
-            {/* Pill Modèle si sélectionné */}
-            {(selectedModel || customModel) && (
-              <span className="px-2.5 py-1 rounded-lg bg-white border border-black text-black font-bold text-[11px] flex items-center gap-1.5 shadow-2xs">
-                <span>Modèle : {selectedModel || customModel}</span>
+            {/* Pill Gamme */}
+            {selectedGamme && (
+              <span className="px-2.5 py-1 rounded-lg bg-white border border-neutral-400 text-neutral-900 font-bold text-[11px] flex items-center gap-1.5 shadow-2xs">
+                <span>Gamme : {selectedGamme}</span>
                 <button
                   onClick={() => {
-                    setSelectedModel('');
-                    setCustomModel('');
+                    setSelectedGamme('');
+                    setSelectedMotor(null);
                   }}
                   className="hover:text-red-600 font-black ml-0.5"
                 >
@@ -363,13 +404,12 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               </span>
             )}
 
-            {/* Pill Numéro de Série si renseigné */}
-            {serialNumber && (
-              <span className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 font-mono text-[11px] flex items-center gap-1.5">
-                <Hash className="w-3 h-3 text-amber-700" />
-                <span>S/N : {serialNumber}</span>
+            {/* Pill Moteur Multi-Motors exact */}
+            {selectedMotor && (
+              <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-950 font-bold text-[11px] flex items-center gap-1.5 shadow-2xs">
+                <span>Moteur : {selectedMotor.model} ({selectedMotor.classe} {selectedMotor.kv ? `${selectedMotor.kv}KV` : ''})</span>
                 <button
-                  onClick={() => setSerialNumber('')}
+                  onClick={() => setSelectedMotor(null)}
                   className="hover:text-red-600 font-black ml-0.5"
                 >
                   ✕
@@ -377,36 +417,36 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               </span>
             )}
 
-            {/* Bouton pour tout effacer */}
-            {(selectedBrand || selectedModel || customModel || serialNumber) && (
+            {/* Bouton pour réinitialiser */}
+            {(selectedBrand || selectedGamme || selectedMotor || serialNumber) && (
               <button
                 onClick={handleResetGuide}
                 className="text-neutral-500 hover:text-black underline text-[11px] ml-2"
               >
-                Réinitialiser les filtres
+                Tout effacer
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* 3. PAGE PRINCIPALE DU FORUM AVEC LES FILTRES INSCRITS */}
+      {/* 3. FLUX DU FORUM SOUS-JACENT */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-6">
-        {/* BANDEAU RECOMMANDATION IA SI FILTRES ACTIFS */}
-        {(selectedBrand || selectedModel) && currentSymptom && (
+        {/* BANDEAU PRÉ-DIAGNOSTIC IA SI MOTEUR SÉLECTIONNÉ */}
+        {selectedMotor && currentSymptom && (
           <div className="p-4 sm:p-5 rounded-2xl border-2 border-black bg-neutral-50/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-2 py-0.5 rounded bg-black text-white text-[10px] font-black uppercase tracking-wider">
-                  PRÉ-DIAGNOSTIC IA FIXMYDRONE
+                  PRÉ-DIAGNOSTIC SUR CE MOTEUR
                 </span>
                 {renderRarityBadge(currentRarityIndex, currentRarityLabel)}
-                <span className="text-xs font-bold text-neutral-800">
-                  {selectedBrand} {selectedModel || customModel}
+                <span className="text-xs font-bold text-neutral-900">
+                  {selectedMotor.fullName} (Réf : {selectedMotor.ref})
                 </span>
               </div>
               <p className="text-xs text-neutral-700 leading-relaxed max-w-3xl">
-                <span className="font-bold text-black">Cause identifiée :</span> {currentSymptom.aiDiagnostic.rootCause} ({currentSymptom.aiDiagnostic.probability}% certitude).
+                <span className="font-bold text-black">Cause identifiée :</span> {currentSymptom.aiDiagnostic.rootCause} ({currentSymptom.aiDiagnostic.probability}% de certitude).
               </p>
             </div>
 
@@ -418,14 +458,13 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               className="px-4 py-2 rounded-xl bg-black text-white text-xs font-bold hover:bg-neutral-800 transition-all flex items-center gap-2 shrink-0"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Voir le protocole complet</span>
+              <span>Voir le protocole & solutions</span>
             </button>
           </div>
         )}
 
-        {/* BARRE D'OUTILS ET ONGLETS FORUM */}
+        {/* BARRE D'OUTILS ET ONGLETS */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 pb-4">
-          {/* Onglets */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
             {[
               { id: 'all', label: 'Toutes les discussions' },
@@ -446,9 +485,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             ))}
           </div>
 
-          {/* Filtre de rareté (1 à 10) et recherche */}
           <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-            {/* Sélecteur de rareté */}
             <div className="flex items-center gap-1.5 text-xs bg-neutral-100 p-1 rounded-xl">
               <span className="text-neutral-500 font-bold px-2 text-[11px]">Rareté :</span>
               {[
@@ -471,7 +508,6 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               ))}
             </div>
 
-            {/* Champ de recherche */}
             <div className="relative w-full sm:w-56">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
               <input
@@ -485,10 +521,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
           </div>
         </div>
 
-        {/* LISTE DES SUJETS DU FORUM AVEC INDICE DE RÉSOLUTION / RARETÉ (1 À 10) */}
+        {/* LISTE DES SUJETS DU FORUM */}
         <div className="space-y-3">
           {filteredForumPosts.length > 0 ? (
-            filteredForumPosts.map((post) => {
+            filteredForumPosts.map((post: CommunityPost) => {
               const rIndex = post.rarityIndex || 8;
               const rLabel = post.rarityLabel || `${rIndex}/10`;
 
@@ -499,7 +535,6 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <div className="flex items-center gap-2 flex-wrap">
-                      {/* Badge Résolution IA */}
                       {post.resolvedWithAI ? (
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-black text-white flex items-center gap-1">
                           <Sparkles className="w-3 h-3 text-amber-300" />
@@ -515,10 +550,9 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                         </span>
                       )}
 
-                      {/* INDICE DE RÉSOLUTION / RARETÉ DE LA PANNE (1 À 10) */}
+                      {/* INDICE DE RÉSOLUTION / RARETÉ 1 À 10 */}
                       {renderRarityBadge(rIndex, rLabel)}
 
-                      {/* Produit / Modèle ciblé */}
                       {post.productName && (
                         <span className="text-[11px] font-mono font-bold text-neutral-500">
                           {post.productName}
@@ -538,12 +572,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     </div>
                   </div>
 
-                  {/* Titre du sujet */}
                   <h3 className="text-sm sm:text-base font-bold text-neutral-900 group-hover:text-black leading-snug">
                     {post.title}
                   </h3>
 
-                  {/* Extrait de la solution IA ou communautaire */}
                   {post.solutionSummary && (
                     <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200/80 text-xs text-neutral-800 space-y-1">
                       <div className="flex items-center gap-1.5 font-bold text-black text-[11px]">
@@ -556,7 +588,6 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     </div>
                   )}
 
-                  {/* Tags & Auteur */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-neutral-100 text-xs">
                     <div className="flex items-center gap-2 flex-wrap">
                       {post.tags.map((t) => (
@@ -584,10 +615,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             <div className="py-12 px-6 rounded-2xl border border-dashed border-neutral-300 text-center space-y-3 bg-neutral-50/50">
               <Search className="w-8 h-8 text-neutral-400 mx-auto" />
               <h4 className="text-sm font-bold text-neutral-800">
-                Aucun sujet ne correspond exactement à ces filtres
+                Aucune discussion ne correspond à cette recherche exacte
               </h4>
               <p className="text-xs text-neutral-500 max-w-md mx-auto">
-                Vous pouvez élargir vos filtres de rareté, ou lancer le guide pas-à-pas pour obtenir immédiatement une analyse IA.
+                Lancez l assistant pop-up pour obtenir immédiatement un diagnostic IA personnalisé avec estimation de rareté.
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <button
@@ -600,7 +631,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   onClick={() => setGuideModalOpen(true)}
                   className="px-4 py-2 text-xs font-bold bg-black text-white rounded-xl hover:bg-neutral-800"
                 >
-                  Lancer le diagnostic IA
+                  Lancer l assistant guidé
                 </button>
               </div>
             </div>
@@ -609,7 +640,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
       </main>
 
       {/* =========================================================================
-          4. POP-UP DE DIAGNOSTIC GUIDÉ (MODALE INTERACTIVE AVEC OPTION DE PASSER)
+          4. POP-UP DE DIAGNOSTIC GUIDÉ (NOUVEAU FLUX MULTI-MOTORS EN 4 ÉTAPES)
           ========================================================================= */}
       {guideModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
@@ -617,25 +648,33 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
             {/* EN-TÊTE DE LA POP-UP */}
             <div className="p-4 sm:p-5 border-b border-neutral-200 bg-neutral-50/90 flex items-center justify-between gap-4 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-black text-xs">
+                <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-black text-xs shrink-0">
                   <Sparkles className="w-5 h-5 text-amber-300" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-black uppercase tracking-wider text-black">
-                      Assistant de Diagnostic Guidé
+                      Assistant Diagnostic Guidé
                     </span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-neutral-200 text-neutral-800">
                       Étape {guideStep} sur 4
                     </span>
+                    {isMotor && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500/10 text-amber-900 border border-amber-500/30">
+                        Multi-Motors Hub
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-neutral-500">
-                    {def.componentName} • Répond aux questions pour identifier la panne via le forum ou l IA
+                    {guideStep === 1 && 'Renseignez la marque, la gamme et le modèle recherché'}
+                    {guideStep === 2 && 'Sélectionnez le moteur tiré de Multi-Motors'}
+                    {guideStep === 3 && 'Précisez les circonstances et le symptôme de panne'}
+                    {guideStep === 4 && 'Résolution par post existant ou intelligence artificielle (1 à 10)'}
                   </p>
                 </div>
               </div>
 
-              {/* BOUTON CRITIQUE : PASSER LE GUIDE POUR ACCÉDER DIRECTEMENT AU FORUM FILTRÉ */}
+              {/* BOUTON PASSER LE GUIDE */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleSkipGuide}
@@ -655,119 +694,93 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               </div>
             </div>
 
-            {/* CORPS DE LA POP-UP : LES 4 ÉTAPES GUIDÉES */}
+            {/* CORPS DE LA POP-UP */}
             <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-6">
-              {/* ÉTAPE 1 : MARQUE */}
+              {/* =========================================================================
+                  ÉTAPE 1 : RENSEIGNER LA MARQUE, LA GAMME ET LE MODÈLE
+                  ========================================================================= */}
               {guideStep === 1 && (
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <h3 className="text-base font-black text-neutral-900">
-                        1. Choisissez la marque de votre {def.componentName}
-                      </h3>
-                      <p className="text-xs text-neutral-500">
-                        {isMotor
-                          ? 'Alimenté par les 13 824 références du catalogue Multi-Motors.fr'
-                          : 'Sélectionnez le fabricant d origine de la pièce'}
-                      </p>
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-base font-black text-neutral-900">
+                      1. Renseignez la Marque, la Gamme et le Modèle du moteur
+                    </h3>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Indiquez les caractéristiques de votre pièce pour extraire les moteurs répertoriés sur Multi-Motors.
+                    </p>
+                  </div>
+
+                  {/* A. Choix de la Marque */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-black uppercase tracking-wider text-neutral-700">
+                        A. Marque du moteur :
+                      </label>
+                      <span className="text-[11px] text-neutral-500">
+                        {selectedBrand ? `Sélectionnée : ${selectedBrand}` : 'Cliquez pour choisir'}
+                      </span>
                     </div>
 
-                    <div className="relative w-full sm:w-56">
-                      <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-                      <input
-                        type="text"
-                        placeholder="Filtrer une marque..."
-                        value={brandSearch}
-                        onChange={(e) => setBrandSearch(e.target.value)}
-                        className="w-full pl-8 pr-3 py-1.5 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black"
-                      />
+                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-36 overflow-y-auto pr-1">
+                      {filteredBrands.map((b: any) => {
+                        const isSelected = selectedBrand === b.name;
+                        return (
+                          <button
+                            key={b.name}
+                            onClick={() => {
+                              setSelectedBrand(b.name);
+                              setSelectedGamme('');
+                              setSelectedMotor(null);
+                            }}
+                            className={`p-2.5 rounded-xl border text-left text-xs transition-all ${
+                              isSelected
+                                ? 'border-black bg-black text-white font-bold shadow-xs'
+                                : 'border-neutral-200 bg-white hover:border-black text-neutral-900'
+                            }`}
+                          >
+                            <span className="truncate block">{b.name}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  {/* Grille des marques */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto pr-1">
-                    {filteredBrands.map((b: any) => {
-                      const isSelected = selectedBrand === b.name;
-                      return (
+                  {/* B. Choix de la Gamme (Dès qu'une marque est sélectionnée) */}
+                  {selectedBrand && (
+                    <div className="space-y-2 pt-1 border-t border-neutral-100">
+                      <label className="text-xs font-black uppercase tracking-wider text-neutral-700">
+                        B. Gamme / Série ({selectedBrand}) :
+                      </label>
+                      <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
                         <button
-                          key={b.name}
                           onClick={() => {
-                            setSelectedBrand(b.name);
-                            setSelectedModel('');
-                            setGuideStep(2);
+                            setSelectedGamme('');
+                            setSelectedMotor(null);
                           }}
-                          className={`p-3 rounded-xl border text-left transition-all ${
-                            isSelected
-                              ? 'border-black bg-black text-white shadow-xs'
-                              : 'border-neutral-200 bg-white hover:border-black hover:bg-neutral-50 text-neutral-900'
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                            !selectedGamme
+                              ? 'bg-black text-white border-black'
+                              : 'bg-white border-neutral-200 text-neutral-700 hover:border-black'
                           }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold truncate">{b.name}</span>
-                            {b.totalMotorsInCatalog && (
-                              <span className={`text-[9px] font-mono px-1 rounded ${
-                                isSelected ? 'bg-white/20 text-white' : 'bg-neutral-100 text-neutral-600'
-                              }`}>
-                                {b.totalMotorsInCatalog}
-                              </span>
-                            )}
-                          </div>
+                          Toutes les gammes
                         </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ÉTAPE 2 : MODÈLE, CLASSE/KV & NUMÉRO DE SÉRIE */}
-              {guideStep === 2 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-base font-black text-neutral-900">
-                        2. Modèle & Référence de lot ({selectedBrand})
-                      </h3>
-                      <p className="text-xs text-neutral-500">
-                        Choisissez le modèle exact ou renseignez le numéro de série / lot
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setGuideStep(1)}
-                      className="text-xs font-bold text-neutral-500 hover:text-black underline"
-                    >
-                      Changer de marque
-                    </button>
-                  </div>
-
-                  {/* Modèles catalogue Multi-Motors */}
-                  {isMotor && motorBrandData && motorBrandData.models.length > 0 && (
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-600">
-                        Modèles fréquents répertoriés sur Multi-Motors :
-                      </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-                        {motorBrandData.models.slice(0, 18).map((m: any) => {
-                          const isSelected = selectedModel === m.name;
+                        {availableGammes.map((g) => {
+                          const isSelected = selectedGamme === g;
                           return (
                             <button
-                              key={m.name}
+                              key={g}
                               onClick={() => {
-                                setSelectedModel(m.name);
-                                setCustomModel('');
-                                if (m.kvs && m.kvs.length > 0) setSelectedKV(m.kvs[0]);
+                                setSelectedGamme(g);
+                                setSelectedMotor(null);
                               }}
-                              className={`p-2.5 rounded-xl border text-left transition-all ${
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                                 isSelected
-                                  ? 'border-black bg-black text-white shadow-xs'
-                                  : 'border-neutral-200 bg-white hover:border-black text-neutral-900'
+                                  ? 'bg-black text-white border-black'
+                                  : 'bg-white border-neutral-200 text-neutral-700 hover:border-black'
                               }`}
                             >
-                              <p className="text-xs font-bold truncate">{m.name}</p>
-                              {m.classes && m.classes.length > 0 && (
-                                <p className={`text-[10px] ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                                  {m.classes.join(', ')}
-                                </p>
-                              )}
+                              {g}
                             </button>
                           );
                         })}
@@ -775,54 +788,160 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     </div>
                   )}
 
-                  {/* Saisie libre modèle */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-neutral-700">Autre modèle / Gamme :</label>
+                  {/* C. Recherche du Modèle / Stator */}
+                  <div className="space-y-1.5 pt-1 border-t border-neutral-100">
+                    <label className="text-xs font-black uppercase tracking-wider text-neutral-700">
+                      C. Modèle ou Format Stator (facultatif ou précis) :
+                    </label>
+                    <div className="relative">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
                       <input
                         type="text"
-                        placeholder="Ex: F60 PRO V, Reaper 65A..."
-                        value={customModel}
-                        onChange={(e) => {
-                          setCustomModel(e.target.value);
-                          if (e.target.value) setSelectedModel('');
-                        }}
-                        className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black bg-white"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-neutral-700">
-                        Numéro de Série (S/N) ou Lot de fabrication :
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Ex: S/N 2024-LOT-4412"
-                        value={serialNumber}
-                        onChange={(e) => setSerialNumber(e.target.value)}
-                        className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black bg-white font-mono"
+                        placeholder="Ex: F60 PRO V, 2207, 1950KV, ECO II 2004, GTS V3..."
+                        value={inputModelQuery}
+                        onChange={(e) => setInputModelQuery(e.target.value)}
+                        className="w-full pl-9 pr-3 py-2.5 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black bg-white"
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* ÉTAPE 3 : CIRCONSTANCES & SYMPTÔMES */}
+              {/* =========================================================================
+                  ÉTAPE 2 : MOTEURS TIRÉS DE MULTI-MOTORS
+                  ========================================================================= */}
+              {guideStep === 2 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-black text-neutral-900">
+                        2. Moteurs correspondants tirés de Multi-Motors.fr
+                      </h3>
+                      <p className="text-xs text-neutral-500">
+                        Critères : <span className="font-bold text-black">{selectedBrand}</span> {selectedGamme ? `• Gamme ${selectedGamme}` : ''} {inputModelQuery ? `• « ${inputModelQuery} »` : ''}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setGuideStep(1)}
+                      className="text-xs font-bold text-neutral-500 hover:text-black underline"
+                    >
+                      Modifier la recherche
+                    </button>
+                  </div>
+
+                  {/* Liste des moteurs tirés de Multi-Motors */}
+                  {proposedMotorsFromMultiMotors.length > 0 ? (
+                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                      {proposedMotorsFromMultiMotors.map((m) => {
+                        const isSelected = selectedMotor?.id === m.id;
+                        return (
+                          <div
+                            key={m.id}
+                            onClick={() => {
+                              setSelectedMotor(m);
+                              setCustomModelFallback('');
+                            }}
+                            className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-center justify-between gap-3 ${
+                              isSelected
+                                ? 'border-black bg-neutral-50 ring-2 ring-black shadow-xs'
+                                : 'border-neutral-200 bg-white hover:border-black'
+                            }`}
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-black text-neutral-900">{m.fullName}</span>
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600">
+                                  Réf : {m.ref}
+                                </span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-900 border border-amber-500/30">
+                                  Multi-Motors
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-3 text-[11px] text-neutral-500 flex-wrap">
+                                {m.classe && <span>Stator : <strong className="text-neutral-700">{m.classe}</strong></span>}
+                                {m.kv && <span>KV : <strong className="text-neutral-700">{m.kv}</strong></span>}
+                                {m.poids && <span>Poids : <strong className="text-neutral-700">{m.poids}</strong></span>}
+                                {m.lipo && <span>LiPo : <strong className="text-neutral-700">{m.lipo}</strong></span>}
+                                {m.shaft && <span>Arbre : <strong className="text-neutral-700">{m.shaft}</strong></span>}
+                              </div>
+                            </div>
+
+                            <div className="shrink-0">
+                              {isSelected ? (
+                                <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs">
+                                  <Check className="w-3.5 h-3.5" />
+                                </span>
+                              ) : (
+                                <span className="text-xs font-bold text-neutral-400">Choisir</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl border border-dashed border-neutral-300 text-center space-y-2 bg-neutral-50">
+                      <p className="text-xs font-bold text-neutral-700">
+                        Aucun moteur ne correspond exactement à ce filtre dans Multi-Motors.
+                      </p>
+                      <p className="text-[11px] text-neutral-500">
+                        Vous pouvez saisir le modèle exact manuellement ci-dessous pour poursuivre le diagnostic :
+                      </p>
+                      <input
+                        type="text"
+                        placeholder="Ex: T-Motor F60 PRO V 1950KV"
+                        value={customModelFallback}
+                        onChange={(e) => {
+                          setCustomModelFallback(e.target.value);
+                          setSelectedMotor(null);
+                        }}
+                        className="px-3 py-2 text-xs border border-neutral-300 rounded-xl w-full max-w-sm mx-auto block bg-white focus:outline-none focus:border-black"
+                      />
+                    </div>
+                  )}
+
+                  {/* Numéro de série / lot de traçabilité */}
+                  <div className="p-3.5 rounded-xl border border-neutral-200 bg-neutral-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div>
+                      <span className="font-bold text-neutral-800 flex items-center gap-1.5">
+                        <Barcode className="w-3.5 h-3.5" />
+                        <span>Numéro de série (S/N) ou Lot de fabrication :</span>
+                      </span>
+                      <span className="text-[11px] text-neutral-500">
+                        Optionnel : permet de corréler avec d éventuels défauts de série connus
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Ex: TM-2024-F60-8842"
+                      value={serialNumber}
+                      onChange={(e) => setSerialNumber(e.target.value)}
+                      className="px-3 py-1.5 text-xs border border-neutral-300 rounded-lg w-full sm:w-48 bg-white font-mono focus:outline-none focus:border-black"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* =========================================================================
+                  ÉTAPE 3 : QUESTIONS COURTES SUR LE PROBLÈME
+                  ========================================================================= */}
               {guideStep === 3 && (
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-base font-black text-neutral-900">
-                      3. Que se passe-t-il sur votre {selectedBrand} {selectedModel || customModel} ?
+                      3. Quel problème rencontrez-vous sur ce moteur ?
                     </h3>
                     <p className="text-xs text-neutral-500">
-                      Sélectionnez la circonstance et le comportement anormal observé
+                      Moteur : <span className="font-bold text-black">{selectedMotor?.fullName || customModelFallback || selectedBrand}</span>
                     </p>
                   </div>
 
-                  {/* Circonstances */}
+                  {/* Circonstance */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-600">
-                      Circonstance d apparition :
+                      Quand est apparu le problème ?
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {def.circumstances.map((c) => {
@@ -847,7 +966,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   {/* Symptômes précis */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-600">
-                      Symptôme constaté (cliquez pour choisir) :
+                      Symptôme constaté :
                     </label>
                     <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                       {def.symptoms.map((s) => {
@@ -877,29 +996,58 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 </div>
               )}
 
-              {/* ÉTAPE 4 : RÉSULTAT DU GUIDE DANS LA POP-UP (IA & FORUM) */}
+              {/* =========================================================================
+                  ÉTAPE 4 : RÉSOLUTION (POSTS EXISTANTS SUR CE MOTEUR OU IA)
+                  ========================================================================= */}
               {guideStep === 4 && (
                 <div className="space-y-5">
                   <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                        DIAGNOSTIC GUIDÉ ÉTABLI
+                        DIAGNOSTIC & RÉSOLUTION FINALISÉS
                       </span>
                       <h3 className="text-base font-black text-neutral-900">
-                        Résolution : {selectedBrand} {selectedModel || customModel}
+                        Résolution pour : {selectedMotor?.fullName || customModelFallback || selectedBrand}
                       </h3>
                     </div>
 
-                    {/* BADGE INDICE DE RARETÉ DE LA PANNE 1 À 10 */}
                     {renderRarityBadge(currentRarityIndex, currentRarityLabel)}
                   </div>
 
-                  {/* CARTE DE CAUSE RACINE IA */}
+                  {/* A. POSTS FORUM EXISTANTS SUR CE MOTEUR EXACT */}
+                  {exactMotorForumPosts.length > 0 ? (
+                    <div className="p-4 rounded-2xl bg-neutral-900 text-white space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Discussion forum existante sur ce moteur exact !</span>
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500 text-white">
+                          Solution Validée
+                        </span>
+                      </div>
+
+                      {exactMotorForumPosts.slice(0, 2).map((p) => (
+                        <div key={p.id} className="p-3 rounded-xl bg-white/10 border border-white/10 space-y-1.5">
+                          <p className="text-xs font-bold text-white">{p.title}</p>
+                          <p className="text-[11px] text-neutral-300 leading-relaxed">
+                            💡 <span className="font-bold text-white">Solution pilote :</span> {p.solutionSummary}
+                          </p>
+                          <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-1">
+                            <span>Par {p.author.callsign} ({p.author.badge})</span>
+                            <span>{p.replies} réponses</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {/* B. ANALYSE ET RÉSOLUTION PAR L'IA */}
                   <div className="p-4 rounded-2xl border-2 border-black bg-neutral-50 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black uppercase tracking-wider text-black flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                        <span>Diagnostic IA FixMyDrone</span>
+                        <span>Résolution IA adaptée à ce moteur</span>
                       </span>
                       <span className="px-2 py-0.5 rounded bg-black text-white text-[10px] font-black">
                         {currentSymptom?.aiDiagnostic.probability}% CERTITUDE
@@ -913,10 +1061,9 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                       {currentSymptom?.aiDiagnostic.explanation}
                     </p>
 
-                    {/* Procédure pas à pas */}
                     <div className="pt-2 border-t border-neutral-200 space-y-1.5">
                       <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider block">
-                        Action Corrective Recommandée :
+                        Action Corrective & Protocole :
                       </span>
                       <ul className="text-xs text-neutral-800 space-y-1 list-disc pl-4">
                         {currentSymptom?.aiDiagnostic.recommendedFix.map((fix, idx) => (
@@ -925,27 +1072,11 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                       </ul>
                     </div>
                   </div>
-
-                  {/* LIEN AVEC LE FORUM COMMUNAUTAIRE */}
-                  <div className="p-4 rounded-2xl bg-neutral-900 text-white space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Ce que dit la communauté FixMyDrone</span>
-                      </span>
-                      <span className="text-[10px] font-bold text-neutral-300">
-                        Alimente cette IA
-                      </span>
-                    </div>
-                    <p className="text-xs text-neutral-300 leading-relaxed">
-                      Plusieurs pilotes ont déjà rencontré ce comportement sur cette série. En fermant le guide, le forum s affichera avec vos filtres exacts ({selectedBrand} {selectedModel || customModel}).
-                    </p>
-                  </div>
                 </div>
               )}
             </div>
 
-            {/* PIED DE PAGE DE LA POP-UP : NAVIGATION & BOUTON PASSER */}
+            {/* PIED DE PAGE DE LA POP-UP */}
             <div className="p-4 sm:p-5 border-t border-neutral-200 bg-neutral-50/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
               <div className="flex items-center gap-2">
                 {guideStep > 1 && guideStep < 4 && (
@@ -956,7 +1087,6 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     ← Précédent
                   </button>
                 )}
-                {/* BOUTON PASSER / ACCÉDER DIRECTEMENT AU FORUM FILTRÉ */}
                 <button
                   onClick={handleSkipGuide}
                   className="px-3.5 py-2 text-xs font-bold text-neutral-500 hover:text-black hover:underline"
@@ -970,9 +1100,9 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                   <button
                     onClick={() => setGuideStep(2)}
                     disabled={!selectedBrand}
-                    className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>Continuer vers le modèle</span>
+                    <span>Voir les moteurs Multi-Motors correspondants</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 )}
@@ -980,10 +1110,10 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 {guideStep === 2 && (
                   <button
                     onClick={() => setGuideStep(3)}
-                    disabled={!selectedModel && !customModel}
-                    className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5"
+                    disabled={!selectedMotor && !customModelFallback}
+                    className="px-5 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 disabled:opacity-40 transition-all flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>Continuer vers le symptôme</span>
+                    <span>Diagnostiquer ce moteur</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 )}
@@ -997,7 +1127,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     {isAnalyzing ? (
                       <>
                         <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Calcul IA & Rareté...</span>
+                        <span>Recherche forum & IA...</span>
                       </>
                     ) : (
                       <>
@@ -1013,7 +1143,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                     onClick={handleSkipGuide}
                     className="px-6 py-2.5 text-xs font-black uppercase tracking-wider bg-black text-white rounded-xl hover:bg-neutral-800 transition-all shadow-xs"
                   >
-                    Voir les discussions forum avec ces filtres
+                    Voir les discussions du forum sur ce moteur
                   </button>
                 )}
               </div>
@@ -1022,7 +1152,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
         </div>
       )}
 
-      {/* MODAL POUR CRÉER UN NOUVEAU SUJET FORUM PRÉ-REMPLI */}
+      {/* MODAL POUR CRÉER UN SUJET FORUM PRÉ-REMPLI */}
       {newTopicModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-black max-w-xl w-full p-6 shadow-2xl space-y-4">
@@ -1046,7 +1176,7 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
                 <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h4 className="text-base font-black text-neutral-900">Votre sujet est publié sur le forum !</h4>
                 <p className="text-xs text-neutral-600 max-w-sm mx-auto">
-                  La communauté a été notifiée de votre référence ({selectedBrand || 'Moteur'} {selectedModel || customModel}) et de votre indice de rareté ({currentRarityIndex}/10).
+                  La communauté a été notifiée de votre moteur ({selectedMotor?.fullName || customModelFallback || selectedBrand}) et de son indice de rareté ({currentRarityIndex}/10).
                 </p>
                 <button
                   onClick={() => {
@@ -1060,24 +1190,20 @@ export function DiagnosticWorkflow({ componentId }: DiagnosticWorkflowProps) {
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-xs text-neutral-600">
-                  Votre question sera pré-remplie avec le modèle exact et les résultats de l analyse IA :
-                </p>
-
                 <div className="space-y-1">
                   <label className="text-[11px] font-bold text-neutral-700">Titre du sujet :</label>
                   <input
                     type="text"
-                    defaultValue={`[Aide] ${selectedBrand || 'Moteur'} ${selectedModel || customModel || ''} - ${currentSymptom?.title || 'Anomalie de fonctionnement'}`}
+                    defaultValue={`[Aide] ${selectedMotor?.fullName || customModelFallback || selectedBrand || 'Moteur'} - ${currentSymptom?.title || 'Anomalie de fonctionnement'}`}
                     className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-lg focus:outline-none focus:border-black font-medium"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-neutral-700">Détails & Indice de rareté :</label>
+                  <label className="text-[11px] font-bold text-neutral-700">Détails & Diagnostic IA :</label>
                   <textarea
                     rows={6}
-                    defaultValue={`Bonjour à tous,\n\nComposant : ${selectedBrand || 'Moteur'} ${selectedModel || customModel || ''} ${selectedKV ? `(${selectedKV})` : ''} ${serialNumber ? `(S/N: ${serialNumber})` : ''}\n\nSymptôme : ${currentSymptom?.title || 'Anomalie constatée'}\nIndice de rareté estimé par l'IA : ${currentRarityIndex}/10 (${currentRarityLabel})\n\nPré-diagnostic IA : ${currentSymptom?.aiDiagnostic.rootCause || ''}\n\nAvez-vous déjà rencontré ce comportement sur ce modèle ? Merci pour votre aide !`}
+                    defaultValue={`Bonjour à tous,\n\nMoteur Multi-Motors : ${selectedMotor?.fullName || customModelFallback || selectedBrand || ''} ${selectedMotor?.ref ? `(Réf : ${selectedMotor.ref})` : ''} ${serialNumber ? `(S/N : ${serialNumber})` : ''}\n\nSymptôme : ${currentSymptom?.title || 'Anomalie constatée'}\nIndice de rareté estimé par l'IA : ${currentRarityIndex}/10 (${currentRarityLabel})\n\nPré-diagnostic IA : ${currentSymptom?.aiDiagnostic.rootCause || ''}\n\nQuelqu'un a déjà rencontré ce cas sur ce moteur ? Merci d'avance pour vos conseils !`}
                     className="w-full px-3 py-2 text-xs border border-neutral-300 rounded-lg focus:outline-none focus:border-black font-mono text-[11px]"
                   />
                 </div>
