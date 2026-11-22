@@ -76,10 +76,10 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
     <>
       <nav
         aria-label="Navigation principale"
-        className={`w-full flex items-center justify-between px-3 sm:px-6 py-2.5 z-30 transition-all ${className}`}
+        className={`w-full flex items-center justify-between px-2.5 sm:px-6 py-2 z-30 transition-all ${className}`}
       >
         {/* Logo & Titre Multi-Motors Style */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <Link
             href="/"
             className="flex items-center gap-2 group transition-transform active:scale-95"
@@ -89,7 +89,7 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
               FD
             </div>
             <div className="flex flex-col">
-              <span className="font-mono font-black text-sm sm:text-base tracking-tight text-black group-hover:text-zinc-700 transition-colors">
+              <span className="font-mono font-black text-xs sm:text-base tracking-tight text-black group-hover:text-zinc-700 transition-colors">
                 FixMyDrone<span className="text-red-600">.fr</span>
               </span>
               <span className="hidden sm:inline-block text-[9px] font-mono text-zinc-600 font-semibold uppercase tracking-wider -mt-0.5">
@@ -100,18 +100,18 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
         </div>
 
         {/* Pilules de Navigation Style Multi-Motors */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           {/* Onglet Actualités / News (Dashboard Forum) */}
           <Link
             href="/forum"
-            className={`inline-flex items-center gap-2 h-9 px-4 sm:px-4.5 border-2 rounded-[13px] font-mono text-xs font-bold uppercase tracking-[0.14em] transition-all duration-150 ${
+            className={`inline-flex items-center gap-1.5 sm:gap-2 h-8.5 sm:h-9 px-2.5 sm:px-4.5 border-2 rounded-[13px] font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-[0.14em] transition-all duration-150 ${
               activeTab === 'news'
                 ? 'border-solid border-black bg-black text-white shadow-sm'
                 : 'border-dashed border-black/35 hover:border-solid hover:border-black bg-white text-black/80 hover:text-black hover:shadow-xs'
             }`}
           >
-            <span>Actualités</span>
-            <span className={`px-1.5 py-0.5 rounded-[6px] text-[9.5px] font-mono font-black tracking-normal uppercase ${
+            <span className="hidden xs:inline">Actualités</span>
+            <span className={`px-1.5 py-0.5 rounded-[6px] text-[9px] sm:text-[9.5px] font-mono font-black tracking-normal uppercase ${
               activeTab === 'news' ? 'bg-red-500 text-white' : 'bg-red-600 text-white'
             }`}>
               Forum
@@ -125,12 +125,12 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
               <button
                 type="button"
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="inline-flex items-center gap-2.5 h-9 px-3.5 sm:px-4 border-2 border-solid border-black rounded-[13px] bg-black text-white font-mono text-xs font-bold uppercase tracking-[0.12em] hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-1.5 sm:gap-2.5 h-8.5 sm:h-9 px-2.5 sm:px-4 border-2 border-solid border-black rounded-[13px] bg-black text-white font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-[0.12em] hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
               >
                 <div className="w-4.5 h-4.5 rounded-full bg-amber-400 text-black flex items-center justify-center font-black text-[10px]">
                   {pilot.callsign ? pilot.callsign.charAt(0).toUpperCase() : 'P'}
                 </div>
-                <span className="max-w-[90px] sm:max-w-[140px] truncate">
+                <span className="max-w-[75px] sm:max-w-[140px] truncate">
                   {pilot.callsign || 'PILOTE'}
                 </span>
                 <span className="hidden xs:inline-block px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-amber-400 text-[9.5px] font-black">
@@ -147,7 +147,7 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="inline-flex items-center gap-2 h-9 px-4 sm:px-4.5 border-2 border-dashed border-black/35 hover:border-solid hover:border-black rounded-[13px] bg-white text-black/80 hover:text-black font-mono text-xs font-bold uppercase tracking-[0.14em] transition-all cursor-pointer hover:shadow-xs"
+                className="inline-flex items-center gap-1.5 sm:gap-2 h-8.5 sm:h-9 px-2.5 sm:px-4.5 border-2 border-dashed border-black/35 hover:border-solid hover:border-black rounded-[13px] bg-white text-black/80 hover:text-black font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-[0.14em] transition-all cursor-pointer hover:shadow-xs"
               >
                 <User className="w-3.5 h-3.5" />
                 <span>Connexion</span>
