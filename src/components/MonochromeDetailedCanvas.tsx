@@ -221,11 +221,31 @@ export function MonochromeDetailedCanvas({
 }: MonochromeDetailedCanvasProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [scale, setScale] = useState(1);
 
+  // Gestion responsive : échelle 1:1 pour écrans fixes, adaptation fluide pour PC portables, et vue mobile séparée
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+
+      if (!mobile) {
+        // En-tête FixMyDrone (environ 64px) et marges d'aération
+        const headerH = 68;
+        const paddingY = 24;
+        const paddingX = 40;
+        const availW = window.innerWidth - paddingX;
+        const availH = window.innerHeight - headerH - paddingY;
+
+        // Échelle 1:1 maximale (1.0) sur écrans fixes (>= 1540px et >= 880px),
+        // et adaptation automatique proportionnelle pour PC portables (1366x768, 1440x900, 1536x960)
+        const targetScale = Math.min(1, Math.min(availW / 1540, availH / 880));
+        setScale(Math.max(0.55, targetScale));
+      } else {
+        setScale(1);
+      }
     };
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -311,133 +331,160 @@ export function MonochromeDetailedCanvas({
     onSelectComponent(comp);
   };
 
+  // Rendu vectoriel CAD haute fidélité des 13 composants du drone
+  const renderDroneComponents = () =>
+    DRONE_COMPONENT_CONFIGS.map((comp) => {
+      const isSelected = selectedCompId === comp.id;
+      const isHov = hoveredId === comp.id;
+      const active = isSelected || isHov;
+      const pillW = getPillWidth(comp.id);
+
+      return (
+        <g
+          key={comp.id}
+          id={`comp-${comp.id}`}
+          onClick={() => handleComponentClick(comp.id)}
+          onMouseEnter={() => setHoveredId(comp.id)}
+          onMouseLeave={() => setHoveredId(null)}
+          className="cursor-pointer transition-all duration-200"
+        >
+          {/* Zone réactive cliquable invisible : aucun encadré au survol */}
+          <rect
+            x={comp.x - 6}
+            y={comp.y - 6}
+            width={comp.width + 12}
+            height={comp.height + 12}
+            fill="transparent"
+            stroke="none"
+            pointerEvents="all"
+          />
+
+          {/* VECTEUR AUTHENTIQUE : Surbrillance du contour de l'objet au survol & sélection */}
+          <image
+            href={comp.image}
+            x={comp.x}
+            y={comp.y}
+            width={comp.width}
+            height={comp.height}
+            preserveAspectRatio="xMidYMid meet"
+            className="select-none pointer-events-none transition-all duration-150"
+            style={{
+              filter: isSelected
+                ? 'drop-shadow(0 0 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 7px rgba(0, 0, 0, 0.45))'
+                : isHov
+                ? 'drop-shadow(0 0 2.5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.35))'
+                : 'none',
+            }}
+          />
+
+          {/* Étiquette technique Haute Précision : Noire sur Blanc, Typographie Suisse / CAD Ultra-Design */}
+          <g
+            className="transition-all duration-150"
+            style={{
+              filter: isSelected
+                ? 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.22))'
+                : isHov
+                ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14))'
+                : 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08))',
+              transform: active ? 'scale(1.03)' : 'scale(1)',
+              transformOrigin: `${comp.labelX}px ${comp.labelY}px`,
+            }}
+          >
+            <rect
+              x={comp.labelX - pillW / 2}
+              y={comp.labelY - 13}
+              width={pillW}
+              height="26"
+              rx="13"
+              fill="#ffffff"
+              stroke="#000000"
+              strokeWidth={isSelected ? '2.5' : isHov ? '2' : '1.5'}
+              className="transition-all duration-150"
+            />
+            <text
+              x={comp.labelX}
+              y={comp.labelY + 3.5}
+              textAnchor="middle"
+              fontSize="9.5"
+              fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
+              fontWeight="800"
+              letterSpacing="0.05em"
+              fill="#000000"
+              className="select-none pointer-events-none"
+            >
+              {comp.label}
+            </text>
+          </g>
+        </g>
+      );
+    });
+
   return (
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
-      {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className={`relative w-full ${isMobile ? 'max-w-[650px] aspect-[1240/1020]' : 'max-w-[1540px] aspect-[1540/880] max-h-[calc(100vh-4.5rem)]'} bg-white flex items-center justify-center overflow-visible`}>
-
-        {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
-        <svg
-          viewBox={isMobile ? '0 0 1240 1020' : '0 0 1540 880'}
-          className="w-full h-full select-none"
+      {/* ====================================================================
+          AFFICHAGE RESPONSIVE CAD HAUTE PRÉCISION :
+          - ÉCRANS FIXES : Échelle 1:1 CAD pure (1540px × 880px)
+          - PC PORTABLES : Adaptation proportionnelle fluide selon la hauteur/largeur disponible
+          - MOBILES : Système dédié compact (en attente du nouveau système mobile)
+         ==================================================================== */}
+      {!isMobile ? (
+        <div
+          style={{
+            width: `${1540 * scale}px`,
+            height: `${880 * scale}px`,
+          }}
+          className="relative flex items-center justify-center overflow-visible select-none"
         >
-          {/* Ligne directrice technique blueprint discrète sur desktop */}
-          {!isMobile && (
-            <line
-              x1="1230"
-              y1="40"
-              x2="1230"
-              y2="840"
-              stroke="#000000"
-              strokeWidth="1.2"
-              strokeDasharray="4 6"
-              opacity="0.18"
-              className="select-none pointer-events-none"
-            />
-          )}
+          <div
+            style={{
+              width: '1540px',
+              height: '880px',
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+            }}
+            className="absolute top-0 left-0 bg-white overflow-visible"
+          >
+            {/* SVG 1540 × 880 (Drone et ligne de séparation CAD) */}
+            <svg
+              viewBox="0 0 1540 880"
+              width="1540"
+              height="880"
+              className="w-full h-full select-none"
+            >
+              {/* Ligne directrice technique blueprint discrète sur desktop */}
+              <line
+                x1="1260"
+                y1="40"
+                x2="1260"
+                y2="840"
+                stroke="#000000"
+                strokeWidth="1.2"
+                strokeDasharray="4 6"
+                opacity="0.18"
+                className="select-none pointer-events-none"
+              />
 
-          {/* ====================================================================
-              13 COMPOSANTS DU DRONE VECTORISÉS (STYLE MULTI-MOTORS PUR SANS OMBRE)
-             ==================================================================== */}
-          {DRONE_COMPONENT_CONFIGS.map((comp) => {
-            const isSelected = selectedCompId === comp.id;
-            const isHov = hoveredId === comp.id;
-            const active = isSelected || isHov;
-            const pillW = getPillWidth(comp.id);
+              {renderDroneComponents()}
+            </svg>
 
-            return (
-              <g
-                key={comp.id}
-                id={`comp-${comp.id}`}
-                onClick={() => handleComponentClick(comp.id)}
-                onMouseEnter={() => setHoveredId(comp.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                className="cursor-pointer transition-all duration-200"
-              >
-                {/* Zone réactive cliquable invisible : aucun encadré au survol */}
-                <rect
-                  x={comp.x - 6}
-                  y={comp.y - 6}
-                  width={comp.width + 12}
-                  height={comp.height + 12}
-                  fill="transparent"
-                  stroke="none"
-                  pointerEvents="all"
-                />
-
-                {/* VECTEUR AUTHENTIQUE : Surbrillance du contour de l'objet au survol & sélection */}
-                <image
-                  href={comp.image}
-                  x={comp.x}
-                  y={comp.y}
-                  width={comp.width}
-                  height={comp.height}
-                  preserveAspectRatio="xMidYMid meet"
-                  className="select-none pointer-events-none transition-all duration-150"
-                  style={{
-                    filter: isSelected
-                      ? 'drop-shadow(0 0 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 7px rgba(0, 0, 0, 0.45))'
-                      : isHov
-                      ? 'drop-shadow(0 0 2.5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.35))'
-                      : 'none',
-                  }}
-                />
-
-                {/* Étiquette technique Haute Précision : Noire sur Blanc, Typographie Suisse / CAD Ultra-Design */}
-                <g
-                  className="transition-all duration-150"
-                  style={{
-                    filter: isSelected
-                      ? 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.22))'
-                      : isHov
-                      ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14))'
-                      : 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08))',
-                    transform: active ? 'scale(1.03)' : 'scale(1)',
-                    transformOrigin: `${comp.labelX}px ${comp.labelY}px`,
-                  }}
-                >
-                  <rect
-                    x={comp.labelX - pillW / 2}
-                    y={comp.labelY - 13}
-                    width={pillW}
-                    height="26"
-                    rx="13"
-                    fill="#ffffff"
-                    stroke="#000000"
-                    strokeWidth={isSelected ? '2.5' : isHov ? '2' : '1.5'}
-                    className="transition-all duration-150"
-                  />
-                  <text
-                    x={comp.labelX}
-                    y={comp.labelY + 3.5}
-                    textAnchor="middle"
-                    fontSize="9.5"
-                    fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
-                    fontWeight="800"
-                    letterSpacing="0.05em"
-                    fill="#000000"
-                    className="select-none pointer-events-none"
-                  >
-                    {comp.label}
-                  </text>
-                </g>
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* ====================================================================
-            À DROITE SUR DESKTOP (>= 1024px) : ÉQUIPEMENTS SOL (HOMOGÈNE & ALIGNÉ CAD)
-            FONDU ENCHAÎNÉ SANS SURVOL • AFFICHAGE DES AUTRES MARQUES AU SURVOL
-           ==================================================================== */}
-        <div className="hidden lg:flex absolute right-[2.5%] sm:right-[3.5%] top-1/2 -translate-y-1/2 flex-col justify-between items-center h-[680px] w-[140px] sm:w-[150px] z-40 select-none">
-          {/* En-tête de section technique blueprint au-dessus des stations */}
-          <div className="flex items-center gap-1.5 pb-1 border-b border-zinc-200 w-full justify-center select-none pointer-events-none">
-            <span className="font-mono text-[8.5px] font-black uppercase tracking-widest text-zinc-400">
-              Équipements Sol
-            </span>
-          </div>
+            {/* STATIONS SOL À DROITE : Fixées en coordonnées exactes 1540 × 880 */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '50px',
+                right: '35px',
+                width: '148px',
+                height: '750px',
+              }}
+              className="flex flex-col justify-between items-center z-40 select-none"
+            >
+              {/* En-tête de section technique blueprint au-dessus des stations */}
+              <div className="flex items-center gap-1.5 pb-1 border-b border-zinc-200 w-full justify-center select-none pointer-events-none">
+                <span className="font-mono text-[8.5px] font-black uppercase tracking-widest text-zinc-400">
+                  Équipements Sol
+                </span>
+              </div>
           
           {/* STATION 1 : LUNETTES FPV */}
           <div
@@ -664,6 +711,18 @@ export function MonochromeDetailedCanvas({
         </div>
 
       </div>
+
+    </div>
+  ) : (
+    <div className="relative w-full max-w-[650px] aspect-[1240/880] bg-white flex items-center justify-center overflow-visible">
+      <svg
+        viewBox="0 0 1240 880"
+        className="w-full h-full select-none"
+      >
+        {renderDroneComponents()}
+      </svg>
+    </div>
+  )}
 
       {/* ====================================================================
           EN BAS SUR MOBILE & TABLETTES (< 1024px) : 3 STATIONS HORIZONTALES
