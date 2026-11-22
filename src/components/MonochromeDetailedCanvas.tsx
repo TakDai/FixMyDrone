@@ -648,7 +648,7 @@ export function MonochromeDetailedCanvas({
           EN BAS SUR MOBILE & TABLETTES (< 1024px) : 3 STATIONS HORIZONTALES
           TOTALEMENT DÉGAGÉES DU DRONE AVEC ZERO SUPERPOSITION
          ==================================================================== */}
-      <div className="flex lg:hidden flex-row flex-wrap items-center justify-center gap-4 sm:gap-8 mt-5 pb-6 select-none z-40 w-full max-w-lg">
+      <div className="flex lg:hidden flex-row flex-wrap items-center justify-center gap-4 sm:gap-8 mt-2 pb-2 select-none z-40 w-full max-w-lg">
         {/* STATION 1 MOBILE : LUNETTES FPV */}
         <div
           className="relative flex flex-col items-center group cursor-pointer"
@@ -684,7 +684,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'goggle' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 left-0 sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 left-0 sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-1.5 shadow-2xl z-50 flex flex-col gap-1 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
@@ -694,7 +694,7 @@ export function MonochromeDetailedCanvas({
                   {GOGGLE_BRANDS.length} marques
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-1">
                 {GOGGLE_BRANDS.map((gb, i) => (
                   <button
                     key={gb.id}
@@ -703,15 +703,15 @@ export function MonochromeDetailedCanvas({
                       handleComponentClick('fatshark');
                       setHoveredStation(null);
                     }}
-                    className={`flex flex-col items-center justify-center h-13 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center h-11 p-1 rounded-xl border-2 transition-all cursor-pointer ${
                       i === goggleIdx
                         ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={gb.name}
                   >
-                    <div className="w-full h-6 flex items-center justify-center">
-                      <BrandLogo brandId={gb.id} width={32} height={18} />
+                    <div className="w-full h-5 flex items-center justify-center">
+                      <BrandLogo brandId={gb.id} width={30} height={16} />
                     </div>
                     <span className="text-[7px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
                       {gb.brand}
@@ -757,7 +757,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'radio' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-black rounded-2xl p-1.5 shadow-2xl z-50 flex flex-col gap-1 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
@@ -767,7 +767,7 @@ export function MonochromeDetailedCanvas({
                   {RADIO_BRANDS.length} marques
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-1">
                 {RADIO_BRANDS.map((rb, i) => (
                   <button
                     key={rb.id}
@@ -776,15 +776,15 @@ export function MonochromeDetailedCanvas({
                       handleComponentClick('tango');
                       setHoveredStation(null);
                     }}
-                    className={`flex flex-col items-center justify-center h-13 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center h-11 p-1 rounded-xl border-2 transition-all cursor-pointer ${
                       i === radioIdx
                         ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={rb.name}
                   >
-                    <div className="w-full h-6 flex items-center justify-center">
-                      <BrandLogo brandId={rb.id} width={34} height={18} />
+                    <div className="w-full h-5 flex items-center justify-center">
+                      <BrandLogo brandId={rb.id} width={30} height={16} />
                     </div>
                     <span className="text-[7px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
                       {rb.brand}
@@ -830,7 +830,7 @@ export function MonochromeDetailedCanvas({
           {hoveredStation === 'config' && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-full mt-2 right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-2.5 shadow-2xl z-50 flex flex-col gap-1.5 w-[160px] animate-in fade-in duration-150"
+              className="absolute top-full mt-2 right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 bg-white border-2 border-black rounded-2xl p-1.5 shadow-2xl z-50 flex flex-col gap-1 w-[160px] animate-in fade-in duration-150"
             >
               <div className="flex items-center justify-between pb-1 border-b border-zinc-200 px-0.5">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-black">
@@ -840,7 +840,7 @@ export function MonochromeDetailedCanvas({
                   {CONFIGURATOR_BRANDS.length} options
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-1">
                 {CONFIGURATOR_BRANDS.map((cb, i) => (
                   <button
                     key={cb.id}
@@ -849,15 +849,15 @@ export function MonochromeDetailedCanvas({
                       handleComponentClick('betaflight');
                       setHoveredStation(null);
                     }}
-                    className={`flex flex-col items-center justify-center h-13 p-1 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center h-11 p-1 rounded-xl border-2 transition-all cursor-pointer ${
                       i === configIdx
                         ? 'bg-zinc-100 border-black ring-1 ring-black font-bold shadow-xs'
                         : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
                     }`}
                     title={cb.name}
                   >
-                    <div className="w-full h-6 flex items-center justify-center">
-                      <BrandLogo brandId={cb.id} width={30} height={18} />
+                    <div className="w-full h-5 flex items-center justify-center">
+                      <BrandLogo brandId={cb.id} width={28} height={16} />
                     </div>
                     <span className="text-[7px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
                       {cb.brand}
