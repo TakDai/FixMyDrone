@@ -43,7 +43,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 1. Châssis Carbone True-X : 768 × 670, centre (690, 580)
   {
     id: 'frame',
-    image: '/images/components/frame.svg?v=3',
+    image: '/images/components/frame.svg?v=4',
     x: 306,
     y: 245,
     width: 768,
@@ -151,7 +151,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
   // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1060, 70)
   {
     id: 'antenna-vtx',
-    image: '/images/components/antenna-vtx.svg?v=3',
+    image: '/images/components/antenna-vtx.svg?v=4',
     x: 1060,
     y: 70,
     width: 55,

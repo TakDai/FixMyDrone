@@ -1,202 +1,341 @@
-<svg viewBox="0 0 500 480" width="500" height="480" xmlns="http://www.w3.org/2000/svg">
-  <!-- CHÂSSIS CARBONE DEADCAT / TRUE-X 5" (FIDÈLE À FRAME.PNG - STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
-  <g id="frame-top-view">
-    
-    <!-- ==========================================
-         1. LES 4 BRAS CARBONE 5MM AVEC BUMPERS
-         ========================================== -->
-    <!-- Bras Avant-Gauche (vers 55, 60) -->
-    <path
-      d="M 216 195 
-         L 85 68 
-         C 75 58, 62 52, 45 52 
-         C 32 52, 22 62, 22 75 
-         C 22 92, 35 105, 52 105 
-         C 65 105, 78 98, 88 88 
-         L 205 225 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-    <!-- Bras Avant-Droit (vers 445, 60) -->
-    <path
-      d="M 284 195 
-         L 415 68 
-         C 425 58, 438 52, 455 52 
-         C 468 52, 478 62, 478 75 
-         C 478 92, 465 105, 448 105 
-         C 435 105, 422 98, 412 88 
-         L 295 225 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-    <!-- Bras Arrière-Gauche (vers 55, 420) -->
-    <path
-      d="M 205 255 
-         L 88 392 
-         C 78 382, 65 375, 52 375 
-         C 35 375, 22 388, 22 405 
-         C 22 418, 32 428, 45 428 
-         C 62 428, 75 422, 85 412 
-         L 216 285 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-    <!-- Bras Arrière-Droit (vers 445, 420) -->
-    <path
-      d="M 295 255 
-         L 412 392 
-         C 422 382, 435 375, 448 375 
-         C 465 375, 478 388, 478 405 
-         C 478 418, 468 428, 455 428 
-         C 438 428, 425 422, 415 412 
-         L 284 285 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
+<svg viewBox="0 0 600 520" width="600" height="520" xmlns="http://www.w3.org/2000/svg">
+  <!-- ==========================================================================
+       CHÂSSIS CARBONE TRUE-X 5" (FIDÈLE À FRAME.PNG & FIGMA-EXPLODED-DRONE.PNG)
+       STYLE MULTI-MOTORS 100% CAD VECTORIEL NOIR & BLANC SANS OMBRE
+       ========================================================================== -->
+  <defs>
+    <!-- Trame subtile carbone tissé 3K Twill (Monochrome pur) -->
+    <pattern id="carbon-weave" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#18181b" />
+      <rect x="0" y="0" width="3" height="3" fill="#27272a" />
+      <rect x="3" y="3" width="3" height="3" fill="#27272a" />
+      <line x1="0" y1="3" x2="6" y2="3" stroke="#09090b" stroke-width="0.5" />
+      <line x1="3" y1="0" x2="3" y2="6" stroke="#09090b" stroke-width="0.5" />
+    </pattern>
 
-    <!-- ==========================================
-         2. PADS MOTEURS AVEC BUMPERS CRASH-PROTECT
-         (Forme en trèfle avec butée de bout de bras)
-         ========================================== -->
-    <!-- Avant-Gauche (55, 75) -->
-    <g transform="translate(55, 75)">
-      <!-- Bumper de protection extérieur -->
-      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <circle cx="0" cy="0" r="7" fill="#000000" />
-      <circle cx="-10" cy="-10" r="3" fill="#000000" />
-      <circle cx="10" cy="-10" r="3" fill="#000000" />
-      <circle cx="-10" cy="10" r="3" fill="#000000" />
-      <circle cx="10" cy="10" r="3" fill="#000000" />
-      <!-- Ergot crash protector au bout du bras -->
-      <rect x="-26" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    <!-- Modèle de vis BTR hexagonale M3 fraisée (Vue de dessus CAD) -->
+    <g id="screw-btr">
+      <circle cx="0" cy="0" r="5.5" fill="#27272a" stroke="#000000" stroke-width="1.2" />
+      <circle cx="0" cy="0" r="4.2" fill="#09090b" />
+      <!-- Empreinte 6 pans creux (clé Allen) -->
+      <polygon points="0,-2.6 2.25,-1.3 2.25,1.3 0,2.6 -2.25,1.3 -2.25,-1.3" fill="#ffffff" stroke="#27272a" stroke-width="0.5" />
     </g>
 
-    <!-- Avant-Droit (445, 75) -->
-    <g transform="translate(445, 75)">
-      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <circle cx="0" cy="0" r="7" fill="#000000" />
-      <circle cx="-10" cy="-10" r="3" fill="#000000" />
-      <circle cx="10" cy="-10" r="3" fill="#000000" />
-      <circle cx="-10" cy="10" r="3" fill="#000000" />
-      <circle cx="10" cy="10" r="3" fill="#000000" />
-      <rect x="21" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    <!-- Modèle de vis Standoff M3 tête ronde avec rondelle alu -->
+    <g id="screw-standoff">
+      <circle cx="0" cy="0" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="3.2" fill="#18181b" />
+      <polygon points="0,-1.8 1.6,-0.9 1.6,0.9 0,1.8 -1.6,0.9 -1.6,-0.9" fill="#ffffff" />
     </g>
 
-    <!-- Arrière-Gauche (55, 405) -->
-    <g transform="translate(55, 405)">
-      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <circle cx="0" cy="0" r="7" fill="#000000" />
-      <circle cx="-10" cy="-10" r="3" fill="#000000" />
-      <circle cx="10" cy="-10" r="3" fill="#000000" />
-      <circle cx="-10" cy="10" r="3" fill="#000000" />
-      <circle cx="10" cy="10" r="3" fill="#000000" />
-      <rect x="-26" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    <!-- Modèle de plot standoff alu visible entre plaques -->
+    <g id="standoff-barrel">
+      <circle cx="0" cy="0" r="4" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="2" fill="#71717a" />
+      <circle cx="0" cy="0" r="1" fill="#000000" />
     </g>
 
-    <!-- Arrière-Droit (445, 405) -->
-    <g transform="translate(445, 405)">
-      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <circle cx="0" cy="0" r="7" fill="#000000" />
-      <circle cx="-10" cy="-10" r="3" fill="#000000" />
-      <circle cx="10" cy="-10" r="3" fill="#000000" />
-      <circle cx="-10" cy="10" r="3" fill="#000000" />
-      <circle cx="10" cy="10" r="3" fill="#000000" />
-      <rect x="21" y="-5" width="5" height="10" rx="2" fill="#000000" />
-    </g>
+    <!-- PAD MOTEUR AVEC BUMPERS CRASH-PROTECTION (EXACT SELON FRAME.PNG) -->
+    <!-- Pad Avant-Gauche : Protections vers le haut (-Y) et vers la gauche (-X) -->
+    <g id="motor-mount-fl">
+      <!-- Contour monobloc carbone usiné CNC avec bumpers -->
+      <path
+        d="M -6 18 
+           C -16 16, -23 8, -23 -3
+           L -33 -3 
+           C -37 -3, -40 -6, -40 -10 
+           L -40 -18 
+           C -40 -22, -37 -25, -33 -25 
+           L -21 -25 
+           C -18 -25, -15 -23, -15 -20 
+           L -15 -25 
+           C -15 -29, -12 -32, -8 -32 
+           L 0 -32 
+           C 4 -32, 7 -29, 7 -25 
+           L 7 -18 
+           C 18 -18, 26 -10, 26 0 
+           C 26 12, 17 22, 5 23 
+           Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+      />
+      <!-- Chanfrein intérieur CNC 45° -->
+      <path
+        d="M -5 15 C -14 13, -20 6, -20 -3 L -31 -3 C -34 -3, -37 -5, -37 -9 L -37 -17 C -37 -20, -34 -22, -31 -22 L -20 -22 L -13 -22 L -13 -25 C -13 -27, -11 -29, -8 -29 L 0 -29 C 3 -29, 5 -27, 5 -25 L 5 -16 C 15 -16, 23 -8, 23 0 C 23 10, 15 19, 4 20 Z"
+        fill="none"
+        stroke="#3f3f46"
+        stroke-width="1"
+      />
+      <!-- Trou central d'axe moteur (passage circlip 9mm) -->
+      <circle cx="0" cy="0" r="8.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="4.5" fill="none" stroke="#27272a" stroke-width="1" stroke-dasharray="2 2" />
 
-    <!-- ==========================================
-         3. TOP PLATE CARBONE DU FUSELAGE CENTRAL
-         (Silhouette exacte de frame.png avec découpes X et standoffs)
-         ========================================== -->
-    <path
-      d="M 232 35 
-         L 242 35 C 245 42, 255 42, 258 35 L 268 35 
-         C 278 35, 284 41, 284 50 
-         L 284 165 
-         C 284 175, 292 185, 292 195 
-         L 292 285 
-         C 292 295, 284 305, 284 315 
-         L 284 430 
-         C 284 439, 278 445, 268 445 
-         L 258 445 C 255 438, 245 438, 242 445 L 232 445 
-         C 222 445, 216 439, 216 430 
-         L 216 315 
-         C 216 305, 208 295, 208 285 
-         L 208 195 
-         C 208 185, 216 175, 216 165 
-         L 216 50 
-         C 216 41, 222 35, 232 35 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="3.5"
-      stroke-linejoin="round"
-    />
-
-    <!-- ==========================================
-         4. DÉCOUPES TECHNIQUES & AJOURAGES CAD
-         ========================================== -->
-    <!-- Encoche Caméra avant & standoffs avant -->
-    <g fill="#000000">
-      <!-- 2 Standoffs alu avant -->
-      <circle cx="226" cy="46" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="226" cy="46" r="1.5" />
-      <circle cx="274" cy="46" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="274" cy="46" r="1.5" />
-
-      <!-- Fentes longitudinales supérieures (passage straps / rislan) -->
-      <rect x="225" y="68" width="6" height="42" rx="3" />
-      <rect x="269" y="68" width="6" height="42" rx="3" />
-
-      <!-- Découpe en 'X' avant (haut du châssis) -->
-      <path d="M 238 74 L 246 88 L 238 102 L 245 102 L 250 93 L 255 102 L 262 102 L 254 88 L 262 74 L 255 74 L 250 83 L 245 74 Z" />
-
-      <!-- Vis de fixation des bras (4 vis BTR fraisées avec empreinte 6 pans) -->
-      <g stroke="#000000" stroke-width="1.5" fill="#ffffff">
-        <circle cx="224" cy="155" r="5" />
-        <circle cx="276" cy="155" r="5" />
-        <circle cx="224" cy="325" r="5" />
-        <circle cx="276" cy="325" r="5" />
+      <!-- 4 fentes de fixation moteur 16x16 / 19x19mm -->
+      <g fill="#ffffff" stroke="#000000" stroke-width="1.5">
+        <!-- Trou Haut-Gauche (-11, -11) -->
+        <rect x="-13" y="-13" width="4" height="4" rx="2" transform="rotate(45 -11 -11)" />
+        <!-- Trou Haut-Droit (11, -11) -->
+        <rect x="9" y="-13" width="4" height="4" rx="2" transform="rotate(-45 11 -11)" />
+        <!-- Trou Bas-Gauche (-11, 11) -->
+        <rect x="-13" y="9" width="4" height="4" rx="2" transform="rotate(-45 -11 11)" />
+        <!-- Trou Bas-Droit (11, 11) -->
+        <rect x="9" y="9" width="4" height="4" rx="2" transform="rotate(45 11 11)" />
       </g>
-      <circle cx="224" cy="155" r="2" fill="#000000" />
-      <circle cx="276" cy="155" r="2" fill="#000000" />
-      <circle cx="224" cy="325" r="2" fill="#000000" />
-      <circle cx="276" cy="325" r="2" fill="#000000" />
 
-      <!-- Découpe centrale 'X' avec trou circulaire au centre -->
-      <path d="M 235 170 L 244 185 L 235 200 L 243 200 L 250 191 L 257 200 L 265 200 L 256 185 L 265 170 L 257 170 L 250 179 L 243 170 Z" />
-      
-      <!-- Trou central d'axe stack / passage de fils -->
-      <circle cx="250" cy="240" r="12" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-      <circle cx="250" cy="240" r="5" fill="#000000" />
+      <!-- Lumières d'allègement / passage rislan dans les bumpers -->
+      <rect x="-35" y="-18" width="5" height="9" rx="2" fill="#ffffff" stroke="#000000" stroke-width="1.2" />
+      <rect x="-5" y="-27" width="8" height="5" rx="2" fill="#ffffff" stroke="#000000" stroke-width="1.2" />
+    </g>
+  </defs>
 
-      <!-- Découpe 'X' inférieure -->
-      <path d="M 235 280 L 244 295 L 235 310 L 243 310 L 250 301 L 257 310 L 265 310 L 256 295 L 265 280 L 257 280 L 250 289 L 243 280 Z" />
+  <g id="drone-frame-assembly">
 
-      <!-- Fentes longitudinales inférieures -->
-      <rect x="225" y="370" width="6" height="42" rx="3" />
-      <rect x="269" y="370" width="6" height="42" rx="3" />
+    <!-- ======================================================================
+         1. LES 4 BRAS CARBONE MASSIFS 5MM (VUE DE DESSOUS/TRAVERSANTE)
+         ====================================================================== -->
+    <g id="carbon-arms">
+      <!-- Bras Avant-Gauche (du centre 300,260 vers 75,75) -->
+      <path
+        d="M 280 240 
+           L 95 82 
+           C 90 77, 85 75, 75 75 
+           L 70 85 
+           L 260 270 Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="2.5"
+      />
+      <!-- Ligne de chanfrein intérieur du bras -->
+      <line x1="275" y1="244" x2="93" y2="86" stroke="#3f3f46" stroke-width="1.2" />
+      <line x1="264" y1="266" x2="74" y2="92" stroke="#3f3f46" stroke-width="1.2" />
 
-      <!-- 2 Standoffs alu arrière -->
-      <circle cx="226" cy="434" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="226" cy="434" r="1.5" />
-      <circle cx="274" cy="434" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
-      <circle cx="274" cy="434" r="1.5" />
+      <!-- Bras Avant-Droit (du centre 300,260 vers 525,75) -->
+      <path
+        d="M 320 240 
+           L 505 82 
+           C 510 77, 515 75, 525 75 
+           L 530 85 
+           L 340 270 Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="2.5"
+      />
+      <line x1="325" y1="244" x2="507" y2="86" stroke="#3f3f46" stroke-width="1.2" />
+      <line x1="336" y1="266" x2="526" y2="92" stroke="#3f3f46" stroke-width="1.2" />
+
+      <!-- Bras Arrière-Gauche (du centre 300,260 vers 75,445) -->
+      <path
+        d="M 260 250 
+           L 70 435 
+           L 75 445 
+           C 85 445, 90 443, 95 438 
+           L 280 280 Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="2.5"
+      />
+      <line x1="264" y1="254" x2="74" y2="428" stroke="#3f3f46" stroke-width="1.2" />
+      <line x1="275" y1="276" x2="93" y2="434" stroke="#3f3f46" stroke-width="1.2" />
+
+      <!-- Bras Arrière-Droit (du centre 300,260 vers 525,445) -->
+      <path
+        d="M 340 250 
+           L 530 435 
+           L 525 445 
+           C 515 445, 510 443, 505 438 
+           L 320 280 Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="2.5"
+      />
+      <line x1="336" y1="254" x2="526" y2="428" stroke="#3f3f46" stroke-width="1.2" />
+      <line x1="325" y1="276" x2="507" y2="434" stroke="#3f3f46" stroke-width="1.2" />
     </g>
 
-    <!-- Sérigraphie technique gravée dans la colonne centrale -->
-    <text x="250" y="352" text-anchor="middle" font-family="monospace, sans-serif" font-size="5.5" font-weight="900" fill="#000000" letter-spacing="0.5">
-      TRUE-X 5"
+    <!-- ======================================================================
+         2. LES 4 PADS MOTEURS AVEC BUMPERS CRASH-PROTECTION USINÉS
+         ====================================================================== -->
+    <!-- Avant-Gauche (75, 75) -->
+    <g transform="translate(75, 75)">
+      <use href="#motor-mount-fl" />
+    </g>
+
+    <!-- Avant-Droit (525, 75) - Miroir horizontal -->
+    <g transform="translate(525, 75) scale(-1, 1)">
+      <use href="#motor-mount-fl" />
+    </g>
+
+    <!-- Arrière-Gauche (75, 445) - Miroir vertical -->
+    <g transform="translate(75, 445) scale(1, -1)">
+      <use href="#motor-mount-fl" />
+    </g>
+
+    <!-- Arrière-Droit (525, 445) - Double miroir -->
+    <g transform="translate(525, 445) scale(-1, -1)">
+      <use href="#motor-mount-fl" />
+    </g>
+
+    <!-- ======================================================================
+         3. ENTRETOISES ALUMINIUM (STANDOFFS) VISIBLES SUR LES CÔTÉS
+         ====================================================================== -->
+    <g id="visible-standoffs">
+      <use href="#standoff-barrel" x="256" y="148" />
+      <use href="#standoff-barrel" x="344" y="148" />
+      <use href="#standoff-barrel" x="254" y="260" />
+      <use href="#standoff-barrel" x="346" y="260" />
+      <use href="#standoff-barrel" x="256" y="372" />
+      <use href="#standoff-barrel" x="344" y="372" />
+    </g>
+
+    <!-- ======================================================================
+         4. TOP PLATE CARBONE DU FUSELAGE CENTRAL (EXACT DE FRAME.PNG)
+         ====================================================================== -->
+    <g id="top-plate">
+      <!-- Silhouette extérieure usinée CNC de la plaque supérieure -->
+      <path
+        d="M 270 20 
+           L 282 20 
+           C 285 28, 292 32, 300 32 
+           C 308 32, 315 28, 318 20 
+           L 330 20 
+           C 336 20, 340 25, 340 32 
+           L 340 140 
+           C 340 148, 348 156, 348 166 
+           L 348 354 
+           C 348 364, 340 372, 340 380 
+           L 340 488 
+           C 340 495, 336 500, 330 500 
+           L 318 500 
+           C 315 492, 308 488, 300 488 
+           C 292 488, 285 492, 282 500 
+           L 270 500 
+           C 264 500, 260 495, 260 488 
+           L 260 380 
+           C 260 372, 252 364, 252 354 
+           L 252 166 
+           C 252 156, 260 148, 260 140 
+           L 260 32 
+           C 260 25, 264 20, 270 20 Z"
+        fill="url(#carbon-weave)"
+        stroke="#000000"
+        stroke-width="3"
+        stroke-linejoin="round"
+      />
+
+      <!-- Chanfrein intérieur de la top plate (Biseau 45° CNC) -->
+      <path
+        d="M 272 23 
+           L 283 23 
+           C 286 29, 292 34, 300 34 
+           C 308 34, 314 29, 317 23 
+           L 328 23 
+           C 333 23, 337 27, 337 33 
+           L 337 139 
+           C 337 146, 345 154, 345 165 
+           L 345 355 
+           C 345 366, 337 374, 337 381 
+           L 337 487 
+           C 337 493, 333 497, 328 497 
+           L 317 497 
+           C 314 491, 308 486, 300 486 
+           C 292 486, 286 491, 283 497 
+           L 272 497 
+           C 267 497, 263 493, 263 487 
+           L 263 381 
+           C 263 374, 255 366, 255 355 
+           L 255 165 
+           C 255 154, 263 146, 263 139 
+           L 263 33 
+           C 263 27, 267 23, 272 23 Z"
+        fill="none"
+        stroke="#3f3f46"
+        stroke-width="1.2"
+      />
+    </g>
+
+    <!-- ======================================================================
+         5. TOUTES LES DÉCOUPES ET AJOURAGES TECHNIQUES (BLANC TRAVERSANT)
+         ====================================================================== -->
+    <g id="top-plate-cutouts" fill="#ffffff" stroke="#000000" stroke-width="1.8" stroke-linejoin="round">
+      
+      <!-- --- SECTION AVANT (CAMÉRA & SANGLE HD) --- -->
+      <!-- Fentes longitudinales de sangle / caméra -->
+      <rect x="268" y="52" width="7" height="42" rx="3.5" />
+      <rect x="325" y="52" width="7" height="42" rx="3.5" />
+
+      <!-- Découpe centrale en sablier / double-triangle (X) -->
+      <polygon points="284,55 316,55 300,72" />
+      <polygon points="300,75 316,92 284,92" />
+
+      <!-- --- SECTION CENTRALE (STACK FC / ESC 30.5x30.5 & 20x20) --- -->
+      <!-- Découpe en 'X' supérieure au-dessus du contrôleur -->
+      <polygon points="280,165 294,185 280,205 290,205 300,190 310,205 320,205 306,185 320,165 310,165 300,180 290,165" />
+
+      <!-- Découpe centrale 'X' avec puits circulaire central traversant -->
+      <polygon points="278,225 292,245 282,245 272,230" />
+      <polygon points="322,225 308,245 318,245 328,230" />
+      <polygon points="282,275 292,275 278,295 272,290" />
+      <polygon points="318,275 308,275 322,295 328,290" />
+      
+      <!-- Puits circulaire central (accès axe moteur / connecteur / câbles) -->
+      <circle cx="300" cy="260" r="14" />
+
+      <!-- Découpe en 'X' inférieure sous le contrôleur -->
+      <polygon points="280,315 294,335 280,355 290,355 300,340 310,355 320,355 306,335 320,315 310,315 300,330 290,315" />
+
+      <!-- --- SECTION ARRIÈRE (BATTERIE LIPO & VTX) --- -->
+      <!-- Découpe triangulaire supérieure arrière -->
+      <polygon points="285,385 315,385 300,402" />
+
+      <!-- Fentes longitudinales de passage sangle LiPo 20mm -->
+      <rect x="268" y="415" width="7" height="44" rx="3.5" />
+      <rect x="325" y="415" width="7" height="44" rx="3.5" />
+
+      <!-- Découpe triangulaire inférieure arrière -->
+      <polygon points="300,422 315,442 285,442" />
+    </g>
+
+    <!-- Détail interne du puits central -->
+    <circle cx="300" cy="260" r="6" fill="#18181b" stroke="#000000" stroke-width="1.5" />
+
+    <!-- ======================================================================
+         6. VISSERIE BTR FRAISÉE & VIS STANDOFFS (FIDÈLE À FRAME.PNG)
+         ====================================================================== -->
+    <g id="screws">
+      <!-- 2 Vis Standoffs Avant (Plaque caméra) -->
+      <use href="#screw-standoff" x="274" y="36" />
+      <use href="#screw-standoff" x="326" y="36" />
+
+      <!-- 2 Vis Standoffs Transition Avant -->
+      <use href="#screw-standoff" x="270" y="146" />
+      <use href="#screw-standoff" x="330" y="146" />
+
+      <!-- 4 Vis BTR de serrage des bras carbone (Stack Center 30.5x30.5) -->
+      <use href="#screw-btr" x="274" y="210" />
+      <use href="#screw-btr" x="326" y="210" />
+      <use href="#screw-btr" x="274" y="310" />
+      <use href="#screw-btr" x="326" y="310" />
+
+      <!-- 2 Vis Standoffs Transition Arrière -->
+      <use href="#screw-standoff" x="270" y="374" />
+      <use href="#screw-standoff" x="330" y="374" />
+
+      <!-- 2 Vis Standoffs Arrière (Queue de fuselage) -->
+      <use href="#screw-standoff" x="274" y="484" />
+      <use href="#screw-standoff" x="326" y="484" />
+    </g>
+
+    <!-- ======================================================================
+         7. SÉRIGRAPHIE TECHNIQUE BLANCHE GRAVÉE LASER
+         ====================================================================== -->
+    <text x="300" y="468" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="6.5" font-weight="900" fill="#ffffff" letter-spacing="1">
+      TRUE-X • 5 INCH
     </text>
-    <text x="250" y="362" text-anchor="middle" font-family="monospace, sans-serif" font-size="4.8" font-weight="bold" fill="#52525b" letter-spacing="0.5">
-      3K T700
+    <text x="300" y="478" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="5" font-weight="700" fill="#a1a1aa" letter-spacing="0.5">
+      TORAY 3K T700 CNC
     </text>
+
   </g>
 </svg>
