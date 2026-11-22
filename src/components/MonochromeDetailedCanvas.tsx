@@ -36,162 +36,162 @@ interface ComponentVisualConfig {
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 // Disposition éclatée CAD pure parfaitement répartie sur toute la surface de la page
-// Architecture symétrique et aérée, centrée en (620, 440) avec zéro superposition
+// Architecture symétrique et aérée, centrée en (620, 505) avec zéro superposition
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 440)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 505)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=6',
     x: 236,
-    y: 105,
+    y: 170,
     width: 768,
     height: 670,
     labelX: 620,
-    labelY: 825,
+    labelY: 862,
     label: 'CHÂSSIS',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (275, 355) - Éclaté hors de la plaque centrale
+  // 2. Contrôleur de Vol FC : 146 × 148 à (275, 395) - Éclaté hors de la plaque centrale
   {
     id: 'fc',
     image: '/images/components/fc.svg?v=6',
     x: 275,
-    y: 355,
+    y: 395,
     width: 146,
     height: 148,
     labelX: 348,
-    labelY: 535,
+    labelY: 575,
     label: 'FC',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (815, 355) - Éclaté hors de la plaque centrale
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (815, 395) - Éclaté hors de la plaque centrale
   {
     id: 'esc',
     image: '/images/components/esc.svg?v=6',
     x: 815,
-    y: 355,
+    y: 395,
     width: 165,
     height: 155,
     labelX: 897,
-    labelY: 538,
+    labelY: 578,
     label: 'ESC',
   },
-  // 4. Moteur Brushless : 155 × 155 à (60, 625) - Éclaté bas-gauche
+  // 4. Moteur Brushless : 155 × 155 à (60, 645) - Éclaté bas-gauche
   {
     id: 'motor',
     image: '/images/components/motor.svg?v=6',
     x: 60,
-    y: 625,
+    y: 645,
     width: 155,
     height: 155,
     labelX: 137,
-    labelY: 810,
+    labelY: 830,
     label: 'MOTEUR',
   },
-  // 5. Caméra FPV : 84 × 95 à (578, 15) - Éclatée au-dessus du nez
+  // 5. Caméra FPV : 84 × 78 à (578, 58) - Éclatée au-dessus du nez
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=6',
     x: 578,
-    y: 15,
+    y: 58,
     width: 84,
-    height: 95,
+    height: 78,
     labelX: 620,
-    labelY: 125,
+    labelY: 152,
     label: 'CAMÉRA',
   },
-  // 6. Émetteur Vidéo VTX : 95 × 145 à (60, 100) - Flanc haut-gauche
+  // 6. Émetteur Vidéo VTX : 95 × 145 à (60, 110) - Flanc haut-gauche
   {
     id: 'vtx',
     image: '/images/components/vtx.svg?v=6',
     x: 60,
-    y: 100,
+    y: 110,
     width: 95,
     height: 145,
     labelX: 107,
-    labelY: 270,
+    labelY: 280,
     label: 'VTX',
   },
-  // 7. Module GPS : 78 × 82 à (320, 25) - Flanc avant-gauche
+  // 7. Module GPS : 78 × 82 à (320, 35) - Flanc avant-gauche
   {
     id: 'gps',
     image: '/images/components/gps.svg?v=6',
     x: 320,
-    y: 25,
+    y: 35,
     width: 78,
     height: 82,
     labelX: 359,
-    labelY: 130,
+    labelY: 135,
     label: 'GPS',
   },
-  // 8. Récepteur RX : 70 × 122 à (840, 25) - Flanc avant-droit
+  // 8. Récepteur RX : 70 × 122 à (840, 35) - Flanc avant-droit
   {
     id: 'rx',
     image: '/images/components/rx.svg?v=6',
     x: 840,
-    y: 25,
+    y: 35,
     width: 70,
     height: 122,
     labelX: 875,
-    labelY: 170,
+    labelY: 175,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 6) - Sommet
+  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 20) - Centrée au sommet
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=6',
     x: 400,
-    y: 6,
+    y: 20,
     width: 440,
     height: 35,
-    labelX: 430,
-    labelY: 10,
+    labelX: 620,
+    labelY: 14,
     label: 'ANTENNE',
   },
-  // 10. Antenne VTX : 58 × 260 à (1050, 65) - Flanc haut-droit
+  // 10. Antenne VTX : 58 × 260 à (1050, 75) - Flanc haut-droit
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=6',
     x: 1050,
-    y: 65,
+    y: 75,
     width: 58,
     height: 260,
     labelX: 1079,
-    labelY: 350,
+    labelY: 360,
     label: 'ANTENNE',
   },
-  // 11. Condensateur : 68 × 68 à (75, 380) - Flanc mi-gauche
+  // 11. Condensateur : 68 × 68 à (75, 400) - Flanc mi-gauche
   {
     id: 'condo',
     image: '/images/components/condo.svg?v=6',
     x: 75,
-    y: 380,
+    y: 400,
     width: 68,
     height: 68,
     labelX: 109,
-    labelY: 472,
+    labelY: 492,
     label: 'CONDENSATEUR',
   },
-  // 12. Buzzer : 50 × 80 à (740, 655) - Alvéole arrière
+  // 12. Buzzer : 50 × 80 à (740, 680) - Alvéole arrière
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=6',
     x: 740,
-    y: 655,
+    y: 680,
     width: 50,
     height: 80,
     labelX: 765,
-    labelY: 760,
+    labelY: 785,
     label: 'BUZZER',
   },
-  // 13. Batterie LiPo : 125 × 265 à (950, 510) - Flanc bas-droit
+  // 13. Batterie LiPo : 125 × 265 à (950, 530) - Flanc bas-droit
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=6',
     x: 950,
-    y: 510,
+    y: 530,
     width: 125,
     height: 265,
     labelX: 1012,
-    labelY: 800,
+    labelY: 820,
     label: 'BATTERIE',
   },
 ];
