@@ -23,6 +23,8 @@ import {
   HelpCircle,
   Clock,
   Radio,
+  Search,
+  Zap,
 } from 'lucide-react';
 import { EcosystemTopNav } from '@/components/EcosystemTopNav';
 import { EcosystemAuthModal } from '@/components/EcosystemAuthModal';
@@ -32,6 +34,8 @@ import {
   loadPilotProfile,
   savePilotProfile,
   PILOT_LEVELS,
+  PRESTIGE_ORDERS,
+  MajorPrestigeOrder,
   ALL_PILOT_BADGES,
   ECOSYSTEM_SITES,
   PARTNER_REWARDS,
@@ -46,6 +50,8 @@ export default function PilotAccountPage() {
   const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'profile' | 'levels' | 'badges' | 'ecosystem' | 'rewards' | 'reports'>('profile');
   const [badgeFilter, setBadgeFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
+  const [selectedOrderNum, setSelectedOrderNum] = useState<number>(1);
+  const [levelSearchInput, setLevelSearchInput] = useState<string>('');
 
   const refreshPilot = () => {
     const p = loadPilotProfile();
@@ -180,7 +186,7 @@ export default function PilotAccountPage() {
                   : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
               }`}
             >
-              10 Paliers & Niveaux XP
+              1000 Niveaux & Prestige XP
             </button>
             <button
               onClick={() => setActiveTab('badges')}
@@ -443,99 +449,326 @@ export default function PilotAccountPage() {
           </div>
         )}
 
-        {/* ================= 2. PALIERS & NIVEAUX D'EXPÉRIENCE ================= */}
-        {activeTab === 'levels' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                <h2 className="text-xl font-mono font-black uppercase text-black">
-                  La Voie de l Atelier : 10 Paliers d Évolution
-                </h2>
-                <span className="px-2.5 py-0.5 rounded-full bg-black text-white font-mono text-[10px] font-black uppercase tracking-wider">
-                  Progression 0 à 30 000+ XP
-                </span>
-              </div>
-              <p className="text-xs text-zinc-600 font-normal mb-6">
-                Chaque panne diagnostiquée, chaque rapport d atelier validé et chaque aide apportée sur le forum vous rapporte de l XP. Plus votre niveau est élevé, plus votre voix fait autorité et plus vos récompenses partenaires augmentent.
-              </p>
+        {/* ================= 2. PALIERS & 1000 NIVEAUX D'EXPÉRIENCE ================= */}
+        {activeTab === 'levels' && (() => {
+          const currentOrder = PRESTIGE_ORDERS.find(
+            (o) => (pilot?.level || 1) >= o.startLevel && (pilot?.level || 1) <= o.endLevel
+          ) || PRESTIGE_ORDERS[0];
 
-              <div className="space-y-4">
-                {PILOT_LEVELS.map((lvl) => {
-                  const isCurrent = (pilot?.level || 1) === lvl.level;
-                  const isUnlocked = (pilot?.level || 1) >= lvl.level;
+          // Filtrage des niveaux affichés
+          const searchedLevelNum = parseInt(levelSearchInput.trim(), 10);
+          const isSearchingValidLevel =
+            !isNaN(searchedLevelNum) && searchedLevelNum >= 1 && searchedLevelNum <= 1000;
 
-                  return (
-                    <div
-                      key={lvl.level}
-                      className={`p-5 rounded-xl border-2 transition-all ${
-                        isCurrent
-                          ? 'border-black bg-zinc-50 shadow-md ring-2 ring-black/10'
-                          : isUnlocked
-                          ? 'border-zinc-300 bg-white'
-                          : 'border-zinc-200 bg-zinc-50/50 opacity-70'
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center font-mono font-black text-sm ${
-                              isUnlocked ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-500'
-                            }`}
-                          >
-                            {lvl.level}
+          const displayedLevels = isSearchingValidLevel
+            ? PILOT_LEVELS.filter((l) => l.level === searchedLevelNum)
+            : PILOT_LEVELS.filter(
+                (l) => {
+                  const ord = PRESTIGE_ORDERS.find((o) => o.orderNumber === selectedOrderNum) || PRESTIGE_ORDERS[0];
+                  return l.level >= ord.startLevel && l.level <= ord.endLevel;
+                }
+              );
+
+          const activeOrder = PRESTIGE_ORDERS.find((o) => o.orderNumber === selectedOrderNum) || PRESTIGE_ORDERS[0];
+
+          return (
+            <div className="space-y-6">
+              {/* Carte Principale 1000 Niveaux */}
+              <div className="bg-white rounded-2xl border-2 border-black p-6 sm:p-8 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-zinc-200">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="px-2 py-0.5 rounded bg-black text-white font-mono text-[10px] font-black uppercase tracking-wider">
+                        1 000 Niveaux Déployés
+                      </span>
+                      <span className="text-xs font-mono text-zinc-500 font-bold uppercase">
+                        12 Ordres Majeurs de Prestige
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-mono font-black uppercase text-black">
+                      La Voie de l Atelier : Progression vers le Niveau 1000
+                    </h2>
+                    <p className="text-xs text-zinc-600 font-normal mt-1 max-w-2xl">
+                      Chaque réparation et rapport d atelier vous fait grimper dans la hiérarchie mondiale. Débloquez de nouveaux titres honorifiques, des multiplicateurs d XP et des privilèges exclusifs auprès des constructeurs.
+                    </p>
+                  </div>
+
+                  {/* Résumé du Pilote Actuel */}
+                  <div className="p-4 rounded-xl bg-zinc-50 border-2 border-black flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center font-mono font-black text-lg">
+                      {pilot?.level || 1}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-xs font-black uppercase text-black">
+                          {pilot?.levelTitle || 'Rookie Pilote'}
+                        </span>
+                        <span className="text-[10px] font-mono text-red-600 font-bold">
+                          / 1000
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono text-zinc-500 block">
+                        Ordre {currentOrder.romanNumeral} : {currentOrder.name.split('&')[0].trim()}
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-700 font-bold">
+                        Multiplicateur XP : x{(1 + ((pilot?.level || 1) - 1) * 0.005).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sélecteur des 12 Ordres de Prestige */}
+                <div className="mt-6 mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono text-xs font-bold uppercase text-black">
+                      Les 12 Ordres Majeurs de l Écosystème :
+                    </span>
+                    <span className="text-[11px] font-mono text-zinc-500">
+                      Cliquez sur un ordre pour explorer ses paliers
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {PRESTIGE_ORDERS.map((ord) => {
+                      const isSelected = selectedOrderNum === ord.orderNumber && !isSearchingValidLevel;
+                      const isCurrentOrder =
+                        (pilot?.level || 1) >= ord.startLevel && (pilot?.level || 1) <= ord.endLevel;
+
+                      return (
+                        <button
+                          key={ord.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedOrderNum(ord.orderNumber);
+                            setLevelSearchInput('');
+                          }}
+                          className={`p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                            isSelected
+                              ? 'border-black bg-black text-white shadow-sm'
+                              : isCurrentOrder
+                              ? 'border-red-600 bg-red-50/50 text-black'
+                              : 'border-zinc-200 bg-white hover:border-black text-zinc-800'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-base">{ord.icon}</span>
+                            <span
+                              className={`font-mono text-[10px] font-black uppercase px-1.5 py-0.5 rounded ${
+                                isSelected ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-700'
+                              }`}
+                            >
+                              Ordre {ord.romanNumeral}
+                            </span>
                           </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-sm font-black uppercase text-black">
-                                {lvl.title}
-                              </span>
-                              {isCurrent && (
-                                <span className="px-2 py-0.5 rounded-full bg-red-600 text-white font-mono text-[9px] font-black uppercase tracking-wider">
-                                  Votre Niveau Actuel
-                                </span>
-                              )}
-                              {isUnlocked && !isCurrent && (
-                                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[9px] font-bold">
-                                  Atteint
-                                </span>
-                              )}
+                          <div className="mt-2">
+                            <div className="font-mono text-xs font-bold leading-tight line-clamp-1">
+                              {ord.name.split('&')[0].trim()}
                             </div>
-                            <span className="text-xs font-mono text-zinc-500">
-                              {lvl.minXp} à {lvl.maxXp === 99999 ? '∞' : lvl.maxXp} XP
+                            <span
+                              className={`text-[10px] font-mono block mt-0.5 ${
+                                isSelected ? 'text-zinc-300' : 'text-zinc-500'
+                              }`}
+                            >
+                              Niv. {ord.startLevel} - {ord.endLevel}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Barre de Recherche Rapide & Raccourcis Niveaux */}
+                <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 flex-1">
+                    <Search className="w-4 h-4 text-zinc-500 shrink-0" />
+                    <input
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={levelSearchInput}
+                      onChange={(e) => setLevelSearchInput(e.target.value)}
+                      placeholder="Saisir un niveau exact (ex: 2, 50, 250, 500, 1000)..."
+                      className="bg-transparent text-xs font-mono text-black placeholder:text-zinc-400 focus:outline-none w-full"
+                    />
+                    {levelSearchInput && (
+                      <button
+                        type="button"
+                        onClick={() => setLevelSearchInput('')}
+                        className="text-xs font-mono text-zinc-500 hover:text-black font-bold uppercase cursor-pointer"
+                      >
+                        Effacer
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0 overflow-x-auto">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLevelSearchInput('');
+                        setSelectedOrderNum(currentOrder.orderNumber);
+                      }}
+                      className="h-8 px-2.5 rounded-lg bg-white border border-zinc-300 hover:border-black font-mono text-[11px] font-bold text-black transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      Mon Niveau ({pilot?.level || 1})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLevelSearchInput('500');
+                      }}
+                      className="h-8 px-2.5 rounded-lg bg-white border border-zinc-300 hover:border-black font-mono text-[11px] font-bold text-black transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      Niveau 500
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLevelSearchInput('1000');
+                      }}
+                      className="h-8 px-2.5 rounded-lg bg-red-600 hover:bg-red-700 font-mono text-[11px] font-bold text-white transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      Niveau 1000 (Ultime)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bannière de l'Ordre Actif */}
+                {!isSearchingValidLevel && (
+                  <div className="mb-6 p-4 rounded-xl bg-zinc-100 border border-zinc-300 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{activeOrder.icon}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-black uppercase text-red-600">
+                            Ordre {activeOrder.romanNumeral} :
+                          </span>
+                          <span className="font-mono text-sm font-black uppercase text-black">
+                            {activeOrder.name}
+                          </span>
+                        </div>
+                        <p className="text-xs text-zinc-600 mt-0.5">
+                          {activeOrder.description}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-left md:text-right shrink-0">
+                      <span className="text-[10px] font-mono text-zinc-500 uppercase block font-bold">
+                        Grand Privilège :
+                      </span>
+                      <span className="text-xs font-mono font-bold text-black">
+                        {activeOrder.grandPerk}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Liste des Niveaux Générés (Fluidité garantie) */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-xs font-mono text-zinc-500 pb-1 border-b border-zinc-200">
+                    <span>
+                      {isSearchingValidLevel
+                        ? `Affichage du niveau recherché (${searchedLevelNum})`
+                        : `Affichage des niveaux ${activeOrder.startLevel} à ${activeOrder.endLevel} (${displayedLevels.length} paliers)`}
+                    </span>
+                    <span>XP Requis & Titre Honorifique</span>
+                  </div>
+
+                  {displayedLevels.map((lvl) => {
+                    const isCurrent = (pilot?.level || 1) === lvl.level;
+                    const isUnlocked = (pilot?.level || 1) >= lvl.level;
+
+                    return (
+                      <div
+                        key={lvl.level}
+                        className={`p-4 rounded-xl border-2 transition-all ${
+                          isCurrent
+                            ? 'border-black bg-zinc-50 shadow-md ring-2 ring-black/10'
+                            : isUnlocked
+                            ? 'border-zinc-300 bg-white'
+                            : 'border-zinc-200 bg-zinc-50/50 opacity-75'
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-11 h-11 rounded-xl flex flex-col items-center justify-center font-mono font-black ${
+                                isCurrent
+                                  ? 'bg-red-600 text-white'
+                                  : isUnlocked
+                                  ? 'bg-black text-white'
+                                  : 'bg-zinc-200 text-zinc-500'
+                              }`}
+                            >
+                              <span className="text-xs font-black">{lvl.level}</span>
+                              <span className="text-[8px] uppercase tracking-tighter opacity-80">Niv</span>
+                            </div>
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-mono text-sm font-black uppercase text-black">
+                                  {lvl.title}
+                                </span>
+                                {isCurrent && (
+                                  <span className="px-2 py-0.5 rounded-full bg-red-600 text-white font-mono text-[9px] font-black uppercase tracking-wider">
+                                    Votre Niveau Actuel
+                                  </span>
+                                )}
+                                {isUnlocked && !isCurrent && (
+                                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[9px] font-bold">
+                                    Atteint
+                                  </span>
+                                )}
+                                {!isUnlocked && (
+                                  <span className="px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-500 font-mono text-[9px] font-semibold flex items-center gap-1">
+                                    <Lock className="w-2.5 h-2.5" /> Verrouillé
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 mt-0.5 text-xs font-mono text-zinc-500">
+                                <span>
+                                  {lvl.minXp.toLocaleString('fr-FR')} à{' '}
+                                  {lvl.maxXp >= 9999999 ? '∞' : lvl.maxXp.toLocaleString('fr-FR')} XP
+                                </span>
+                                <span>•</span>
+                                <span className="text-zinc-600 font-bold">
+                                  Ordre {lvl.orderRoman}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="text-left sm:text-right shrink-0">
+                            <span className="text-[11px] font-mono text-zinc-600 font-bold">
+                              Multiplicateur : x{(1 + (lvl.level - 1) * 0.005).toFixed(2)}
                             </span>
                           </div>
                         </div>
 
-                        <div className="text-right sm:text-right">
-                          <span className="text-[11px] font-mono text-zinc-500 block">
-                            Avantages débloqués :
-                          </span>
+                        {/* Liste des Avantages */}
+                        <div className="mt-3 pt-2.5 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-3 gap-2">
+                          {lvl.perks.map((perk, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2 text-[11px] font-mono text-zinc-700"
+                            >
+                              <CheckCircle2
+                                className={`w-3.5 h-3.5 shrink-0 ${
+                                  isUnlocked ? 'text-emerald-600' : 'text-zinc-400'
+                                }`}
+                              />
+                              <span className="truncate">{perk}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
-
-                      {/* Liste des Avantages */}
-                      <div className="mt-3.5 pt-3 border-t border-zinc-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                        {lvl.perks.map((perk, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center gap-2 text-xs font-mono text-zinc-700"
-                          >
-                            <CheckCircle2
-                              className={`w-3.5 h-3.5 shrink-0 ${
-                                isUnlocked ? 'text-emerald-600' : 'text-zinc-400'
-                              }`}
-                            />
-                            <span>{perk}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ================= 3. BADGES & TROPHÉES D'ATELIER (12 BADGES) ================= */}
         {activeTab === 'badges' && (

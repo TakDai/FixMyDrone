@@ -29,7 +29,184 @@ export interface PilotLevelInfo {
   colorClass: string;
   badgeBg: string;
   perks: string[];
+  orderId?: string;
+  orderNumber?: number;
+  orderName?: string;
+  orderRoman?: string;
 }
+
+export interface MajorPrestigeOrder {
+  id: string;
+  orderNumber: number;
+  romanNumeral: string;
+  name: string;
+  startLevel: number;
+  endLevel: number;
+  themeColor: string;
+  badgeBg: string;
+  icon: string;
+  description: string;
+  grandPerk: string;
+}
+
+export const PRESTIGE_ORDERS: MajorPrestigeOrder[] = [
+  {
+    id: 'order-1',
+    orderNumber: 1,
+    romanNumeral: 'I',
+    name: 'Apprentis du Fer & Dépannage Initial',
+    startLevel: 1,
+    endLevel: 25,
+    themeColor: 'text-neutral-700',
+    badgeBg: 'bg-neutral-100 text-neutral-800 border-neutral-300',
+    icon: '🛠️',
+    description: 'Premières soudures, tests de continuité multimètre et familiarisation avec Betaflight.',
+    grandPerk: 'Code -5% Multi-Motors.fr & BindMyQuad.fr + Accès complet aux fiches de pannes IA',
+  },
+  {
+    id: 'order-2',
+    orderNumber: 2,
+    romanNumeral: 'II',
+    name: 'Artisans Builders & Monteurs 5 Pouces',
+    startLevel: 26,
+    endLevel: 75,
+    themeColor: 'text-blue-600',
+    badgeBg: 'bg-blue-50 text-blue-800 border-blue-300',
+    icon: '🔩',
+    description: 'Montages complets, gestion du Smoke Stopper, flash des firmwares ESC Bluejay et AM32.',
+    grandPerk: 'Code -8% + Frais de port offerts dès 4 moteurs + Droit de vote sur les pannes résolues',
+  },
+  {
+    id: 'order-3',
+    orderNumber: 3,
+    romanNumeral: 'III',
+    name: 'Experts Électroniques & Maîtres Soudeurs',
+    startLevel: 76,
+    endLevel: 150,
+    themeColor: 'text-emerald-600',
+    badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+    icon: '🔥',
+    description: 'Micro-soudures sur pads CMS arrachés, remplacement de MOSFETs ESC et débug de bus SPI.',
+    grandPerk: 'Code -10% VIP Permanent multi-boutiques + Mention "Expert Résolution" sur le forum',
+  },
+  {
+    id: 'order-4',
+    orderNumber: 4,
+    romanNumeral: 'IV',
+    name: 'Alchimistes du Vol & Dompteurs Blackbox',
+    startLevel: 151,
+    endLevel: 250,
+    themeColor: 'text-purple-600',
+    badgeBg: 'bg-purple-50 text-purple-800 border-purple-300',
+    icon: '📊',
+    description: 'Analyse spectrale FFT, accordage PID poussé, filtres RPM dynamiques et suppression du jello.',
+    grandPerk: 'Code -12% Multi-Motors.fr + Buzzer autonome Vifly Finder offert dès 35€',
+  },
+  {
+    id: 'order-5',
+    orderNumber: 5,
+    romanNumeral: 'V',
+    name: 'Maîtres des Ondes RF & Long-Range',
+    startLevel: 251,
+    endLevel: 350,
+    themeColor: 'text-cyan-600',
+    badgeBg: 'bg-cyan-50 text-cyan-800 border-cyan-300',
+    icon: '📡',
+    description: 'Maîtrise d ExpressLRS Gemini, Crossfire 868MHz, diagrammes de rayonnement et liaisons 20km+.',
+    grandPerk: 'Code -10% BindMyQuad + Accès prioritaire aux bulletins de séries et firmwares beta',
+  },
+  {
+    id: 'order-6',
+    orderNumber: 6,
+    romanNumeral: 'VI',
+    name: 'Visionnaires Haute Définition & Optique',
+    startLevel: 351,
+    endLevel: 450,
+    themeColor: 'text-indigo-600',
+    badgeBg: 'bg-indigo-50 text-indigo-800 border-indigo-300',
+    icon: '🕶️',
+    description: 'Optimisation des flux DJI O3, Walksnail Avatar HD et HDZero avec réglages thermiques d usine.',
+    grandPerk: 'Code -10% CamYQuad Lunettes & VTX + Canal direct d échange avec les fabricants',
+  },
+  {
+    id: 'order-7',
+    orderNumber: 7,
+    romanNumeral: 'VII',
+    name: 'Seigneurs du Bando & Crash-Proof Builders',
+    startLevel: 451,
+    endLevel: 550,
+    themeColor: 'text-orange-600',
+    badgeBg: 'bg-orange-50 text-orange-800 border-orange-300',
+    icon: '🧱',
+    description: 'Conception de quads blindés ultra-résistants aux impacts de béton et réparations extrêmes.',
+    grandPerk: 'Certification officielle "Atelier Agréé FixMyDrone" + Médaille physique d étain personnalisée',
+  },
+  {
+    id: 'order-8',
+    orderNumber: 8,
+    romanNumeral: 'VIII',
+    name: 'Grands Professeurs d Atelier & Mentors FPV',
+    startLevel: 551,
+    endLevel: 650,
+    themeColor: 'text-amber-600',
+    badgeBg: 'bg-amber-50 text-amber-800 border-amber-300',
+    icon: '🎓',
+    description: 'Transmission du savoir, formation des nouveaux arrivants et homologation des guides d atelier.',
+    grandPerk: 'Pouvoir de modération et d homologation officielle sur tous les tutoriels de l écosystème',
+  },
+  {
+    id: 'order-9',
+    orderNumber: 9,
+    romanNumeral: 'IX',
+    name: 'Concepteurs CAD & Ingénieurs Aérodynamiques',
+    startLevel: 651,
+    endLevel: 750,
+    themeColor: 'text-teal-600',
+    badgeBg: 'bg-teal-50 text-teal-800 border-teal-300',
+    icon: '📐',
+    description: 'Conception de frames carbone sur-mesure (T700/Toray), pièces TPU optimisées et flux CFD.',
+    grandPerk: 'Code -15% MakeMyFrame Carbone & TPU + Découpe de prototypes offerts à l atelier',
+  },
+  {
+    id: 'order-10',
+    orderNumber: 10,
+    romanNumeral: 'X',
+    name: 'Seigneurs de la Télémétrie Aéronautique',
+    startLevel: 751,
+    endLevel: 850,
+    themeColor: 'text-sky-600',
+    badgeBg: 'bg-sky-50 text-sky-800 border-sky-300',
+    icon: '🛰️',
+    description: 'Navigation inertielle autonome, fusion de capteurs GNSS multi-constellations et baromètres.',
+    grandPerk: 'Dotation trimestrielle de capteurs et GPS Rescue neufs par FindMyQuad.fr',
+  },
+  {
+    id: 'order-11',
+    orderNumber: 11,
+    romanNumeral: 'XI',
+    name: 'Sommités Mondiales du Pilotage & R&D Drone',
+    startLevel: 851,
+    endLevel: 950,
+    themeColor: 'text-fuchsia-600',
+    badgeBg: 'bg-fuchsia-50 text-fuchsia-800 border-fuchsia-300',
+    icon: '👑',
+    description: 'Reconnaissance planétaire, conseil technique auprès des écuries de course et juré international.',
+    grandPerk: 'Statut Ambassadeur Mondial + Prototypes constructeurs envoyés avant toute annonce publique',
+  },
+  {
+    id: 'order-12',
+    orderNumber: 12,
+    romanNumeral: 'XII',
+    name: 'Titans Mythiques & Démiurges Célestes',
+    startLevel: 951,
+    endLevel: 1000,
+    themeColor: 'text-red-600',
+    badgeBg: 'bg-gradient-to-r from-red-500 to-amber-500 text-white border-red-600 shadow-sm',
+    icon: '⚡',
+    description: 'Le sommet ultime de l ingénierie et du pilotage FPV. Maîtrise absolue du vol et des composants.',
+    grandPerk: 'Inscription éternelle au Panthéon Mondial FixMyDrone + Cadre titane personnalisé gravé au laser',
+  },
+];
 
 export interface DetailedFixReport {
   id: string;
@@ -142,148 +319,163 @@ export const ECOSYSTEM_SITES: EcosystemSiteInfo[] = [
   },
 ];
 
-// 2. Échelles de 10 niveaux de pilotes (Paliers FPV progressifs & prestige atelier)
-export const PILOT_LEVELS: PilotLevelInfo[] = [
-  {
-    level: 1,
-    title: 'Rookie Pilote',
-    minXp: 0,
-    maxXp: 149,
-    colorClass: 'text-neutral-600',
-    badgeBg: 'bg-neutral-100 text-neutral-800 border-neutral-300',
-    perks: [
-      'Accès au diagnostic IA et fiches de dépannage',
-      'Consultation des 13 824 moteurs Multi-Motors',
-      'Compte SSO mutualisé actif sur les 7 sites partenaires',
-    ],
-  },
-  {
-    level: 2,
-    title: 'Padawan du Fer',
-    minXp: 150,
-    maxXp: 399,
-    colorClass: 'text-blue-600',
-    badgeBg: 'bg-blue-50 text-blue-800 border-blue-300',
-    perks: [
-      'Badge "Padawan" visible sur le forum communautaire',
-      'Code -5% Multi-Motors.fr (Code : FIXMYDRONE5)',
-      'Code -5% BindMyQuad récepteurs & radio (Code : BINDRESCUE5)',
-      'Droit de vote utile (+10 XP) sur les pannes résolues',
-    ],
-  },
-  {
-    level: 3,
-    title: 'Tech Builder Certifié',
-    minXp: 400,
-    maxXp: 899,
-    colorClass: 'text-emerald-600',
-    badgeBg: 'bg-emerald-50 text-emerald-800 border-emerald-300',
-    perks: [
-      'Badge "Tech Builder" certifié sur votre profil',
-      'Code -8% + Frais de port offerts dès 4 moteurs (Code : TECHBUILDER8)',
-      'Code -7% CamYQuad VTX & Caméras (Code : CAMYHD7)',
-      'Publication de tutoriels et fiches d atelier en tête de forum',
-    ],
-  },
-  {
-    level: 4,
-    title: 'Docteur FPV / Maître Soudeur',
-    minXp: 900,
-    maxXp: 1799,
-    colorClass: 'text-purple-600',
-    badgeBg: 'bg-purple-50 text-purple-800 border-purple-300',
-    perks: [
-      'Mention "Expert Résolution" sur vos interventions',
-      'Code -10% VIP Permanent multi-boutiques (Code : FPVDOCTOR10)',
-      'Code -8% MakeMyQuad Stacks & LiPos (Code : MAKEMYSTACK8)',
-      'Accès aux analyses avancées de télémétrie Blackbox',
-    ],
-  },
-  {
-    level: 5,
-    title: 'Grand Expert Hardware',
-    minXp: 1800,
-    maxXp: 3499,
-    colorClass: 'text-amber-600',
-    badgeBg: 'bg-amber-50 text-amber-800 border-amber-300',
-    perks: [
-      'Statut Modérateur Technique sur le forum',
-      'Accès direct aux fiches constructeurs & bulletins de séries',
-      'Code -10% MakeMyFrame Carbone & TPU (Code : FRAMEPRO10)',
-      'Validation officielle des solutions signalées par la communauté',
-    ],
-  },
-  {
-    level: 6,
-    title: 'Accordeur PID & Maître Blackbox',
-    minXp: 3500,
-    maxXp: 5999,
-    colorClass: 'text-orange-600',
-    badgeBg: 'bg-orange-50 text-orange-800 border-orange-300',
-    perks: [
-      'Badge "PID Master" ornemental et distinctif',
-      'Code -12% Multi-Motors.fr (Code : MULTIVIP12)',
-      'Accès anticipé aux calculateurs de filtres RPM dynamiques',
-      'Buzzer Vifly autonome offert dès 35€ d achat (Code : BUZZERFREE)',
-    ],
-  },
-  {
-    level: 7,
-    title: 'Ingénieur Course & Bando',
-    minXp: 6000,
-    maxXp: 9999,
-    colorClass: 'text-cyan-600',
-    badgeBg: 'bg-cyan-50 text-cyan-800 border-cyan-300',
-    perks: [
-      'Accès prioritaire aux Giveaways mensuels de pièces neuves',
-      'Canal direct d échange avec les fabricants (SpeedyBee, T-Motor)',
-      'Code -10% CamYQuad Lunettes & VTX (Code : CAMYPRO10)',
-      'Testeur privilégié de firmwares beta (Betaflight / EdgeTX)',
-    ],
-  },
-  {
-    level: 8,
-    title: 'Maître d Atelier Émérite',
-    minXp: 10000,
-    maxXp: 16999,
-    colorClass: 'text-indigo-600',
-    badgeBg: 'bg-indigo-50 text-indigo-800 border-indigo-300',
-    perks: [
-      'Certification officielle "Atelier Agréé FixMyDrone"',
-      'Attribution de la médaille d étain virtuelle gravée',
-      'Pouvoir d homologation des guides d atelier communautaires',
-      'Invitation VIP aux rencontres annuelles des builders FPV',
-    ],
-  },
-  {
-    level: 9,
-    title: 'Sommité Mondiale FPV',
-    minXp: 17000,
-    maxXp: 29999,
-    colorClass: 'text-fuchsia-600',
-    badgeBg: 'bg-fuchsia-50 text-fuchsia-800 border-fuchsia-300',
-    perks: [
-      'Droit de vote sur le référencement des nouvelles marques',
-      'Dotation trimestrielle de pièces d essai par nos partenaires',
-      'Participation au jury des meilleurs builds de l année',
-      'Accès illimité à vie à tous les services pro de l écosystème',
-    ],
-  },
-  {
-    level: 10,
-    title: 'Légende Vivante FPV',
-    minXp: 30000,
-    maxXp: 99999,
-    colorClass: 'text-red-600',
-    badgeBg: 'bg-gradient-to-r from-red-50 to-amber-50 text-red-900 border-red-400',
-    perks: [
-      'Inscription éternelle au Hall of Fame mondial FixMyDrone',
-      'Prototypes d usine envoyés avant commercialisation publique',
-      'Statut Administrateur d Honneur sur l ensemble de l écosystème',
-      'Cadre physique personnalisé gravé au laser offert à l atelier',
-    ],
-  },
-];
+// 2. Générateur des 1000 Niveaux de Pilotes & Paliers de Prestige FPV
+function generateAll1000Levels(): PilotLevelInfo[] {
+  const levels: PilotLevelInfo[] = [];
+
+  // Paliers signatures et historiques des 10 premiers niveaux
+  const base10MinXp = [0, 150, 400, 900, 1800, 3500, 6000, 10000, 17000, 30000];
+  const base10MaxXp = [149, 399, 899, 1799, 3499, 5999, 9999, 16999, 29999, 44999];
+  const base10Titles = [
+    'Rookie Pilote',
+    'Padawan du Fer',
+    'Tech Builder Certifié',
+    'Docteur FPV / Maître Soudeur',
+    'Grand Expert Hardware',
+    'Accordeur PID & Maître Blackbox',
+    'Ingénieur Course & Bando',
+    'Maître d Atelier Émérite',
+    'Sommité Mondiale FPV',
+    'Légende Vivante FPV',
+  ];
+
+  const signatureMilestones: Record<number, string> = {
+    25: 'Grand Prévôt des Apprentis',
+    50: 'Maître Artisan 5 Pouces',
+    75: 'Doyen des Artisans Builders',
+    100: 'Grand Maître Soudeur Suprême',
+    150: 'Souverain des Circuits & ESCs',
+    200: 'Grand Alchimiste des Filtres RPM',
+    250: 'Maître Absolu de la Blackbox',
+    300: 'Commandant des Fréquences 868MHz',
+    350: 'Grand Amiral du Long-Range',
+    400: 'Visionnaire Suprême Vidéo HD',
+    450: 'Maître Optique & Latence Zéro',
+    500: 'Gladiateur Mythique des Bandos',
+    550: 'Seigneur Crash-Proof Invaincu',
+    600: 'Grand Recteur d Atelier FPV',
+    650: 'Patriarche des Formateurs Pilotes',
+    700: 'Grand Architecte Carbone Toray',
+    750: 'Maître Concepteur CAD Suprême',
+    800: 'Grand Oracle GNSS & Rescue',
+    850: 'Navigateur Inertiel Stellaire',
+    900: 'Sommité Planétaire Absolue',
+    950: 'Doyen Suprême de la R&D FPV',
+    990: 'Titan Céleste de l Éther',
+    999: 'Archange du Fer & du Carbone',
+    1000: 'Dieu Vivant du FPV & Légende Éternelle des Cieux',
+  };
+
+  const rankAdjectives = [
+    'Initié',
+    'Praticien',
+    'Spécialiste',
+    'Expert',
+    'Maître',
+    'Commandant',
+    'Grand Expert',
+    'Souverain',
+    'Virtuose',
+    'Émérite',
+  ];
+
+  let currentMinXp = 0;
+
+  for (let lvl = 1; lvl <= 1000; lvl++) {
+    // 1. Ordre de prestige correspondant
+    const order =
+      PRESTIGE_ORDERS.find((o) => lvl >= o.startLevel && lvl <= o.endLevel) ||
+      PRESTIGE_ORDERS[PRESTIGE_ORDERS.length - 1];
+
+    // 2. Calcul d'XP
+    let minXp = 0;
+    let maxXp = 0;
+
+    if (lvl <= 10) {
+      minXp = base10MinXp[lvl - 1];
+      maxXp = base10MaxXp[lvl - 1];
+      currentMinXp = maxXp + 1;
+    } else {
+      minXp = currentMinXp;
+      if (lvl === 1000) {
+        maxXp = 999999999;
+      } else {
+        const step = Math.round(1500 + Math.pow(lvl - 10, 1.35) * 45);
+        maxXp = minXp + step - 1;
+        currentMinXp = maxXp + 1;
+      }
+    }
+
+    // 3. Titre du niveau
+    let title = '';
+    if (lvl <= 10) {
+      title = base10Titles[lvl - 1];
+    } else if (signatureMilestones[lvl]) {
+      title = signatureMilestones[lvl];
+    } else {
+      const adjIdx = (lvl - order.startLevel) % rankAdjectives.length;
+      const stepIdx = Math.floor((lvl - order.startLevel) / rankAdjectives.length) + 1;
+      const adj = rankAdjectives[adjIdx];
+
+      // Thème court de l'ordre
+      const domainShort =
+        order.orderNumber === 1
+          ? 'du Fer'
+          : order.orderNumber === 2
+          ? 'du Montage 5"'
+          : order.orderNumber === 3
+          ? 'de la Micro-Soudure'
+          : order.orderNumber === 4
+          ? 'de l Accordage PID'
+          : order.orderNumber === 5
+          ? 'des Liaisons RF'
+          : order.orderNumber === 6
+          ? 'du Flux HD'
+          : order.orderNumber === 7
+          ? 'du Bando'
+          : order.orderNumber === 8
+          ? 'd Atelier'
+          : order.orderNumber === 9
+          ? 'du Carbone CAD'
+          : order.orderNumber === 10
+          ? 'du GNSS Rescue'
+          : order.orderNumber === 11
+          ? 'Mondial Drone'
+          : 'des Titans FPV';
+
+      title = `${adj} ${domainShort} (Échelon ${stepIdx})`;
+    }
+
+    // 4. Avantages & Perks spécifiques
+    const perks: string[] = [
+      order.grandPerk,
+      `Multiplicateur XP Atelier x${(1 + (lvl - 1) * 0.005).toFixed(2)} sur les rapports`,
+      `Distinction publique : Membre officiel Ordre ${order.romanNumeral} (Niv. ${lvl}/1000)`,
+    ];
+
+    if (lvl % 50 === 0) {
+      perks.push(`Cadeau d atelier débloqué : Box partenaire de composants palier ${lvl}`);
+    }
+
+    levels.push({
+      level: lvl,
+      title,
+      minXp,
+      maxXp,
+      colorClass: order.themeColor,
+      badgeBg: order.badgeBg,
+      perks,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      orderName: order.name,
+      orderRoman: order.romanNumeral,
+    });
+  }
+
+  return levels;
+}
+
+export const PILOT_LEVELS: PilotLevelInfo[] = generateAll1000Levels();
 
 // 3. Badges de distinction (12 badges variés et prestigieux)
 export const ALL_PILOT_BADGES: PilotBadge[] = [
