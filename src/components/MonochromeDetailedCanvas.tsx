@@ -40,160 +40,160 @@ interface ComponentVisualConfig {
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X (node 2004-5) : 768 × 670, centre (768, 580)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (780, 580)
   {
     id: 'frame',
     image: '/images/components/frame.svg',
-    x: 384,
+    x: 396,
     y: 245,
     width: 768,
     height: 670,
-    labelX: 768,
-    labelY: 900,
+    labelX: 780,
+    labelY: 890,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
-  // 2. Contrôleur de Vol FC (node 2004-4) : 146 × 148 à (467, 491)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (430, 490)
   {
     id: 'fc',
     image: '/images/components/fc.svg',
-    x: 467,
-    y: 491,
+    x: 430,
+    y: 490,
     width: 146,
     height: 148,
-    labelX: 540,
+    labelX: 503,
     labelY: 660,
     label: 'FC F7 30.5x30.5',
   },
-  // 3. Variateur ESC 4-en-1 (node 2004-6) : 165 × 155 à (925, 510)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (980, 490)
   {
     id: 'esc',
     image: '/images/components/esc.svg',
-    x: 925,
-    y: 510,
+    x: 980,
+    y: 490,
     width: 165,
     height: 155,
-    labelX: 1007,
-    labelY: 685,
+    labelX: 1062,
+    labelY: 665,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (540, 890)
+  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (510, 890)
   {
     id: 'motor',
     image: '/images/components/motor.svg',
-    x: 540,
+    x: 510,
     y: 890,
     width: 150,
     height: 150,
-    labelX: 615,
-    labelY: 1065,
-    label: 'MOTEUR BRUSHLESS (MULTI-MOTORS)',
+    labelX: 585,
+    labelY: 1060,
+    label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro (node 2004-2) : 93 × 77 à (804, 945)
+  // 5. Caméra FPV Micro : 94 × 80 à (733, 940)
   {
     id: 'cam',
     image: '/images/components/camera.svg',
-    x: 804,
-    y: 945,
-    width: 93,
-    height: 77,
-    labelX: 850,
+    x: 733,
+    y: 940,
+    width: 94,
+    height: 80,
+    labelX: 780,
     labelY: 1040,
     label: 'CAMÉRA FPV MICRO',
   },
-  // 6. Émetteur Vidéo VTX (node 2004-9) : 89 × 145 à (572, 218)
+  // 6. Émetteur Vidéo VTX : 90 × 145 à (430, 130)
   {
     id: 'vtx',
     image: '/images/components/vtx.svg',
-    x: 572,
-    y: 218,
-    width: 89,
+    x: 430,
+    y: 130,
+    width: 90,
     height: 145,
-    labelX: 616,
-    labelY: 382,
+    labelX: 475,
+    labelY: 295,
     label: 'VTX 5.8GHZ 1W',
   },
-  // 7. Module GPS (node 2004-16) : 77 × 83 à (735, 186)
+  // 7. Module GPS : 78 × 83 à (741, 115)
   {
     id: 'gps',
     image: '/images/components/gps.svg',
-    x: 735,
-    y: 186,
-    width: 77,
+    x: 741,
+    y: 115,
+    width: 78,
     height: 83,
-    labelX: 773,
-    labelY: 286,
+    labelX: 780,
+    labelY: 215,
     label: 'GPS M10 & BOUSSOLE',
   },
-  // 8. Récepteur RX ELRS (node 2004-8) : 64 × 114 à (856, 232)
+  // 8. Récepteur RX ELRS : 70 × 125 à (1010, 130)
   {
     id: 'rx',
     image: '/images/components/rx.svg',
-    x: 856,
-    y: 232,
-    width: 64,
-    height: 114,
-    labelX: 888,
-    labelY: 362,
+    x: 1010,
+    y: 130,
+    width: 70,
+    height: 125,
+    labelX: 1045,
+    labelY: 275,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 26 à (945, 200)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 26 à (560, 60)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg',
-    x: 945,
-    y: 200,
+    x: 560,
+    y: 60,
     width: 440,
     height: 26,
-    labelX: 1165,
-    labelY: 190,
+    labelX: 780,
+    labelY: 46,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop (node 2004-3) : 56 × 427 à (1315, 262)
+  // 10. Antenne VTX RHCP Lollipop : 60 × 260 à (1140, 75)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg',
-    x: 1315,
-    y: 262,
-    width: 56,
-    height: 427,
-    labelX: 1343,
-    labelY: 710,
+    x: 1140,
+    y: 75,
+    width: 60,
+    height: 260,
+    labelX: 1170,
+    labelY: 355,
     label: 'ANTENNE RHCP VTX',
   },
-  // 11. Condensateur Low ESR : 50 × 50 à (385, 541)
+  // 11. Condensateur Low ESR : 55 × 55 à (275, 535)
   {
     id: 'condo',
     image: '/images/components/condo.svg',
-    x: 385,
-    y: 541,
-    width: 50,
-    height: 50,
-    labelX: 410,
-    labelY: 614,
+    x: 275,
+    y: 535,
+    width: 55,
+    height: 55,
+    labelX: 302,
+    labelY: 610,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly (node 2004-17) : 52 × 92 à (878, 754)
+  // 12. Buzzer ViFly : 55 × 95 à (885, 770)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg',
-    x: 878,
-    y: 754,
-    width: 52,
-    height: 92,
-    labelX: 904,
-    labelY: 866,
+    x: 885,
+    y: 770,
+    width: 55,
+    height: 95,
+    labelX: 912,
+    labelY: 885,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S (node 2004-10) : 192 × 437 à (1141, 588)
+  // 13. Batterie LiPo 6S : 140 × 320 à (1070, 690)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg',
-    x: 1141,
-    y: 588,
-    width: 192,
-    height: 437,
-    labelX: 1237,
-    labelY: 1042,
+    x: 1070,
+    y: 690,
+    width: 140,
+    height: 320,
+    labelX: 1140,
+    labelY: 1030,
     label: 'BATTERIE LIPO 6S XT60',
   },
 ];
@@ -275,72 +275,61 @@ export function MonochromeDetailedCanvas({
         />
 
         {/* Lignes directrices CAO d'alignement centrées sur le châssis */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="340 160 1562 904">
-          <line x1="768" y1="160" x2="768" y2="1080" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <line x1="340" y1="580" x2="1900" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
-          <circle cx="768" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 rounded-3xl" viewBox="200 40 1600 1050">
+          <line x1="780" y1="40" x2="780" y2="1090" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <line x1="200" y1="580" x2="1800" y2="580" stroke="#71717a" strokeWidth="1" strokeDasharray="6 8" />
+          <circle cx="780" cy="580" r="335" fill="none" stroke="#71717a" strokeWidth="0.8" strokeDasharray="4 6" />
         </svg>
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="340 160 1562 904"
+          viewBox="200 40 1600 1050"
           className="w-full h-full select-none"
         >
-          <defs>
-            {/* Surbrillance bleue de sélection */}
-            <filter id="selectGlow" x="-15%" y="-15%" width="130%" height="130%">
-              <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#2563eb" floodOpacity="0.7" />
-            </filter>
-
-            {/* Surbrillance au survol rouge corail style Multi-Motors */}
-            <filter id="hoverGlow" x="-12%" y="-12%" width="124%" height="124%">
-              <feDropShadow dx="0" dy="2" stdDeviation="7" floodColor="#ff5757" floodOpacity="0.5" />
-            </filter>
-          </defs>
-
           {/* ====================================================================
-              LIGNES DE CÂBLAGE & REPÉRAGE TECHNIQUE DU BLUEPRINT
+              LIGNES DE CÂBLAGE & REPÉRAGE TECHNIQUE DU BLUEPRINT (MONOCHROME STRICT)
              ==================================================================== */}
           <g className="pointer-events-none opacity-40">
             {/* Ligne Standoffs Frame -> FC -> ESC */}
-            <line x1="540" y1="565" x2="768" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
-            <line x1="1007" y1="587" x2="768" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="503" y1="564" x2="780" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="1062" y1="567" x2="780" y2="580" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne Moteurs vers Châssis */}
-            <line x1="613" y1="890" x2="485" y2="815" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="585" y1="890" x2="497" y2="815" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
             
             {/* Ligne Caméra vers avant du châssis */}
-            <line x1="850" y1="945" x2="768" y2="680" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="780" y1="940" x2="780" y2="680" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne VTX vers Stack */}
-            <line x1="616" y1="363" x2="768" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="475" y1="275" x2="780" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne GPS vers Châssis arrière */}
-            <line x1="773" y1="269" x2="768" y2="380" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="780" y1="198" x2="780" y2="380" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Ligne RX vers Stack */}
-            <line x1="888" y1="346" x2="768" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
+            <line x1="1045" y1="255" x2="780" y2="480" stroke="#52525b" strokeWidth="1.5" strokeDasharray="4 4" />
 
             {/* Câble d'antenne VTX vers VTX */}
-            <line x1="1315" y1="475" x2="661" y2="290" stroke="#71717a" strokeWidth="1.2" strokeDasharray="3 3" />
+            <line x1="1140" y1="205" x2="520" y2="202" stroke="#52525b" strokeWidth="1.2" strokeDasharray="4 4" />
 
-            {/* Câble d'alimentation Condensateur vers ESC */}
-            <line x1="426" y1="568" x2="925" y2="587" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" />
+            {/* Câble d'alimentation Condensateur vers ESC (Monochrome) */}
+            <line x1="330" y1="562" x2="980" y2="567" stroke="#18181b" strokeWidth="1.5" strokeDasharray="6 4" />
 
-            {/* Câble ViFly Buzzer vers FC */}
-            <line x1="878" y1="800" x2="613" y2="565" stroke="#16a34a" strokeWidth="1.5" strokeDasharray="4 4" />
+            {/* Câble ViFly Buzzer vers FC (Monochrome) */}
+            <line x1="885" y1="817" x2="576" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
 
-            {/* Câble LiPo XT60 vers ESC */}
-            <line x1="1141" y1="806" x2="1090" y2="587" stroke="#eab308" strokeWidth="2" strokeDasharray="5 5" />
+            {/* Câble LiPo XT60 vers ESC (Monochrome) */}
+            <line x1="1070" y1="750" x2="1062" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
           </g>
 
           {/* ====================================================================
-              13 COMPOSANTS DU DRONE VECTORISÉS (Moteur Multi-Motors.fr)
+              13 COMPOSANTS DU DRONE VECTORISÉS (STYLE MULTI-MOTORS PUR SANS OMBRE)
              ==================================================================== */}
           {DRONE_COMPONENT_CONFIGS.map((comp) => {
             const isSelected = selectedCompId === comp.id;
             const isHov = hoveredId === comp.id;
             const active = isSelected || isHov;
+            const pillW = comp.id === 'condo' ? 144 : 176;
 
             return (
               <g
@@ -350,18 +339,17 @@ export function MonochromeDetailedCanvas({
                 onMouseEnter={() => setHoveredId(comp.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 className="cursor-pointer transition-all duration-200"
-                filter={isSelected ? 'url(#selectGlow)' : isHov ? 'url(#hoverGlow)' : undefined}
               >
-                {/* Zone réactive cliquable */}
+                {/* Zone réactive cliquable (Zero ombres / pur trait Multi-Motors) */}
                 <rect
                   x={comp.x - 6}
                   y={comp.y - 6}
                   width={comp.width + 12}
                   height={comp.height + 12}
                   rx="10"
-                  fill={active ? 'rgba(255, 87, 87, 0.06)' : 'transparent'}
-                  stroke={isSelected ? '#2563eb' : isHov ? '#ff5757' : 'transparent'}
-                  strokeWidth={isSelected ? '2.5' : '1.5'}
+                  fill={isSelected ? 'rgba(0, 0, 0, 0.06)' : isHov ? 'rgba(0, 0, 0, 0.03)' : 'transparent'}
+                  stroke={isSelected ? '#000000' : isHov ? '#000000' : 'transparent'}
+                  strokeWidth={isSelected ? '3' : '1.5'}
                   strokeDasharray={isHov && !isSelected ? '4 4' : undefined}
                   className="transition-colors duration-150"
                 />
@@ -380,20 +368,20 @@ export function MonochromeDetailedCanvas({
                 {/* Étiquette technique style Multi-Motors (pill noir / blanc à contour précis) */}
                 <g className={`transition-opacity duration-150 ${active ? 'opacity-100' : 'opacity-85'}`}>
                   <rect
-                    x={comp.labelX - 90}
+                    x={comp.labelX - pillW / 2}
                     y={comp.labelY - 14}
-                    width="180"
+                    width={pillW}
                     height="24"
                     rx="6"
-                    fill={active ? '#ff5757' : '#000000'}
-                    stroke={active ? '#000000' : '#000000'}
+                    fill={isSelected ? '#000000' : isHov ? '#27272a' : '#000000'}
+                    stroke="#000000"
                     strokeWidth="1.2"
                   />
                   <text
                     x={comp.labelX}
                     y={comp.labelY + 2}
                     textAnchor="middle"
-                    fontSize="9.5"
+                    fontSize="9"
                     fontFamily="monospace"
                     fontWeight="bold"
                     letterSpacing="0.04em"
@@ -411,10 +399,10 @@ export function MonochromeDetailedCanvas({
             À DROITE : LES 3 BOUTONS D'ÉQUIPEMENTS EXTERNES STYLE MULTI-MOTORS.FR
             (Survol : grille pure des marques avec le vrai logo officiel)
            ==================================================================== */}
-        <div className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3.5 z-40 w-64 sm:w-72">
+        <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3.5 z-40 w-60 sm:w-64">
           
           <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest px-1 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#ff5757]" />
+            <span className="w-2 h-2 rounded-full bg-black" />
             <span>Périphériques & Écosystème</span>
           </div>
 
@@ -436,12 +424,12 @@ export function MonochromeDetailedCanvas({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Glasses className={`w-4 h-4 ${hoveredButton === 'goggles' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <Glasses className="w-4 h-4 text-black" />
                   <span className="text-xs font-mono font-bold uppercase tracking-wider">
                     Lunettes FPV
                   </span>
                 </div>
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-black text-white">
                   {GOGGLE_BRANDS.length}
                 </span>
               </div>
@@ -476,7 +464,7 @@ export function MonochromeDetailedCanvas({
                         }}
                         className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all cursor-pointer border ${
                           isSelected
-                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-[#ff5757]'
+                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-black'
                             : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black shadow-2xs hover:scale-105'
                         }`}
                         title={gb.name}
@@ -513,12 +501,12 @@ export function MonochromeDetailedCanvas({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Radio className={`w-4 h-4 ${hoveredButton === 'radio' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <Radio className="w-4 h-4 text-black" />
                   <span className="text-xs font-mono font-bold uppercase tracking-wider">
                     Radiocommande
                   </span>
                 </div>
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-black text-white">
                   {RADIO_BRANDS.length}
                 </span>
               </div>
@@ -553,7 +541,7 @@ export function MonochromeDetailedCanvas({
                         }}
                         className={`flex flex-col items-center justify-center p-2.5 rounded-xl transition-all cursor-pointer border ${
                           isSelected
-                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-[#ff5757]'
+                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-black'
                             : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black shadow-2xs hover:scale-105'
                         }`}
                         title={rb.name}
@@ -590,12 +578,12 @@ export function MonochromeDetailedCanvas({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Cpu className={`w-4 h-4 ${hoveredButton === 'config' ? 'text-[#ff5757]' : 'text-zinc-700'}`} />
+                  <Cpu className="w-4 h-4 text-black" />
                   <span className="text-xs font-mono font-bold uppercase tracking-wider">
                     Firmware / Config
                   </span>
                 </div>
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#ff5757] text-white">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-black text-white">
                   {CONFIGURATOR_BRANDS.length}
                 </span>
               </div>
@@ -630,7 +618,7 @@ export function MonochromeDetailedCanvas({
                         }}
                         className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all cursor-pointer border ${
                           isSelected
-                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-[#ff5757]'
+                            ? 'bg-zinc-100 border-2 border-black shadow-sm ring-2 ring-black'
                             : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black shadow-2xs hover:scale-105'
                         }`}
                         title={cb.name}
@@ -659,7 +647,7 @@ export function MonochromeDetailedCanvas({
                 <Crosshair className="w-3.5 h-3.5 text-black" />
                 {getComp(hoveredId).category}
               </span>
-              <span className="text-white bg-[#ff5757] px-2 py-0.5 rounded font-mono font-bold text-[10px]">
+              <span className="text-white bg-black px-2 py-0.5 rounded font-mono font-bold text-[10px]">
                 {getComp(hoveredId).commonIssues.length} pannes
               </span>
             </div>
@@ -678,7 +666,7 @@ export function MonochromeDetailedCanvas({
 
         {/* Repère d'atelier discret en bas à gauche style Multi-Motors */}
         <div className="absolute bottom-3 left-4 bg-white/95 px-3 py-1.5 rounded-xl border border-black/30 text-[11px] text-zinc-700 flex items-center gap-2 pointer-events-none shadow-xs">
-          <Flame className="w-3.5 h-3.5 text-[#ff5757]" />
+          <Flame className="w-3.5 h-3.5 text-black" />
           <span>Style Multi-Motors.fr • Moteur vectoriel • Grille de marques au survol</span>
         </div>
 
@@ -695,7 +683,7 @@ export function MonochromeDetailedCanvas({
           </span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-black font-semibold">
-          <CheckCircle2 className="w-3.5 h-3.5 text-[#ff5757]" />
+          <CheckCircle2 className="w-3.5 h-3.5 text-black" />
           <span>14 Vrais Logos Officiels Intégrés • Synchronisation instantanée</span>
         </div>
       </div>
