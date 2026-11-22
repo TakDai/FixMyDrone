@@ -168,66 +168,66 @@ export default function PilotAccountPage() {
           </div>
 
           {/* Navigation par Onglets Piliers Style Multi-Motors */}
-          <div className="flex items-center gap-2 mt-4 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 mt-4 overflow-x-auto pb-1 scrollbar-none p-1 bg-zinc-100/80 rounded-2xl border border-zinc-200">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'profile'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
               Vue d ensemble
             </button>
             <button
               onClick={() => setActiveTab('levels')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'levels'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
-              1000 Niveaux & Prestige XP
+              1000 Niveaux XP
             </button>
             <button
               onClick={() => setActiveTab('badges')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'badges'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
-              12 Badges & Trophées ({pilot?.unlockedBadges?.length || 1}/12)
+              12 Badges ({pilot?.unlockedBadges?.length || 1}/12)
             </button>
             <button
               onClick={() => setActiveTab('rewards')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'rewards'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
-              Codes Réductions Partenaires
+              Codes Réductions
             </button>
             <button
               onClick={() => setActiveTab('reports')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'reports'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
-              Historique des Rapports ({pilot?.historyReports?.length || 0})
+              Rapports ({pilot?.historyReports?.length || 0})
             </button>
             <button
               onClick={() => setActiveTab('ecosystem')}
-              className={`h-9 px-4 rounded-[12px] font-mono text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`h-8.5 px-3.5 rounded-[11px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'ecosystem'
                   ? 'bg-black text-white shadow-sm'
-                  : 'bg-white border-2 border-zinc-200 text-zinc-700 hover:border-black hover:text-black'
+                  : 'bg-white/80 border border-transparent text-zinc-700 hover:border-black hover:text-black hover:bg-white'
               }`}
             >
-              7 Sites Mutualisés (SSO)
+              7 Sites SSO
             </button>
           </div>
         </div>
@@ -747,18 +747,18 @@ export default function PilotAccountPage() {
                         </div>
 
                         {/* Liste des Avantages */}
-                        <div className="mt-3 pt-2.5 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div className="mt-3 pt-2.5 border-t border-zinc-200 grid grid-cols-1 md:grid-cols-3 gap-2.5">
                           {lvl.perks.map((perk, idx) => (
                             <div
                               key={idx}
-                              className="flex items-center gap-2 text-[11px] font-mono text-zinc-700"
+                              className="flex items-start gap-2 text-[11px] font-mono text-zinc-700"
                             >
                               <CheckCircle2
-                                className={`w-3.5 h-3.5 shrink-0 ${
+                                className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${
                                   isUnlocked ? 'text-emerald-600' : 'text-zinc-400'
                                 }`}
                               />
-                              <span className="truncate">{perk}</span>
+                              <span className="leading-snug break-words">{perk}</span>
                             </div>
                           ))}
                         </div>
