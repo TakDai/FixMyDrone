@@ -430,46 +430,27 @@ export function MonochromeDetailedCanvas({
             }}
             className="absolute top-0 left-0 bg-white overflow-visible"
           >
-            {/* SVG 1540 × 892 avec marge de sécurité haute & basse */}
+            {/* SVG 1540 × 892 unifié pour l'ensemble du système */}
             <svg
               viewBox="0 0 1540 892"
               width="1540"
               height="892"
               className="w-full h-full select-none"
             >
-              {/* Ligne directrice technique blueprint discrète sur desktop */}
-              <line
-                x1="1260"
-                y1="10"
-                x2="1260"
-                y2="875"
-                stroke="#000000"
-                strokeWidth="1.2"
-                strokeDasharray="4 6"
-                opacity="0.18"
-                className="select-none pointer-events-none"
-              />
-
               {renderDroneComponents()}
             </svg>
 
-            {/* STATIONS SOL À DROITE : Fixées en coordonnées exactes 1540 × 892 */}
+            {/* ÉQUIPEMENTS INTÉGRÉS DANS LA MÊME SECTION : Alignés harmonieusement */}
             <div
               style={{
                 position: 'absolute',
-                top: '15px',
-                right: '35px',
+                top: '40px',
+                right: '65px',
                 width: '148px',
-                height: '850px',
+                height: '800px',
               }}
               className="flex flex-col justify-between items-center z-40 select-none"
             >
-              {/* En-tête de section technique blueprint au-dessus des stations */}
-              <div className="flex items-center gap-1.5 pb-1 border-b border-zinc-200 w-full justify-center select-none pointer-events-none">
-                <span className="font-mono text-[8.5px] font-black uppercase tracking-widest text-zinc-400">
-                  Équipements Sol
-                </span>
-              </div>
           
           {/* STATION 1 : LUNETTES FPV */}
           <div
