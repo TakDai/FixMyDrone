@@ -76,15 +76,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 685,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 (Logo Multi-Motors.fr Vectorisé) : 145 × 158 à (542, 890)
+  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (540, 890)
   {
     id: 'motor',
     image: '/images/components/motor.svg',
-    x: 542,
+    x: 540,
     y: 890,
-    width: 145,
-    height: 158,
-    labelX: 613,
+    width: 150,
+    height: 150,
+    labelX: 615,
     labelY: 1065,
     label: 'MOTEUR BRUSHLESS (MULTI-MOTORS)',
   },
@@ -160,14 +160,14 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 710,
     label: 'ANTENNE RHCP VTX',
   },
-  // 11. Condensateur Low ESR (node 2004-13) : 32 × 54 à (394, 541)
+  // 11. Condensateur Low ESR : 50 × 50 à (385, 541)
   {
     id: 'condo',
     image: '/images/components/condo.svg',
-    x: 394,
+    x: 385,
     y: 541,
-    width: 32,
-    height: 54,
+    width: 50,
+    height: 50,
     labelX: 410,
     labelY: 614,
     label: 'CONDENSATEUR LOW ESR',
