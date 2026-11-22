@@ -346,6 +346,34 @@ export function getLevelFromXp(xp: number): PilotLevelInfo {
 }
 
 const STORAGE_KEY = 'fpv_ecosystem_account_v1';
+const USERS_DB_KEY = 'fpv_ecosystem_users_db_v1';
+
+export interface StoredUserAccount {
+  email: string;
+  password?: string;
+  profile: PilotProfile;
+}
+
+export function getAllRegisteredUsers(): Record<string, StoredUserAccount> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveUserToDirectory(account: StoredUserAccount): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const db = getAllRegisteredUsers();
+    db[account.email.toLowerCase().trim()] = account;
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+  } catch {
+    // ignore
+  }
+}
 
 /**
  * Récupère le profil pilote mutualisé (SSO Écosystème)
@@ -375,44 +403,107 @@ export function savePilotProfile(profile: PilotProfile): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     localStorage.setItem('fixmydrone_pilot_profile_v1', JSON.stringify(profile));
+    
+    // Met également à jour dans l'annuaire si l'email existe
+    if (profile.email) {
+      const db = getAllRegisteredUsers();
+      const normEmail = profile.email.toLowerCase().trim();
+      const existing = db[normEmail];
+      if (existing) {
+        existing.profile = profile;
+        saveUserToDirectory(existing);
+      } else {
+        saveUserToDirectory({ email: normEmail, profile });
+      }
+    }
+
     window.dispatchEvent(new Event('fpv_ecosystem_account_updated'));
   } catch (e) {
     // ignore
   }
 }
 
+export interface AuthResult {
+  success: boolean;
+  user?: PilotProfile;
+  error?: string;
+}
+
 /**
- * Connexion pilote mutualisée
+ * Connexion pilote mutualisée avec vérification de l'annuaire
  */
-export function loginPilot(email: string, callsign?: string): PilotProfile {
-  const current = loadPilotProfile();
-  const updated: PilotProfile = {
-    ...current,
-    email: email.trim(),
-    callsign: callsign?.trim() || current.callsign || email.split('@')[0].toUpperCase(),
+export function loginPilot(email: string, password?: string): AuthResult {
+  const normEmail = email.toLowerCase().trim();
+  const db = getAllRegisteredUsers();
+  const existing = db[normEmail];
+
+  if (existing) {
+    if (password && existing.password && existing.password !== password) {
+      return { success: false, error: 'Mot de passe incorrect pour cette adresse email.' };
+    }
+    const profile: PilotProfile = {
+      ...existing.profile,
+      isLoggedIn: true,
+    };
+    savePilotProfile(profile);
+    existing.profile = profile;
+    saveUserToDirectory(existing);
+    return { success: true, user: profile };
+  }
+
+  // Première connexion avec cet email : initialisation automatique avec le pseudo déduit
+  const callsign = normEmail.split('@')[0].toUpperCase();
+  const newProfile: PilotProfile = {
+    ...DEFAULT_PILOT_PROFILE,
+    id: `pilot-${Date.now()}`,
+    callsign,
+    email: normEmail,
     isLoggedIn: true,
+    xp: 150,
+    level: 2,
+    levelTitle: 'Padawan du Fer',
+    createdAt: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
   };
-  savePilotProfile(updated);
-  return updated;
+  savePilotProfile(newProfile);
+  saveUserToDirectory({ email: normEmail, password, profile: newProfile });
+  return { success: true, user: newProfile };
 }
 
 /**
  * Inscription pilote mutualisée
  */
-export function registerPilot(callsign: string, email: string): PilotProfile {
-  const updated: PilotProfile = {
+export function registerPilot(callsign: string, email: string, password?: string): AuthResult {
+  const normEmail = email.toLowerCase().trim();
+  const db = getAllRegisteredUsers();
+
+  if (db[normEmail]) {
+    // Compte existant : mise à jour et connexion
+    const updated: PilotProfile = {
+      ...db[normEmail].profile,
+      callsign: callsign.trim().toUpperCase() || db[normEmail].profile.callsign,
+      isLoggedIn: true,
+    };
+    savePilotProfile(updated);
+    db[normEmail].profile = updated;
+    if (password) db[normEmail].password = password;
+    saveUserToDirectory(db[normEmail]);
+    return { success: true, user: updated };
+  }
+
+  const newProfile: PilotProfile = {
     ...DEFAULT_PILOT_PROFILE,
     id: `pilot-${Date.now()}`,
     callsign: callsign.trim().toUpperCase(),
-    email: email.trim(),
+    email: normEmail,
     isLoggedIn: true,
-    xp: 150, // Passe immédiatement niveau 2 (Padawan du Fer) !
+    xp: 150, // Bonus d'inscription de 150 XP direct au niveau 2 !
     level: 2,
     levelTitle: 'Padawan du Fer',
     createdAt: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
   };
-  savePilotProfile(updated);
-  return updated;
+  savePilotProfile(newProfile);
+  saveUserToDirectory({ email: normEmail, password, profile: newProfile });
+  return { success: true, user: newProfile };
 }
 
 /**

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Sparkles,
@@ -60,7 +61,13 @@ export function DetailedFixReportModal({
   const [replacedPart, setReplacedPart] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const toggleTool = (tool: string) => {
     setSelectedTools((prev) =>
@@ -91,8 +98,8 @@ export function DetailedFixReportModal({
     }, 400);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+  const modalContent = (
+    <div className="fixed inset-0 z-[99999] bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
       <div className="bg-white rounded-3xl border-2 border-black max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150">
         {/* EN-TÊTE DE LA MODALE */}
         <div className="p-4 sm:p-5 border-b border-neutral-200 bg-neutral-50/90 flex items-center justify-between gap-4 shrink-0">
@@ -302,4 +309,6 @@ export function DetailedFixReportModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

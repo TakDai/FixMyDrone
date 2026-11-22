@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Lock,
@@ -30,6 +31,7 @@ export function EcosystemAuthModal({
   onClose,
   onAuthSuccess,
 }: EcosystemAuthModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [tab, setTab] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,13 +39,25 @@ export function EcosystemAuthModal({
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Réinitialiser les erreurs quand la modale s'ouvre
+  useEffect(() => {
+    if (isOpen) {
+      setError('');
+    }
+  }, [isOpen, tab]);
+
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !password) {
       setError('Veuillez renseigner votre adresse email et mot de passe.');
       return;
     }
@@ -62,20 +76,31 @@ export function EcosystemAuthModal({
 
     setTimeout(() => {
       setLoading(false);
-      let user: PilotProfile;
       if (tab === 'register') {
-        user = registerPilot(callsign, email);
+        const res = registerPilot(callsign, cleanEmail, password);
+        if (!res.success || !res.user) {
+          setError(res.error || 'Erreur lors de la création du compte.');
+          return;
+        }
+        onAuthSuccess(res.user);
       } else {
-        user = loginPilot(email);
+        const res = loginPilot(cleanEmail, password);
+        if (!res.success || !res.user) {
+          setError(res.error || 'Identifiants invalides.');
+          return;
+        }
+        onAuthSuccess(res.user);
       }
-      onAuthSuccess(user);
       onClose();
-    }, 400);
+    }, 350);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="bg-white rounded-3xl border-2 border-black max-w-md w-full overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150">
+  const modalContent = (
+    <div className="fixed inset-0 z-[99999] bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+      <div
+        className="bg-white rounded-3xl border-2 border-black max-w-md w-full overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* EN-TÊTE STYLE MULTI-MOTORS */}
         <div className="p-5 border-b border-neutral-200 bg-neutral-50/90 flex items-center justify-between">
           <div>
@@ -88,8 +113,10 @@ export function EcosystemAuthModal({
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full border border-neutral-200 hover:border-black flex items-center justify-center text-neutral-500 hover:text-black transition-colors"
+            className="w-8 h-8 rounded-full border border-neutral-200 hover:border-black flex items-center justify-center text-neutral-500 hover:text-black transition-colors cursor-pointer"
+            title="Fermer la modale"
           >
             <X className="w-4 h-4" />
           </button>
@@ -99,7 +126,7 @@ export function EcosystemAuthModal({
         <div className="p-3 bg-neutral-900 text-white text-xs space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-amber-300 text-[11px]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Compte Unique & Mutualisé</span>
+            <span>Compte Unique & Mutualisé (SSO)</span>
           </div>
           <p className="text-[11px] text-neutral-300 leading-snug">
             Un seul compte pour <strong>FixMyDrone</strong>, <strong>Multi-Motors</strong>, <strong>BindMyQuad</strong>, <strong>CamYQuad</strong>, <strong>MakeMyFrame</strong>, <strong>MakeMyQuad</strong> et <strong>FindMyQuad</strong>.
@@ -110,19 +137,25 @@ export function EcosystemAuthModal({
         <div className="flex border-b border-neutral-200 bg-neutral-100">
           <button
             type="button"
-            onClick={() => setTab('login')}
-            className={`flex-1 py-2.5 text-xs font-bold transition-all ${
+            onClick={() => {
+              setTab('login');
+              setError('');
+            }}
+            className={`flex-1 py-2.5 text-xs font-bold transition-all cursor-pointer ${
               tab === 'login'
                 ? 'bg-white text-black border-b-2 border-black'
                 : 'text-neutral-500 hover:text-black'
             }`}
           >
-            J ai déjà un compte
+            J&apos;ai déjà un compte
           </button>
           <button
             type="button"
-            onClick={() => setTab('register')}
-            className={`flex-1 py-2.5 text-xs font-bold transition-all ${
+            onClick={() => {
+              setTab('register');
+              setError('');
+            }}
+            className={`flex-1 py-2.5 text-xs font-bold transition-all cursor-pointer ${
               tab === 'register'
                 ? 'bg-white text-black border-b-2 border-black'
                 : 'text-neutral-500 hover:text-black'
@@ -135,7 +168,7 @@ export function EcosystemAuthModal({
         {/* FORMULAIRE */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-900 text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-900 text-xs font-semibold flex items-center gap-2 animate-in fade-in duration-150">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{error}</span>
             </div>
@@ -154,7 +187,7 @@ export function EcosystemAuthModal({
                   placeholder="Ex: GHOST_FPV, PILOTE_42..."
                   value={callsign}
                   onChange={(e) => setCallsign(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-semibold uppercase"
+                  className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-semibold uppercase bg-white text-black"
                 />
               </div>
             </div>
@@ -172,7 +205,7 @@ export function EcosystemAuthModal({
                 placeholder="pilote@exemple.fr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-medium"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-medium bg-white text-black"
               />
             </div>
           </div>
@@ -189,7 +222,7 @@ export function EcosystemAuthModal({
                 placeholder="Minimum 6 caractères"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-medium"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-neutral-300 rounded-xl focus:outline-none focus:border-black font-medium bg-white text-black"
               />
             </div>
           </div>
@@ -210,10 +243,12 @@ export function EcosystemAuthModal({
           </button>
 
           <p className="text-[10px] text-neutral-400 text-center leading-relaxed">
-            En continuant, vous acceptez les conditions de service mutualisées de l écosystème Quad FPV.
+            En continuant, vous acceptez les conditions de service mutualisées de l&apos;écosystème Quad FPV.
           </p>
         </form>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
