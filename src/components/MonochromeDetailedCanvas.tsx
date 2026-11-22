@@ -38,16 +38,16 @@ interface ComponentVisualConfig {
 // Disposition éclatée CAD pure parfaitement répartie sur toute la surface de la page
 // Architecture symétrique et aérée, centrée en (620, 505) avec zéro superposition
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 517)
+  // 1. Châssis Carbone True-X : 768 × 650, centre (620, 523)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=6',
     x: 236,
-    y: 182,
+    y: 198,
     width: 768,
-    height: 670,
+    height: 650,
     labelX: 620,
-    labelY: 870,
+    labelY: 868,
     label: 'CHÂSSIS',
   },
   // 2. Contrôleur de Vol FC : 146 × 148 à (275, 395) - Éclaté hors de la plaque centrale
@@ -86,16 +86,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 830,
     label: 'MOTEUR',
   },
-  // 5. Caméra FPV : 84 × 74 à (578, 78) - Dégagée au-dessus du nez avec espace franc
+  // 5. Caméra FPV : 84 × 74 à (578, 96) - Dégagée avec espace franc au-dessus et en-dessous
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=6',
     x: 578,
-    y: 78,
+    y: 96,
     width: 84,
     height: 74,
     labelX: 620,
-    labelY: 164,
+    labelY: 182,
     label: 'CAMÉRA',
   },
   // 6. Émetteur Vidéo VTX : 95 × 145 à (60, 110) - Flanc haut-gauche
@@ -134,16 +134,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 175,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 400 × 26 à (420, 30) - Centrée au sommet avec séparation nette
+  // 9. Antenne RX (Immortal-T complète) : 380 × 87 à (430, 14) - Avec brins dipôles, câble coaxial et connecteur U.FL
   {
     id: 'antenna-rx',
-    image: '/images/components/antenna-rx.svg?v=7',
-    x: 420,
-    y: 30,
-    width: 400,
-    height: 26,
+    image: '/images/components/antenna-rx.svg?v=8',
+    x: 430,
+    y: 14,
+    width: 380,
+    height: 87,
     labelX: 620,
-    labelY: 15,
+    labelY: 9,
     label: 'ANTENNE',
   },
   // 10. Antenne VTX : 58 × 260 à (1050, 75) - Flanc haut-droit
