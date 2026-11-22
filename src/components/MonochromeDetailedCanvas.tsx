@@ -10,9 +10,6 @@ import {
   ComponentBrandOption,
 } from '@/data/figmaComponents';
 import { BrandLogo } from '@/components/BrandLogos';
-import {
-  ChevronRight,
-} from 'lucide-react';
 
 interface MonochromeDetailedCanvasProps {
   onSelectComponent: (comp: FigmaComponentData) => void;
@@ -437,55 +434,45 @@ export function MonochromeDetailedCanvas({
               {renderDroneComponents()}
             </svg>
 
-            {/* ÉQUIPEMENTS DE VOL & ATELIER (3 BOUTONS DÉDIÉS SUR LA DROITE) */}
+            {/* ÉQUIPEMENTS DE VOL & ATELIER : 100% HOMOGÈNES AVEC LES COMPOSANTS DU DRONE */}
             <div
               style={{
                 position: 'absolute',
-                top: '110px',
-                right: '28px',
-                width: '232px',
-                height: '670px',
+                top: '70px',
+                right: '65px',
+                width: '140px',
+                height: '750px',
               }}
-              className="flex flex-col justify-around items-end z-40 select-none"
+              className="flex flex-col justify-around items-center z-40 select-none"
             >
           
           {/* STATION 1 : LUNETTES FPV */}
           <div
-            className="relative flex flex-col items-center group cursor-pointer w-full"
+            className="relative flex flex-col items-center group cursor-pointer"
             onMouseEnter={() => setHoveredStation('goggle')}
             onMouseLeave={() => setHoveredStation(null)}
+            onClick={() => handleComponentClick('fatshark')}
+            title="Lunettes FPV — Cliquer pour diagnostiquer"
           >
-            <button
-              type="button"
-              onClick={() => handleComponentClick('fatshark')}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
-              title="Lunettes FPV — Cliquer pour diagnostiquer"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
-                  {GOGGLE_BRANDS.map((gb, i) => (
-                    <div
-                      key={gb.id}
-                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
-                      style={{
-                        opacity: i === goggleIdx ? 1 : 0,
-                      }}
-                    >
-                      <BrandLogo brandId={gb.id} width={34} height={20} />
-                    </div>
-                  ))}
+            {/* Logo épuré avec fondu enchaîné */}
+            <div className="relative w-32 h-18 flex items-center justify-center transition-transform group-hover:scale-105">
+              {GOGGLE_BRANDS.map((gb, i) => (
+                <div
+                  key={gb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{
+                    opacity: i === goggleIdx ? 1 : 0,
+                  }}
+                >
+                  <BrandLogo brandId={gb.id} width={76} height={44} />
                 </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="font-mono text-[11px] font-black uppercase tracking-wider">
-                    Lunettes
-                  </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
-                    {currentGoggle.brand} • DJI • HD
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-400 group-hover/btn:text-white shrink-0 group-hover/btn:translate-x-0.5 transition-all" />
-            </button>
+              ))}
+            </div>
+
+            {/* Étiquette capsule : 100% homogène avec les étiquettes des composants du drone */}
+            <span className="mt-2 px-3.5 py-1 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-[0.05em] shadow-2xs group-hover:scale-105 group-hover:border-2 transition-all">
+              Lunettes
+            </span>
 
             {/* Au survol : palette compacte 2 colonnes */}
             {hoveredStation === 'goggle' && (
@@ -531,41 +518,31 @@ export function MonochromeDetailedCanvas({
 
           {/* STATION 2 : RADIOCOMMANDE */}
           <div
-            className="relative flex flex-col items-center group cursor-pointer w-full"
+            className="relative flex flex-col items-center group cursor-pointer"
             onMouseEnter={() => setHoveredStation('radio')}
             onMouseLeave={() => setHoveredStation(null)}
+            onClick={() => handleComponentClick('tango')}
+            title="Radiocommande — Cliquer pour diagnostiquer"
           >
-            <button
-              type="button"
-              onClick={() => handleComponentClick('tango')}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
-              title="Radiocommande — Cliquer pour diagnostiquer"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
-                  {RADIO_BRANDS.map((rb, i) => (
-                    <div
-                      key={rb.id}
-                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
-                      style={{
-                        opacity: i === radioIdx ? 1 : 0,
-                      }}
-                    >
-                      <BrandLogo brandId={rb.id} width={36} height={20} />
-                    </div>
-                  ))}
+            {/* Logo épuré avec fondu enchaîné */}
+            <div className="relative w-32 h-18 flex items-center justify-center transition-transform group-hover:scale-105">
+              {RADIO_BRANDS.map((rb, i) => (
+                <div
+                  key={rb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{
+                    opacity: i === radioIdx ? 1 : 0,
+                  }}
+                >
+                  <BrandLogo brandId={rb.id} width={80} height={44} />
                 </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="font-mono text-[11px] font-black uppercase tracking-wider">
-                    Radio
-                  </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
-                    {currentRadio.brand} • ELRS
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-400 group-hover/btn:text-white shrink-0 group-hover/btn:translate-x-0.5 transition-all" />
-            </button>
+              ))}
+            </div>
+
+            {/* Étiquette capsule : 100% homogène avec les étiquettes des composants du drone */}
+            <span className="mt-2 px-3.5 py-1 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-[0.05em] shadow-2xs group-hover:scale-105 group-hover:border-2 transition-all">
+              Radio
+            </span>
 
             {/* Au survol : palette compacte 2 colonnes */}
             {hoveredStation === 'radio' && (
@@ -611,41 +588,31 @@ export function MonochromeDetailedCanvas({
 
           {/* STATION 3 : CONFIGURATEUR */}
           <div
-            className="relative flex flex-col items-center group cursor-pointer w-full"
+            className="relative flex flex-col items-center group cursor-pointer"
             onMouseEnter={() => setHoveredStation('config')}
             onMouseLeave={() => setHoveredStation(null)}
+            onClick={() => handleComponentClick('betaflight')}
+            title="Configurateur — Cliquer pour diagnostiquer"
           >
-            <button
-              type="button"
-              onClick={() => handleComponentClick('betaflight')}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
-              title="Configurateur — Cliquer pour diagnostiquer"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
-                  {CONFIGURATOR_BRANDS.map((cb, i) => (
-                    <div
-                      key={cb.id}
-                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
-                      style={{
-                        opacity: i === configIdx ? 1 : 0,
-                      }}
-                    >
-                      <BrandLogo brandId={cb.id} width={32} height={20} />
-                    </div>
-                  ))}
+            {/* Logo épuré avec fondu enchaîné */}
+            <div className="relative w-32 h-18 flex items-center justify-center transition-transform group-hover:scale-105">
+              {CONFIGURATOR_BRANDS.map((cb, i) => (
+                <div
+                  key={cb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{
+                    opacity: i === configIdx ? 1 : 0,
+                  }}
+                >
+                  <BrandLogo brandId={cb.id} width={68} height={44} />
                 </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="font-mono text-[11px] font-black uppercase tracking-wider">
-                    Config
-                  </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[142px]">
-                    {currentConfig.brand} • EdgeTX
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-400 group-hover/btn:text-white shrink-0 group-hover/btn:translate-x-0.5 transition-all" />
-            </button>
+              ))}
+            </div>
+
+            {/* Étiquette capsule : 100% homogène avec les étiquettes des composants du drone */}
+            <span className="mt-2 px-3.5 py-1 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-[0.05em] shadow-2xs group-hover:scale-105 group-hover:border-2 transition-all">
+              Config
+            </span>
 
             {/* Au survol : palette compacte 2 colonnes */}
             {hoveredStation === 'config' && (
@@ -717,19 +684,28 @@ export function MonochromeDetailedCanvas({
           onMouseEnter={() => setHoveredStation('goggle')}
           onMouseLeave={() => setHoveredStation(null)}
         >
-          <button
-            type="button"
+          <div
             onClick={(e) => {
               e.stopPropagation();
               handleComponentClick('fatshark');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
+            className="flex flex-col items-center cursor-pointer"
           >
-            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
-              <BrandLogo brandId={currentGoggle.id} width={20} height={12} />
+            <div className="relative w-16 h-7 flex items-center justify-center">
+              {GOGGLE_BRANDS.map((gb, i) => (
+                <div
+                  key={gb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{ opacity: i === goggleIdx ? 1 : 0 }}
+                >
+                  <BrandLogo brandId={gb.id} width={44} height={22} />
+                </div>
+              ))}
             </div>
-            <span>Lunettes</span>
-          </button>
+            <span className="mt-1 px-3 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9px] font-black uppercase tracking-wider shadow-2xs">
+              Lunettes
+            </span>
+          </div>
 
           {/* Palette mobile au clic/survol : s'ouvre vers le bas, totalement hors du drone */}
           {hoveredStation === 'goggle' && (
@@ -781,19 +757,28 @@ export function MonochromeDetailedCanvas({
           onMouseEnter={() => setHoveredStation('radio')}
           onMouseLeave={() => setHoveredStation(null)}
         >
-          <button
-            type="button"
+          <div
             onClick={(e) => {
               e.stopPropagation();
               handleComponentClick('tango');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
+            className="flex flex-col items-center cursor-pointer"
           >
-            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
-              <BrandLogo brandId={currentRadio.id} width={20} height={12} />
+            <div className="relative w-16 h-7 flex items-center justify-center">
+              {RADIO_BRANDS.map((rb, i) => (
+                <div
+                  key={rb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{ opacity: i === radioIdx ? 1 : 0 }}
+                >
+                  <BrandLogo brandId={rb.id} width={46} height={22} />
+                </div>
+              ))}
             </div>
-            <span>Radio</span>
-          </button>
+            <span className="mt-1 px-3 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9px] font-black uppercase tracking-wider shadow-2xs">
+              Radio
+            </span>
+          </div>
 
           {hoveredStation === 'radio' && (
             <div
@@ -844,19 +829,28 @@ export function MonochromeDetailedCanvas({
           onMouseEnter={() => setHoveredStation('config')}
           onMouseLeave={() => setHoveredStation(null)}
         >
-          <button
-            type="button"
+          <div
             onClick={(e) => {
               e.stopPropagation();
               handleComponentClick('betaflight');
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
+            className="flex flex-col items-center cursor-pointer"
           >
-            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
-              <BrandLogo brandId={currentConfig.id} width={18} height={12} />
+            <div className="relative w-16 h-7 flex items-center justify-center">
+              {CONFIGURATOR_BRANDS.map((cb, i) => (
+                <div
+                  key={cb.id}
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-none"
+                  style={{ opacity: i === configIdx ? 1 : 0 }}
+                >
+                  <BrandLogo brandId={cb.id} width={42} height={22} />
+                </div>
+              ))}
             </div>
-            <span>Config</span>
-          </button>
+            <span className="mt-1 px-3 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9px] font-black uppercase tracking-wider shadow-2xs">
+              Config
+            </span>
+          </div>
 
           {hoveredStation === 'config' && (
             <div
