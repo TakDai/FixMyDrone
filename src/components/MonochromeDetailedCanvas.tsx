@@ -38,16 +38,16 @@ interface ComponentVisualConfig {
 // Disposition éclatée CAD pure parfaitement répartie sur toute la surface de la page
 // Architecture symétrique et aérée, centrée en (620, 505) avec zéro superposition
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 505)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 517)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=6',
     x: 236,
-    y: 170,
+    y: 182,
     width: 768,
     height: 670,
     labelX: 620,
-    labelY: 862,
+    labelY: 870,
     label: 'CHÂSSIS',
   },
   // 2. Contrôleur de Vol FC : 146 × 148 à (275, 395) - Éclaté hors de la plaque centrale
@@ -86,16 +86,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 830,
     label: 'MOTEUR',
   },
-  // 5. Caméra FPV : 84 × 76 à (578, 60) - Éclatée au-dessus du nez
+  // 5. Caméra FPV : 84 × 74 à (578, 78) - Dégagée au-dessus du nez avec espace franc
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=6',
     x: 578,
-    y: 60,
+    y: 78,
     width: 84,
-    height: 76,
+    height: 74,
     labelX: 620,
-    labelY: 153,
+    labelY: 164,
     label: 'CAMÉRA',
   },
   // 6. Émetteur Vidéo VTX : 95 × 145 à (60, 110) - Flanc haut-gauche
@@ -134,16 +134,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 175,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 440 × 35 à (400, 32) - Centrée au sommet avec marge haute
+  // 9. Antenne RX (Dipôle) : 400 × 26 à (420, 30) - Centrée au sommet avec séparation nette
   {
     id: 'antenna-rx',
-    image: '/images/components/antenna-rx.svg?v=6',
-    x: 400,
-    y: 32,
-    width: 440,
-    height: 35,
+    image: '/images/components/antenna-rx.svg?v=7',
+    x: 420,
+    y: 30,
+    width: 400,
+    height: 26,
     labelX: 620,
-    labelY: 17,
+    labelY: 15,
     label: 'ANTENNE',
   },
   // 10. Antenne VTX : 58 × 260 à (1050, 75) - Flanc haut-droit
