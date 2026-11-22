@@ -196,19 +196,19 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
 
 const getPillWidth = (id: string): number => {
   switch (id) {
-    case 'vifly': return 134;
-    case 'vtx': return 136;
-    case 'esc': return 142;
-    case 'condo': return 144;
-    case 'rx': return 144;
-    case 'cam': return 146;
-    case 'fc': return 148;
-    case 'gps': return 150;
-    case 'antenna-vtx': return 150;
-    case 'antenna-rx': return 154;
+    case 'vtx': return 138;
+    case 'vifly': return 142;
+    case 'cam': return 152;
+    case 'fc': return 152;
+    case 'rx': return 150;
+    case 'gps': return 154;
+    case 'antenna-vtx': return 154;
+    case 'antenna-rx': return 158;
+    case 'condo': return 162;
+    case 'esc': return 164;
     case 'frame': return 164;
     case 'motor': return 168;
-    case 'lipo': return 168;
+    case 'lipo': return 172;
     default: return 156;
   }
 };
@@ -327,27 +327,40 @@ export function MonochromeDetailedCanvas({
                   }}
                 />
 
-                {/* Étiquette technique style Multi-Motors (pill noir / blanc à contour précis) */}
-                <g className={`transition-opacity duration-150 ${active ? 'opacity-100' : 'opacity-85'}`}>
+                {/* Étiquette technique Haute Précision : Noire sur Blanc, Typographie Suisse / CAD Ultra-Design */}
+                <g
+                  className="transition-all duration-150"
+                  style={{
+                    filter: isSelected
+                      ? 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.22))'
+                      : isHov
+                      ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14))'
+                      : 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08))',
+                    transform: active ? 'scale(1.03)' : 'scale(1)',
+                    transformOrigin: `${comp.labelX}px ${comp.labelY}px`,
+                  }}
+                >
                   <rect
                     x={comp.labelX - pillW / 2}
-                    y={comp.labelY - 14}
+                    y={comp.labelY - 13}
                     width={pillW}
-                    height="24"
-                    rx="6"
-                    fill={isSelected ? '#000000' : isHov ? '#27272a' : '#000000'}
+                    height="26"
+                    rx="13"
+                    fill="#ffffff"
                     stroke="#000000"
-                    strokeWidth="1.2"
+                    strokeWidth={isSelected ? '2.5' : isHov ? '2' : '1.5'}
+                    className="transition-all duration-150"
                   />
                   <text
                     x={comp.labelX}
-                    y={comp.labelY + 2}
+                    y={comp.labelY + 3.5}
                     textAnchor="middle"
-                    fontSize="9"
-                    fontFamily="monospace"
-                    fontWeight="bold"
-                    letterSpacing="0.04em"
-                    fill="#ffffff"
+                    fontSize="9.5"
+                    fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif"
+                    fontWeight="800"
+                    letterSpacing="0.05em"
+                    fill="#000000"
+                    className="select-none pointer-events-none"
                   >
                     {comp.label}
                   </text>
