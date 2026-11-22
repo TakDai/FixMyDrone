@@ -445,8 +445,8 @@ export function MonochromeDetailedCanvas({
               style={{
                 position: 'absolute',
                 top: '110px',
-                right: '42px',
-                width: '190px',
+                right: '32px',
+                width: '215px',
                 height: '670px',
               }}
               className="flex flex-col justify-around items-end z-40 select-none"
@@ -461,7 +461,7 @@ export function MonochromeDetailedCanvas({
             <button
               type="button"
               onClick={() => handleComponentClick('fatshark')}
-              className="w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Lunettes FPV — Cliquer pour diagnostiquer"
             >
               <div className="flex items-center gap-2.5">
@@ -472,8 +472,8 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Lunettes
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[95px]">
-                    {currentGoggle.name || 'Fat Shark'}
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                    {currentGoggle.brand} • DJI • Walksnail
                   </span>
                 </div>
               </div>
@@ -531,7 +531,7 @@ export function MonochromeDetailedCanvas({
             <button
               type="button"
               onClick={() => handleComponentClick('tango')}
-              className="w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Radiocommande — Cliquer pour diagnostiquer"
             >
               <div className="flex items-center gap-2.5">
@@ -542,8 +542,8 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Radio
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[95px]">
-                    {currentRadio.name || 'RadioMaster'}
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                    {currentRadio.brand} • TBS • ELRS
                   </span>
                 </div>
               </div>
@@ -601,7 +601,7 @@ export function MonochromeDetailedCanvas({
             <button
               type="button"
               onClick={() => handleComponentClick('betaflight')}
-              className="w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Configurateur — Cliquer pour diagnostiquer"
             >
               <div className="flex items-center gap-2.5">
@@ -612,8 +612,8 @@ export function MonochromeDetailedCanvas({
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Config
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[95px]">
-                    {currentConfig.name || 'Betaflight'}
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                    {currentConfig.brand} • EdgeTX • ESC
                   </span>
                 </div>
               </div>
