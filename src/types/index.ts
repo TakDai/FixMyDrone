@@ -74,6 +74,8 @@ export interface CommunityPost {
   category: ComponentCategory;
   categoryName: string;
   productName?: string;
+  brand?: string;
+  model?: string;
   author: {
     name: string;
     callsign: string;
@@ -84,6 +86,9 @@ export interface CommunityPost {
   views: number;
   replies: number;
   isResolved: boolean;
+  resolvedWithAI?: boolean;
+  rarityIndex?: number; // 1 à 10 : 1 = panne très très rare / exotique, 10 = panne très fréquente / classique
+  rarityLabel?: string;
   solutionSummary?: string;
   tags: string[];
 }

@@ -14,6 +14,8 @@ export interface DiagnosticSymptomOption {
   category: 'mecanique' | 'electrique' | 'vol' | 'signal' | 'logiciel' | 'alimentation';
   severity: 'critique' | 'moyen' | 'mineur';
   likelyCause: string;
+  rarityIndex: number; // 1 à 10 : 1 = panne très très rare / exotique, 10 = panne très courante / classique
+  rarityLabel: string;
   aiDiagnostic: {
     rootCause: string;
     probability: number;
@@ -91,6 +93,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'electrique',
         severity: 'critique',
         likelyCause: 'Soudure froide de phase ou fil de cuivre coupé sous gaine thermo',
+        rarityIndex: 10,
+        rarityLabel: 'Panne ultra-fréquente (10/10)',
         aiDiagnostic: {
           rootCause: 'Rupture de continuité sur l une des 3 phases du moteur brushless ou timing ESC inadapté.',
           probability: 95,
@@ -119,6 +123,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'vol',
         severity: 'critique',
         likelyCause: 'Demag compensation ESC insuffisant ou timing inadapté au KV du moteur',
+        rarityIndex: 8,
+        rarityLabel: 'Panne fréquente (8/10)',
         aiDiagnostic: {
           rootCause: 'Perte de synchronisation de la force contre-électromotrice (Back-EMF) sous forte accélération.',
           probability: 92,
@@ -146,6 +152,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'electrique',
         severity: 'moyen',
         likelyCause: 'D-Term trop élevé dans le tune PID ou filtrage gyro insuffisant / vis de fixation trop longues',
+        rarityIndex: 9,
+        rarityLabel: 'Panne très fréquente (9/10)',
         aiDiagnostic: {
           rootCause: 'Oscillations à haute fréquence inaudibles réinjectées par le PID D-Term ou frottement mécanique interne.',
           probability: 94,
@@ -173,6 +181,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'mecanique',
         severity: 'moyen',
         likelyCause: 'Billes de roulement écrasées ou poussière abrasive suite à un atterrissage dans le sable/gravier',
+        rarityIndex: 6,
+        rarityLabel: 'Panne modérée (6/10)',
         aiDiagnostic: {
           rootCause: 'Détérioration mécanique des roulements à billes supérieurs ou inférieurs (format 684zz ou équivalent).',
           probability: 96,
@@ -200,6 +210,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'mecanique',
         severity: 'critique',
         likelyCause: 'Déformation de la cloche en aluminium 7075 ou axe titane tordu sous impact',
+        rarityIndex: 4,
+        rarityLabel: 'Panne peu fréquente (4/10)',
         aiDiagnostic: {
           rootCause: 'Perte de concentricité entre le stator fixe et la cloche tournante suite à un choc violent.',
           probability: 98,
@@ -219,6 +231,33 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
           partsToReplace: ['Cloche de rechange complète avec aimants', 'Axe moteur titane', 'Moteur neuf']
         },
         matchingForumQuery: ['cloche voilée', 'axe tordu', 'aimant frotte', 'impact cloche']
+      },
+      {
+        id: 'mot-magnet-shift',
+        title: 'Aimant néodyme fendu ou glissé dans la cloche',
+        description: 'Frottement métallique intermittent à haut régime ou cliquetis sans déformation apparente de la cloche.',
+        category: 'mecanique',
+        severity: 'critique',
+        likelyCause: 'Onde de choc thermique ou fissuration sous contrainte de l aimant N52SH',
+        rarityIndex: 1,
+        rarityLabel: 'Panne ultra-rare (1/10)',
+        aiDiagnostic: {
+          rootCause: 'Rupture de la colle époxy cyanoacrylate de maintien d un aimant individuel ou éclat interne.',
+          probability: 91,
+          explanation: 'Cas d anomalie extrêmement rare où un aimant néodyme N52SH se décolle ou se micro-fissure suite à un pic de choc thermique et vibratoire combiné.',
+          safetyWarning: 'Un aimant qui se détache à 35 000 tr/min pulvérise le bobinage stator et bloque le moteur en une fraction de seconde.',
+          testSteps: [
+            'Retirer la cloche et passer une lame de rasoir fine sur chaque aimant pour tester la force d adhésion.',
+            'Examiner au microscope / loupe x10 la surface des aimants pour déceler toute fissure capillaire.'
+          ],
+          recommendedFix: [
+            'Recoller l aimant à l époxy structurelle haute température (type Loctite 380 ou Araldite 2 composants) après dégraissage à l acétone.',
+            'Ou remplacer la cloche moteur.'
+          ],
+          toolsNeeded: ['Loupe d horloger x10', 'Époxy structurelle bi-composant', 'Acétone pure'],
+          partsToReplace: ['Cloche de rechange avec aimants neufs']
+        },
+        matchingForumQuery: ['aimant décollé', 'aimant fendu', 'araldite cloche', 'rare aimant']
       }
     ]
   },
@@ -259,6 +298,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'electrique',
         severity: 'critique',
         likelyCause: 'Alimentation logique de l ESC coupée ou microcontrôleur BB21/STM32 grillé',
+        rarityIndex: 7,
+        rarityLabel: 'Panne courante (7/10)',
         aiDiagnostic: {
           rootCause: 'Absence d alimentation haute tension sur l étage logique ou destruction du régulateur abaisseur 3.3V interne de l ESC.',
           probability: 93,
@@ -313,6 +354,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'logiciel',
         severity: 'moyen',
         likelyCause: 'Sécurité logicielle Betaflight active (Throttle, Calib, Bad RX, Angle)',
+        rarityIndex: 10,
+        rarityLabel: 'Panne ultra-fréquente (10/10)',
         aiDiagnostic: {
           rootCause: 'Le système de sécurité de Betaflight empêche l armement pour protéger le pilote.',
           probability: 99,
@@ -367,6 +410,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'signal',
         severity: 'moyen',
         likelyCause: 'Nappe caméra déconnectée ou capteur caméra non alimenté',
+        rarityIndex: 8,
+        rarityLabel: 'Panne fréquente (8/10)',
         aiDiagnostic: {
           rootCause: 'Le signal vidéo de la caméra n atteint pas le processeur du VTX.',
           probability: 95,
@@ -419,6 +464,8 @@ export const DIAGNOSTIC_DEFINITIONS: Record<string, ComponentDiagnosticDefinitio
         category: 'signal',
         severity: 'moyen',
         likelyCause: 'Divergence de version majeure ExpressLRS (v2 vs v3) ou Passphrase erronée',
+        rarityIndex: 9,
+        rarityLabel: 'Panne très fréquente (9/10)',
         aiDiagnostic: {
           rootCause: 'Incompatibilité de version de protocole RF ou passphrase d appairage différente.',
           probability: 97,
@@ -481,6 +528,8 @@ export function getDiagnosticDefinition(compId: string): ComponentDiagnosticDefi
         category: 'electrique',
         severity: 'moyen',
         likelyCause: 'Défaut de connectique ou court-circuit',
+        rarityIndex: 5,
+        rarityLabel: 'Panne modérée (5/10)',
         aiDiagnostic: {
           rootCause: 'Interruption de signal ou problème de liaison électrique.',
           probability: 90,
