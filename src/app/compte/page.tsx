@@ -767,9 +767,9 @@ export default function PilotAccountPage() {
 
                         {/* Compteurs d'Action et XP locale */}
                         <div className="p-4 rounded-xl bg-white border border-zinc-300 shrink-0 flex flex-col justify-center min-w-[220px]">
-                          <div className="flex items-center justify-between text-xs font-mono mb-1">
-                            <span className="text-zinc-500">Progression Niv. {activeSpecialtyInfo.level + 1}</span>
-                            <span className="font-black text-black">{activeSpecialtyInfo.progressPercent}%</span>
+                          <div className="flex items-center justify-between text-xs font-mono mb-1 gap-2">
+                            <span className="text-zinc-500">Progression vers Niv. {activeSpecialtyInfo.level + 1}</span>
+                            <span className="font-black text-black">{Math.round(activeSpecialtyInfo.progressPercent)}%</span>
                           </div>
                           <div className="w-full h-2 bg-zinc-200 rounded-full overflow-hidden mb-2">
                             <div

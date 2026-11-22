@@ -576,7 +576,7 @@ export function getSpecialtyLevelInfo(siteId: string, siteXp: number, actionsCou
   }
 
   const range = Math.max(1, maxXp - minXp);
-  const progressPercent = Math.min(100, Math.max(5, ((siteXp - minXp) / range) * 100));
+  const progressPercent = Math.round(Math.min(100, Math.max(5, ((siteXp - minXp) / range) * 100)));
 
   const title = specialty.milestoneTitles[lvl] || specialty.generateTitle(lvl);
 
