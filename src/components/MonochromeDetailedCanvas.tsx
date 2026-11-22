@@ -477,23 +477,23 @@ export function MonochromeDetailedCanvas({
             onMouseEnter={() => setHoveredStation('goggle')}
             onMouseLeave={() => setHoveredStation(null)}
           >
-            {/* Bouton épuré contenant JUSTE LE LOGO avec fondu enchaîné */}
+            {/* Logo épuré sans bordure avec fondu enchaîné */}
             <div
               onClick={() => {
                 handleComponentClick('fatshark');
               }}
-              className="relative w-28 h-20 sm:w-32 sm:h-22 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-3 shadow-xs hover:shadow-md hover:scale-105 transition-all"
+              className="relative w-32 h-20 flex items-center justify-center transition-all group-hover:scale-105 cursor-pointer"
               title="Lunettes FPV - Cliquer pour diagnostiquer"
             >
               {GOGGLE_BRANDS.map((gb, i) => (
                 <div
                   key={gb.id}
-                  className="absolute inset-0 flex items-center justify-center p-2.5 transition-opacity duration-700 ease-in-out pointer-events-none"
+                  className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                   style={{
                     opacity: i === goggleIdx ? 1 : 0,
                   }}
                 >
-                  <BrandLogo brandId={gb.id} width={64} height={40} />
+                  <BrandLogo brandId={gb.id} width={76} height={46} />
                 </div>
               ))}
             </div>
@@ -551,23 +551,23 @@ export function MonochromeDetailedCanvas({
             onMouseEnter={() => setHoveredStation('radio')}
             onMouseLeave={() => setHoveredStation(null)}
           >
-            {/* Bouton épuré contenant JUSTE LE LOGO avec fondu enchaîné */}
+            {/* Logo épuré sans bordure avec fondu enchaîné */}
             <div
               onClick={() => {
                 handleComponentClick('tango');
               }}
-              className="relative w-28 h-20 sm:w-32 sm:h-22 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-3 shadow-xs hover:shadow-md hover:scale-105 transition-all"
+              className="relative w-32 h-20 flex items-center justify-center transition-all group-hover:scale-105 cursor-pointer"
               title="Radiocommande - Cliquer pour diagnostiquer"
             >
               {RADIO_BRANDS.map((rb, i) => (
                 <div
                   key={rb.id}
-                  className="absolute inset-0 flex items-center justify-center p-2.5 transition-opacity duration-700 ease-in-out pointer-events-none"
+                  className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                   style={{
                     opacity: i === radioIdx ? 1 : 0,
                   }}
                 >
-                  <BrandLogo brandId={rb.id} width={64} height={40} />
+                  <BrandLogo brandId={rb.id} width={76} height={46} />
                 </div>
               ))}
             </div>
@@ -625,23 +625,23 @@ export function MonochromeDetailedCanvas({
             onMouseEnter={() => setHoveredStation('config')}
             onMouseLeave={() => setHoveredStation(null)}
           >
-            {/* Bouton épuré contenant JUSTE LE LOGO avec fondu enchaîné */}
+            {/* Logo épuré sans bordure avec fondu enchaîné */}
             <div
               onClick={() => {
                 handleComponentClick('betaflight');
               }}
-              className="relative w-28 h-20 sm:w-32 sm:h-22 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-3 shadow-xs hover:shadow-md hover:scale-105 transition-all"
+              className="relative w-32 h-20 flex items-center justify-center transition-all group-hover:scale-105 cursor-pointer"
               title="Configurateur - Cliquer pour diagnostiquer"
             >
               {CONFIGURATOR_BRANDS.map((cb, i) => (
                 <div
                   key={cb.id}
-                  className="absolute inset-0 flex items-center justify-center p-2.5 transition-opacity duration-700 ease-in-out pointer-events-none"
+                  className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                   style={{
                     opacity: i === configIdx ? 1 : 0,
                   }}
                 >
-                  <BrandLogo brandId={cb.id} width={64} height={40} />
+                  <BrandLogo brandId={cb.id} width={76} height={46} />
                 </div>
               ))}
             </div>
@@ -726,18 +726,18 @@ export function MonochromeDetailedCanvas({
               e.stopPropagation();
               handleComponentClick('fatshark');
             }}
-            className="relative w-24 h-18 sm:w-28 sm:h-20 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-2.5 shadow-xs hover:shadow-md transition-all"
+            className="relative w-24 h-16 sm:w-28 sm:h-18 flex items-center justify-center transition-all cursor-pointer"
             title="Lunettes FPV - Cliquer pour diagnostiquer"
           >
             {GOGGLE_BRANDS.map((gb, i) => (
               <div
                 key={gb.id}
-                className="absolute inset-0 flex items-center justify-center p-2 transition-opacity duration-700 ease-in-out pointer-events-none"
+                className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                 style={{
                   opacity: i === goggleIdx ? 1 : 0,
                 }}
               >
-                <BrandLogo brandId={gb.id} width={52} height={32} />
+                <BrandLogo brandId={gb.id} width={60} height={36} />
               </div>
             ))}
           </div>
@@ -800,18 +800,18 @@ export function MonochromeDetailedCanvas({
               e.stopPropagation();
               handleComponentClick('tango');
             }}
-            className="relative w-24 h-18 sm:w-28 sm:h-20 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-2.5 shadow-xs hover:shadow-md transition-all"
+            className="relative w-24 h-16 sm:w-28 sm:h-18 flex items-center justify-center transition-all cursor-pointer"
             title="Radiocommande - Cliquer pour diagnostiquer"
           >
             {RADIO_BRANDS.map((rb, i) => (
               <div
                 key={rb.id}
-                className="absolute inset-0 flex items-center justify-center p-2 transition-opacity duration-700 ease-in-out pointer-events-none"
+                className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                 style={{
                   opacity: i === radioIdx ? 1 : 0,
                 }}
               >
-                <BrandLogo brandId={rb.id} width={52} height={32} />
+                <BrandLogo brandId={rb.id} width={60} height={36} />
               </div>
             ))}
           </div>
@@ -873,18 +873,18 @@ export function MonochromeDetailedCanvas({
               e.stopPropagation();
               handleComponentClick('betaflight');
             }}
-            className="relative w-24 h-18 sm:w-28 sm:h-20 bg-white border-2 border-black rounded-2xl flex items-center justify-center p-2.5 shadow-xs hover:shadow-md transition-all"
+            className="relative w-24 h-16 sm:w-28 sm:h-18 flex items-center justify-center transition-all cursor-pointer"
             title="Configurateur - Cliquer pour diagnostiquer"
           >
             {CONFIGURATOR_BRANDS.map((cb, i) => (
               <div
                 key={cb.id}
-                className="absolute inset-0 flex items-center justify-center p-2 transition-opacity duration-700 ease-in-out pointer-events-none"
+                className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-700 ease-in-out pointer-events-none"
                 style={{
                   opacity: i === configIdx ? 1 : 0,
                 }}
               >
-                <BrandLogo brandId={cb.id} width={52} height={32} />
+                <BrandLogo brandId={cb.id} width={60} height={36} />
               </div>
             ))}
           </div>
