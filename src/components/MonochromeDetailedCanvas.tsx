@@ -45,7 +45,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     width: 768,
     height: 670,
     labelX: 720,
-    labelY: 865,
+    labelY: 700,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
   // 2. Contrôleur de Vol FC : 146 × 148 à (420, 410)
@@ -168,27 +168,27 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 555,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 55 × 95 à (692.5, 850)
+  // 12. Buzzer ViFly : 55 × 95 à (692.5, 840)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=3',
     x: 692.5,
-    y: 850,
+    y: 840,
     width: 55,
     height: 95,
     labelX: 720,
-    labelY: 965,
+    labelY: 950,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (1020, 620)
+  // 13. Batterie LiPo 6S : 140 × 320 à (1060, 620)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
-    x: 1020,
+    x: 1060,
     y: 620,
     width: 140,
     height: 320,
-    labelX: 1090,
+    labelX: 1130,
     labelY: 960,
     label: 'BATTERIE LIPO 6S XT60',
   },
