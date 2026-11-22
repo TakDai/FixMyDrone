@@ -223,6 +223,7 @@ export function MonochromeDetailedCanvas({
   const [selectedGoggleBrand, setSelectedGoggleBrand] = useState<string>('fatshark');
   const [selectedRadioBrand, setSelectedRadioBrand] = useState<string>('tbs');
   const [selectedConfigBrand, setSelectedConfigBrand] = useState<string>('betaflight');
+  const [openBrandMenu, setOpenBrandMenu] = useState<'goggle' | 'radio' | 'config' | null>(null);
 
   const currentGoggle = GOGGLE_BRANDS.find((b) => b.id === selectedGoggleBrand) || GOGGLE_BRANDS[0];
   const currentRadio = RADIO_BRANDS.find((b) => b.id === selectedRadioBrand) || RADIO_BRANDS[0];
@@ -371,10 +372,10 @@ export function MonochromeDetailedCanvas({
         </svg>
 
         {/* ====================================================================
-            À DROITE : VRAIS BOUTONS AVEC LOGO (LUNETTES, RADIO, CONFIGURATEUR)
-            STYLE ÉPURÉ MONOCHROME SANS SURCHARGE DE CARTES
+            À DROITE : UN SEUL BOUTON AVEC LOGO PAR ÉQUIPEMENT
+            AUCUNE MARQUE VISIBLE DIRECTEMENT SUR LE PLAN (MENU EN POP-OVER)
            ==================================================================== */}
-        <div className="absolute right-2 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-5 z-40 w-[360px] sm:w-[400px] lg:w-[430px] select-none">
+        <div className="absolute right-2 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-40 w-[340px] sm:w-[380px] lg:w-[410px] select-none">
           
           <div className="flex items-center justify-between px-1">
             <div className="text-xs sm:text-sm font-mono font-black text-black uppercase tracking-wider flex items-center gap-2">
@@ -382,194 +383,266 @@ export function MonochromeDetailedCanvas({
               <span>Écosystème Pilote</span>
             </div>
             <span className="text-xs font-mono font-bold px-3 py-0.5 rounded-full bg-black text-white shadow-2xs">
-              14 Marques
+              3 Équipements
             </span>
           </div>
 
           {/* -------------------------------------------------------------
-              GROUPE 1 : BOUTONS LUNETTES FPV (5 Marques avec logo)
+              BOUTON 1 : LUNETTES FPV (UN SEUL BOUTON AVEC LOGO)
              ------------------------------------------------------------- */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-2 px-1">
-              <div className="flex items-center gap-2">
-                <Glasses className="w-4 h-4 text-black" />
-                <span className="text-xs font-mono font-black uppercase tracking-wider text-black">
-                  Lunettes FPV
-                </span>
-                <span className="text-[11px] font-mono font-bold text-zinc-400">
-                  • {currentGoggle.name}
-                </span>
+          <div className="relative">
+            <div
+              onClick={() => handleComponentClick('fatshark')}
+              className="w-full bg-white border-2 border-black rounded-2xl p-4 flex items-center gap-4 cursor-pointer shadow-xs hover:shadow-md transition-all active:scale-[0.99] group"
+            >
+              {/* Logo officiel de la marque active */}
+              <div className="w-20 h-14 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center p-1.5 shrink-0 group-hover:border-black transition-colors">
+                <BrandLogo brandId={selectedGoggleBrand} width={64} height={40} />
               </div>
-              <button
-                onClick={() => handleComponentClick('fatshark')}
-                className="text-[11px] font-mono font-bold text-zinc-600 hover:text-black flex items-center gap-0.5 cursor-pointer transition-colors"
-                title="Diagnostiquer les lunettes"
-              >
+
+              {/* Titre & Modèle */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-zinc-500 mb-0.5">
+                  <Glasses className="w-3.5 h-3.5 text-black" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black">
+                    Lunettes FPV
+                  </span>
+                </div>
+                <div className="text-sm sm:text-base font-black text-black truncate leading-tight">
+                  {currentGoggle.name}
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenBrandMenu(openBrandMenu === 'goggle' ? null : 'goggle');
+                  }}
+                  className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-zinc-600 hover:text-black hover:underline mt-1 cursor-pointer"
+                  title="Changer de marque"
+                >
+                  <span>Marque : <b className="text-black">{currentGoggle.brand}</b></span>
+                  <span className="text-[9px] text-zinc-400">▾</span>
+                </div>
+              </div>
+
+              {/* Action Diagnostic */}
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-black text-white text-[11px] font-mono font-bold shrink-0 shadow-2xs group-hover:bg-zinc-800 transition-colors">
                 <span>Diagnostic</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </div>
             </div>
 
-            {/* Vrais boutons avec logo */}
-            <div className="grid grid-cols-5 gap-2">
-              {GOGGLE_BRANDS.map((gb) => {
-                const isSelected = selectedGoggleBrand === gb.id;
-                return (
+            {/* Menu de sélection de marque masqué par défaut */}
+            {openBrandMenu === 'goggle' && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <span className="text-[10px] font-mono font-bold uppercase text-zinc-500">
+                    Sélectionner la marque :
+                  </span>
                   <button
-                    key={gb.id}
-                    onClick={() => {
-                      if (isSelected) {
-                        handleComponentClick('fatshark');
-                      } else {
+                    onClick={() => setOpenBrandMenu(null)}
+                    className="text-[10px] font-mono font-bold text-zinc-400 hover:text-black cursor-pointer"
+                  >
+                    Fermer ✕
+                  </button>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {GOGGLE_BRANDS.map((gb) => (
+                    <button
+                      key={gb.id}
+                      onClick={() => {
                         setSelectedGoggleBrand(gb.id);
-                      }
-                    }}
-                    className={`relative flex flex-col items-center justify-center h-20 px-1 rounded-2xl transition-all cursor-pointer border-2 group ${
-                      isSelected
-                        ? 'bg-zinc-100 border-black ring-2 ring-black shadow-sm scale-[1.03]'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black hover:shadow-xs active:scale-95'
-                    }`}
-                    title={`${gb.brand} - ${gb.name} (Cliquer pour sélectionner / diagnostiquer)`}
-                  >
-                    {isSelected && (
-                      <span className="absolute -top-1.5 -right-1 px-1.5 py-0.2 rounded-full bg-black text-white text-[7px] font-mono font-black tracking-wider shadow-2xs">
-                        ACTIF
+                        setOpenBrandMenu(null);
+                      }}
+                      className={`flex flex-col items-center justify-center h-16 p-1 rounded-xl border transition-all cursor-pointer ${
+                        selectedGoggleBrand === gb.id
+                          ? 'bg-zinc-100 border-2 border-black font-bold shadow-xs'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={gb.name}
+                    >
+                      <div className="w-full h-8 flex items-center justify-center">
+                        <BrandLogo brandId={gb.id} width={44} height={26} />
+                      </div>
+                      <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {gb.brand}
                       </span>
-                    )}
-                    <div className="w-full h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-                      <BrandLogo brandId={gb.id} width={54} height={34} />
-                    </div>
-                    <span className="text-[9px] font-mono font-black uppercase text-zinc-800 tracking-tight leading-none mt-1 truncate max-w-full text-center">
-                      {gb.brand}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* -------------------------------------------------------------
-              GROUPE 2 : BOUTONS RADIOCOMMANDE (4 Marques avec logo)
+              BOUTON 2 : RADIOCOMMANDE (UN SEUL BOUTON AVEC LOGO)
              ------------------------------------------------------------- */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-2 px-1">
-              <div className="flex items-center gap-2">
-                <Radio className="w-4 h-4 text-black" />
-                <span className="text-xs font-mono font-black uppercase tracking-wider text-black">
-                  Radiocommande
-                </span>
-                <span className="text-[11px] font-mono font-bold text-zinc-400">
-                  • {currentRadio.name}
-                </span>
+          <div className="relative">
+            <div
+              onClick={() => handleComponentClick('tango')}
+              className="w-full bg-white border-2 border-black rounded-2xl p-4 flex items-center gap-4 cursor-pointer shadow-xs hover:shadow-md transition-all active:scale-[0.99] group"
+            >
+              {/* Logo officiel de la marque active */}
+              <div className="w-20 h-14 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center p-1.5 shrink-0 group-hover:border-black transition-colors">
+                <BrandLogo brandId={selectedRadioBrand} width={64} height={40} />
               </div>
-              <button
-                onClick={() => handleComponentClick('tango')}
-                className="text-[11px] font-mono font-bold text-zinc-600 hover:text-black flex items-center gap-0.5 cursor-pointer transition-colors"
-                title="Diagnostiquer la radio"
-              >
+
+              {/* Titre & Modèle */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-zinc-500 mb-0.5">
+                  <Radio className="w-3.5 h-3.5 text-black" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black">
+                    Radiocommande
+                  </span>
+                </div>
+                <div className="text-sm sm:text-base font-black text-black truncate leading-tight">
+                  {currentRadio.name}
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenBrandMenu(openBrandMenu === 'radio' ? null : 'radio');
+                  }}
+                  className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-zinc-600 hover:text-black hover:underline mt-1 cursor-pointer"
+                  title="Changer de marque"
+                >
+                  <span>Marque : <b className="text-black">{currentRadio.brand}</b></span>
+                  <span className="text-[9px] text-zinc-400">▾</span>
+                </div>
+              </div>
+
+              {/* Action Diagnostic */}
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-black text-white text-[11px] font-mono font-bold shrink-0 shadow-2xs group-hover:bg-zinc-800 transition-colors">
                 <span>Diagnostic</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </div>
             </div>
 
-            {/* Vrais boutons avec logo */}
-            <div className="grid grid-cols-4 gap-2">
-              {RADIO_BRANDS.map((rb) => {
-                const isSelected = selectedRadioBrand === rb.id;
-                return (
+            {/* Menu de sélection de marque masqué par défaut */}
+            {openBrandMenu === 'radio' && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <span className="text-[10px] font-mono font-bold uppercase text-zinc-500">
+                    Sélectionner la marque :
+                  </span>
                   <button
-                    key={rb.id}
-                    onClick={() => {
-                      if (isSelected) {
-                        handleComponentClick('tango');
-                      } else {
+                    onClick={() => setOpenBrandMenu(null)}
+                    className="text-[10px] font-mono font-bold text-zinc-400 hover:text-black cursor-pointer"
+                  >
+                    Fermer ✕
+                  </button>
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {RADIO_BRANDS.map((rb) => (
+                    <button
+                      key={rb.id}
+                      onClick={() => {
                         setSelectedRadioBrand(rb.id);
-                      }
-                    }}
-                    className={`relative flex flex-col items-center justify-center h-20 px-1 rounded-2xl transition-all cursor-pointer border-2 group ${
-                      isSelected
-                        ? 'bg-zinc-100 border-black ring-2 ring-black shadow-sm scale-[1.03]'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black hover:shadow-xs active:scale-95'
-                    }`}
-                    title={`${rb.brand} - ${rb.name} (Cliquer pour sélectionner / diagnostiquer)`}
-                  >
-                    {isSelected && (
-                      <span className="absolute -top-1.5 -right-1 px-1.5 py-0.2 rounded-full bg-black text-white text-[7px] font-mono font-black tracking-wider shadow-2xs">
-                        ACTIF
+                        setOpenBrandMenu(null);
+                      }}
+                      className={`flex flex-col items-center justify-center h-16 p-1 rounded-xl border transition-all cursor-pointer ${
+                        selectedRadioBrand === rb.id
+                          ? 'bg-zinc-100 border-2 border-black font-bold shadow-xs'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={rb.name}
+                    >
+                      <div className="w-full h-8 flex items-center justify-center">
+                        <BrandLogo brandId={rb.id} width={48} height={26} />
+                      </div>
+                      <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {rb.brand}
                       </span>
-                    )}
-                    <div className="w-full h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-                      <BrandLogo brandId={rb.id} width={58} height={34} />
-                    </div>
-                    <span className="text-[9px] font-mono font-black uppercase text-zinc-800 tracking-tight leading-none mt-1 truncate max-w-full text-center">
-                      {rb.brand}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* -------------------------------------------------------------
-              GROUPE 3 : BOUTONS CONFIGURATEUR (5 Marques avec logo)
+              BOUTON 3 : CONFIGURATEUR (UN SEUL BOUTON AVEC LOGO)
              ------------------------------------------------------------- */}
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-2 px-1">
-              <div className="flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-black" />
-                <span className="text-xs font-mono font-black uppercase tracking-wider text-black">
-                  Configurateur
-                </span>
-                <span className="text-[11px] font-mono font-bold text-zinc-400">
-                  • {currentConfig.name}
-                </span>
+          <div className="relative">
+            <div
+              onClick={() => handleComponentClick('betaflight')}
+              className="w-full bg-white border-2 border-black rounded-2xl p-4 flex items-center gap-4 cursor-pointer shadow-xs hover:shadow-md transition-all active:scale-[0.99] group"
+            >
+              {/* Logo officiel de la marque active */}
+              <div className="w-20 h-14 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center p-1.5 shrink-0 group-hover:border-black transition-colors">
+                <BrandLogo brandId={selectedConfigBrand} width={64} height={40} />
               </div>
-              <button
-                onClick={() => handleComponentClick('betaflight')}
-                className="text-[11px] font-mono font-bold text-zinc-600 hover:text-black flex items-center gap-0.5 cursor-pointer transition-colors"
-                title="Diagnostiquer le firmware"
-              >
+
+              {/* Titre & Modèle */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-zinc-500 mb-0.5">
+                  <Cpu className="w-3.5 h-3.5 text-black" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black">
+                    Configurateur
+                  </span>
+                </div>
+                <div className="text-sm sm:text-base font-black text-black truncate leading-tight">
+                  {currentConfig.name}
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenBrandMenu(openBrandMenu === 'config' ? null : 'config');
+                  }}
+                  className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-zinc-600 hover:text-black hover:underline mt-1 cursor-pointer"
+                  title="Changer de configurateur"
+                >
+                  <span>Firmware : <b className="text-black">{currentConfig.brand}</b></span>
+                  <span className="text-[9px] text-zinc-400">▾</span>
+                </div>
+              </div>
+
+              {/* Action Diagnostic */}
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-black text-white text-[11px] font-mono font-bold shrink-0 shadow-2xs group-hover:bg-zinc-800 transition-colors">
                 <span>Diagnostic</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </div>
             </div>
 
-            {/* Vrais boutons avec logo */}
-            <div className="grid grid-cols-5 gap-2">
-              {CONFIGURATOR_BRANDS.map((cb) => {
-                const isSelected = selectedConfigBrand === cb.id;
-                return (
+            {/* Menu de sélection de marque masqué par défaut */}
+            {openBrandMenu === 'config' && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black rounded-2xl p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <span className="text-[10px] font-mono font-bold uppercase text-zinc-500">
+                    Sélectionner le configurateur / firmware :
+                  </span>
                   <button
-                    key={cb.id}
-                    onClick={() => {
-                      if (isSelected) {
-                        handleComponentClick('betaflight');
-                      } else {
-                        setSelectedConfigBrand(cb.id);
-                      }
-                    }}
-                    className={`relative flex flex-col items-center justify-center h-20 px-1 rounded-2xl transition-all cursor-pointer border-2 group ${
-                      isSelected
-                        ? 'bg-zinc-100 border-black ring-2 ring-black shadow-sm scale-[1.03]'
-                        : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black hover:shadow-xs active:scale-95'
-                    }`}
-                    title={`${cb.brand} - ${cb.name} (Cliquer pour sélectionner / diagnostiquer)`}
+                    onClick={() => setOpenBrandMenu(null)}
+                    className="text-[10px] font-mono font-bold text-zinc-400 hover:text-black cursor-pointer"
                   >
-                    {isSelected && (
-                      <span className="absolute -top-1.5 -right-1 px-1.5 py-0.2 rounded-full bg-black text-white text-[7px] font-mono font-black tracking-wider shadow-2xs">
-                        ACTIF
-                      </span>
-                    )}
-                    <div className="w-full h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-                      <BrandLogo brandId={cb.id} width={54} height={34} />
-                    </div>
-                    <span className="text-[9px] font-mono font-black uppercase text-zinc-800 tracking-tight leading-none mt-1 truncate max-w-full text-center">
-                      {cb.brand}
-                    </span>
+                    Fermer ✕
                   </button>
-                );
-              })}
-            </div>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {CONFIGURATOR_BRANDS.map((cb) => (
+                    <button
+                      key={cb.id}
+                      onClick={() => {
+                        setSelectedConfigBrand(cb.id);
+                        setOpenBrandMenu(null);
+                      }}
+                      className={`flex flex-col items-center justify-center h-16 p-1 rounded-xl border transition-all cursor-pointer ${
+                        selectedConfigBrand === cb.id
+                          ? 'bg-zinc-100 border-2 border-black font-bold shadow-xs'
+                          : 'bg-white hover:bg-zinc-50 border-zinc-200 hover:border-black'
+                      }`}
+                      title={cb.name}
+                    >
+                      <div className="w-full h-8 flex items-center justify-center">
+                        <BrandLogo brandId={cb.id} width={44} height={26} />
+                      </div>
+                      <span className="text-[8px] font-mono font-black uppercase text-zinc-800 truncate w-full text-center mt-0.5">
+                        {cb.brand}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
         </div>
