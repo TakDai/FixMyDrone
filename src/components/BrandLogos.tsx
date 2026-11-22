@@ -1,20 +1,20 @@
 import React from 'react';
 
 export const BRAND_LOGOS: Record<string, string> = {
-  fatshark: '/images/brands/fatshark.png',
-  dji: '/images/brands/dji.svg',
-  walksnail: '/images/brands/walksnail.png',
-  hdzero: '/images/brands/hdzero.png',
-  skyzone: '/images/brands/skyzone.png',
-  radiomaster: '/images/brands/radiomaster.png',
-  tbs: '/images/brands/tbs.svg',
-  jumper: '/images/brands/jumper.png',
-  frsky: '/images/brands/frsky.png',
-  betaflight: '/images/brands/betaflight.svg',
-  inav: '/images/brands/inav.png',
-  kiss: '/images/brands/kiss.svg',
-  emuflight: '/images/brands/emuflight.svg',
-  ardupilot: '/images/brands/ardupilot.png',
+  fatshark: '/images/brands/fatshark.png?v=2',
+  dji: '/images/brands/dji.svg?v=2',
+  walksnail: '/images/brands/walksnail.png?v=2',
+  hdzero: '/images/brands/hdzero.png?v=2',
+  skyzone: '/images/brands/skyzone.png?v=2',
+  radiomaster: '/images/brands/radiomaster.png?v=2',
+  tbs: '/images/brands/tbs.svg?v=2',
+  jumper: '/images/brands/jumper.png?v=2',
+  frsky: '/images/brands/frsky.png?v=2',
+  betaflight: '/images/brands/betaflight.svg?v=2',
+  inav: '/images/brands/inav.png?v=2',
+  kiss: '/images/brands/kiss.svg?v=2',
+  emuflight: '/images/brands/emuflight.svg?v=2',
+  ardupilot: '/images/brands/ardupilot.png?v=2',
 };
 
 interface BrandLogoProps {
