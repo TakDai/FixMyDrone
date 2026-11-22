@@ -36,160 +36,160 @@ interface ComponentVisualConfig {
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (640, 580)
+  // 1. Châssis Carbone True-X : 768 × 670, centre (720, 490)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=5',
-    x: 256,
-    y: 245,
+    x: 336,
+    y: 155,
     width: 768,
     height: 670,
-    labelX: 640,
-    labelY: 860,
+    labelX: 720,
+    labelY: 815,
     label: 'CHÂSSIS CARBONE TRUE-X',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (290, 490)
+  // 2. Contrôleur de Vol FC : 146 × 148 à (430, 390)
   {
     id: 'fc',
     image: '/images/components/fc.svg?v=3',
-    x: 290,
-    y: 490,
+    x: 430,
+    y: 390,
     width: 146,
     height: 148,
-    labelX: 363,
-    labelY: 660,
+    labelX: 503,
+    labelY: 560,
     label: 'FC F7 30.5x30.5',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (840, 490)
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (864, 390)
   {
     id: 'esc',
     image: '/images/components/esc.svg?v=3',
-    x: 840,
-    y: 490,
+    x: 864,
+    y: 390,
     width: 165,
     height: 155,
-    labelX: 922,
-    labelY: 460,
+    labelX: 946,
+    labelY: 560,
     label: 'ESC 4-EN-1 55A',
   },
-  // 4. Moteur Brushless 2207 (Style Multi-Motors.fr Vectorisé) : 150 × 150 à (370, 890)
+  // 4. Moteur Brushless 2207 : 150 × 150 à (320, 720)
   {
     id: 'motor',
     image: '/images/components/motor.svg?v=3',
-    x: 370,
-    y: 890,
+    x: 320,
+    y: 720,
     width: 150,
     height: 150,
-    labelX: 445,
-    labelY: 1060,
+    labelX: 395,
+    labelY: 890,
     label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro : 90 × 112 à (595, 920)
+  // 5. Caméra FPV Micro : 90 × 112 à (675, 85)
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=3',
-    x: 595,
-    y: 920,
+    x: 675,
+    y: 85,
     width: 90,
     height: 112,
-    labelX: 640,
-    labelY: 1050,
+    labelX: 720,
+    labelY: 220,
     label: 'CAMÉRA FPV MICRO',
   },
-  // 6. Émetteur Vidéo VTX : 90 × 145 à (290, 130)
+  // 6. Émetteur Vidéo VTX : 90 × 145 à (200, 150)
   {
     id: 'vtx',
     image: '/images/components/vtx.svg?v=3',
-    x: 290,
-    y: 130,
+    x: 200,
+    y: 150,
     width: 90,
     height: 145,
-    labelX: 335,
-    labelY: 295,
+    labelX: 245,
+    labelY: 315,
     label: 'VTX 5.8GHZ 1W',
   },
-  // 7. Module GPS : 78 × 83 à (601, 125)
+  // 7. Module GPS : 78 × 83 à (430, 95)
   {
     id: 'gps',
     image: '/images/components/gps.svg?v=3',
-    x: 601,
-    y: 125,
+    x: 430,
+    y: 95,
     width: 78,
     height: 83,
-    labelX: 640,
-    labelY: 225,
+    labelX: 469,
+    labelY: 200,
     label: 'GPS M10 & BOUSSOLE',
   },
-  // 8. Récepteur RX ELRS : 70 × 125 à (870, 130)
+  // 8. Récepteur RX ELRS : 70 × 125 à (950, 130)
   {
     id: 'rx',
     image: '/images/components/rx.svg?v=3',
-    x: 870,
+    x: 950,
     y: 130,
     width: 70,
     height: 125,
-    labelX: 905,
+    labelX: 985,
     labelY: 275,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (420, 40)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (500, 15)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=3',
-    x: 420,
-    y: 40,
+    x: 500,
+    y: 15,
     width: 440,
     height: 110,
-    labelX: 640,
-    labelY: 34,
+    labelX: 720,
+    labelY: 28,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1010, 70)
+  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1120, 150)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=5',
-    x: 1010,
-    y: 70,
+    x: 1120,
+    y: 150,
     width: 55,
     height: 275,
-    labelX: 1035,
-    labelY: 360,
+    labelX: 1147,
+    labelY: 445,
     label: 'ANTENNE RHCP VTX',
   },
-  // 11. Condensateur Low ESR : 55 × 55 à (135, 535)
+  // 11. Condensateur Low ESR : 55 × 55 à (140, 460)
   {
     id: 'condo',
     image: '/images/components/condo.svg?v=3',
-    x: 135,
-    y: 535,
+    x: 140,
+    y: 460,
     width: 55,
     height: 55,
-    labelX: 162,
-    labelY: 610,
+    labelX: 167,
+    labelY: 535,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 55 × 95 à (795, 770)
+  // 12. Buzzer ViFly : 55 × 95 à (692, 840)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=3',
-    x: 795,
-    y: 770,
+    x: 692,
+    y: 840,
     width: 55,
     height: 95,
-    labelX: 822,
-    labelY: 890,
+    labelX: 720,
+    labelY: 955,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (960, 715)
+  // 13. Batterie LiPo 6S : 140 × 320 à (980, 610)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
-    x: 960,
-    y: 715,
+    x: 980,
+    y: 610,
     width: 140,
     height: 320,
-    labelX: 1030,
-    labelY: 1055,
+    labelX: 1050,
+    labelY: 950,
     label: 'BATTERIE LIPO 6S XT60',
   },
 ];
@@ -303,11 +303,11 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className="relative w-full max-w-[1780px] aspect-[1860/1040] bg-white flex items-center justify-center overflow-visible">
+      <div className="relative w-full max-w-[1780px] aspect-[1680/980] bg-white flex items-center justify-center overflow-visible">
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="40 20 1860 1060"
+          viewBox="0 0 1680 980"
           className="w-full h-full select-none"
         >
           {/* ====================================================================
