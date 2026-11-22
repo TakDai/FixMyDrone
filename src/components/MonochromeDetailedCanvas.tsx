@@ -219,7 +219,7 @@ export function MonochromeDetailedCanvas({
       if (!mobile) {
         // Marges d'aération minimales garantissant 0 barre de défilement et 0 rognage
         const paddingX = 24;
-        const paddingY = 20;
+        const paddingY = 68;
         const availW = window.innerWidth - paddingX;
         const availH = window.innerHeight - paddingY;
 
