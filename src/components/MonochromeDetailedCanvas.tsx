@@ -473,7 +473,7 @@ export function MonochromeDetailedCanvas({
                     Lunettes
                   </span>
                   <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
-                    {currentGoggle.brand} • DJI • Walksnail
+                    {currentGoggle.brand} • DJI • HD
                   </span>
                 </div>
               </div>
