@@ -35,164 +35,163 @@ interface ComponentVisualConfig {
 }
 
 // 13 composants vectorisés fidèles du drone sur le blueprint (moteur dérivé de multi-motors.fr)
-// Disposition éclatée CAD pure avec zéro superposition interne et dégagement total
-// Noms génériques épurés sans références techniques, placés en espace libre 100% dégagé
+// Disposition éclatée CAD pure parfaitement répartie sur toute la surface de la page
+// Architecture symétrique et aérée, centrée en (620, 500) avec zéro superposition
 const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
-  // 1. Châssis Carbone True-X : 768 × 670, centre (580, 585)
-  // Étiquette placée en blanc pur SOUS le châssis pour ne masquer aucun détail carbone
+  // 1. Châssis Carbone True-X : 768 × 670, centre (620, 500)
   {
     id: 'frame',
     image: '/images/components/frame.svg?v=6',
-    x: 196,
-    y: 250,
+    x: 236,
+    y: 165,
     width: 768,
     height: 670,
-    labelX: 580,
-    labelY: 965,
+    labelX: 620,
+    labelY: 885,
     label: 'CHÂSSIS',
   },
-  // 2. Contrôleur de Vol FC : 146 × 148 à (225, 440) - Éclaté hors de la plaque centrale
+  // 2. Contrôleur de Vol FC : 146 × 148 à (275, 415) - Éclaté hors de la plaque centrale
   {
     id: 'fc',
     image: '/images/components/fc.svg?v=6',
-    x: 225,
-    y: 440,
+    x: 275,
+    y: 415,
     width: 146,
     height: 148,
-    labelX: 298,
-    labelY: 620,
+    labelX: 348,
+    labelY: 595,
     label: 'FC',
   },
-  // 3. Variateur ESC 4-en-1 : 165 × 155 à (775, 440) - Éclaté hors de la plaque centrale
+  // 3. Variateur ESC 4-en-1 : 165 × 155 à (815, 415) - Éclaté hors de la plaque centrale
   {
     id: 'esc',
     image: '/images/components/esc.svg?v=6',
-    x: 775,
-    y: 440,
+    x: 815,
+    y: 415,
     width: 165,
     height: 155,
-    labelX: 857,
-    labelY: 625,
+    labelX: 897,
+    labelY: 598,
     label: 'ESC',
   },
-  // 4. Moteur Brushless : 150 × 150 à (80, 760) - Éclaté hors du bras
+  // 4. Moteur Brushless : 160 × 160 à (60, 690) - Éclaté bas-gauche
   {
     id: 'motor',
     image: '/images/components/motor.svg?v=6',
-    x: 80,
-    y: 760,
-    width: 150,
-    height: 150,
-    labelX: 155,
-    labelY: 945,
+    x: 60,
+    y: 690,
+    width: 160,
+    height: 160,
+    labelX: 140,
+    labelY: 875,
     label: 'MOTEUR',
   },
-  // 5. Caméra FPV : 84 × 105 à (538, 75) - Éclatée bien au-dessus du nez
+  // 5. Caméra FPV : 84 × 105 à (578, 45) - Éclatée au-dessus du nez
   {
     id: 'cam',
     image: '/images/components/camera.svg?v=6',
-    x: 538,
-    y: 75,
+    x: 578,
+    y: 45,
     width: 84,
     height: 105,
-    labelX: 580,
-    labelY: 215,
+    labelX: 620,
+    labelY: 168,
     label: 'CAMÉRA',
   },
-  // 6. Émetteur Vidéo VTX : 90 × 145 à (50, 195)
+  // 6. Émetteur Vidéo VTX : 95 × 150 à (60, 140) - Flanc haut-gauche
   {
     id: 'vtx',
     image: '/images/components/vtx.svg?v=6',
-    x: 50,
-    y: 195,
-    width: 90,
-    height: 145,
-    labelX: 95,
-    labelY: 370,
+    x: 60,
+    y: 140,
+    width: 95,
+    height: 150,
+    labelX: 107,
+    labelY: 312,
     label: 'VTX',
   },
-  // 7. Module GPS : 78 × 83 à (270, 70)
+  // 7. Module GPS : 80 × 85 à (320, 55) - Flanc avant-gauche
   {
     id: 'gps',
     image: '/images/components/gps.svg?v=6',
-    x: 270,
-    y: 70,
-    width: 78,
-    height: 83,
-    labelX: 309,
-    labelY: 180,
+    x: 320,
+    y: 55,
+    width: 80,
+    height: 85,
+    labelX: 360,
+    labelY: 162,
     label: 'GPS',
   },
-  // 8. Récepteur RX : 70 × 125 à (770, 65)
+  // 8. Récepteur RX : 72 × 128 à (840, 55) - Flanc avant-droit
   {
     id: 'rx',
     image: '/images/components/rx.svg?v=6',
-    x: 770,
-    y: 65,
-    width: 70,
-    height: 125,
-    labelX: 805,
-    labelY: 215,
+    x: 840,
+    y: 55,
+    width: 72,
+    height: 128,
+    labelX: 876,
+    labelY: 202,
     label: 'RX',
   },
-  // 9. Antenne RX (Dipôle) : 440 × 45 à (360, 30) - Étiquette au-dessus
+  // 9. Antenne RX (Dipôle) : 440 × 42 à (400, 14) - Sommet
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg?v=6',
-    x: 360,
-    y: 30,
+    x: 400,
+    y: 14,
     width: 440,
-    height: 45,
-    labelX: 580,
-    labelY: 14,
+    height: 42,
+    labelX: 620,
+    labelY: 6,
     label: 'ANTENNE',
   },
-  // 10. Antenne VTX : 55 × 260 à (960, 130)
+  // 10. Antenne VTX : 58 × 270 à (1040, 100) - Flanc haut-droit
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=6',
-    x: 960,
-    y: 130,
-    width: 55,
-    height: 260,
-    labelX: 987,
-    labelY: 418,
+    x: 1040,
+    y: 100,
+    width: 58,
+    height: 270,
+    labelX: 1069,
+    labelY: 395,
     label: 'ANTENNE',
   },
-  // 11. Condensateur : 60 × 60 à (65, 500)
+  // 11. Condensateur : 68 × 68 à (75, 440) - Flanc mi-gauche
   {
     id: 'condo',
     image: '/images/components/condo.svg?v=6',
-    x: 65,
-    y: 500,
-    width: 60,
-    height: 60,
-    labelX: 95,
-    labelY: 588,
+    x: 75,
+    y: 440,
+    width: 68,
+    height: 68,
+    labelX: 109,
+    labelY: 532,
     label: 'CONDENSATEUR',
   },
-  // 12. Buzzer : 48 × 78 à (690, 760)
+  // 12. Buzzer : 50 × 80 à (730, 720) - Alvéole arrière
   {
     id: 'vifly',
     image: '/images/components/vifly.svg?v=6',
-    x: 690,
-    y: 760,
-    width: 48,
-    height: 78,
-    labelX: 714,
-    labelY: 865,
+    x: 730,
+    y: 720,
+    width: 50,
+    height: 80,
+    labelX: 755,
+    labelY: 825,
     label: 'BUZZER',
   },
-  // 13. Batterie LiPo : 135 × 290 à (920, 640)
+  // 13. Batterie LiPo : 125 × 270 à (950, 570) - Flanc bas-droit
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=6',
-    x: 920,
-    y: 640,
-    width: 135,
-    height: 290,
-    labelX: 987,
-    labelY: 960,
+    x: 950,
+    y: 570,
+    width: 125,
+    height: 270,
+    labelX: 1012,
+    labelY: 865,
     label: 'BATTERIE',
   },
 ];
@@ -316,13 +315,42 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className={`relative w-full ${isMobile ? 'max-w-[650px] aspect-[1120/1020]' : 'max-w-[1980px] aspect-[1980/1020]'} bg-white flex items-center justify-center overflow-visible`}>
+      <div className={`relative w-full ${isMobile ? 'max-w-[650px] aspect-[1240/1020]' : 'max-w-[1520px] aspect-[1520/980]'} bg-white flex items-center justify-center overflow-visible`}>
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox={isMobile ? '0 0 1120 1020' : '0 0 1980 1020'}
+          viewBox={isMobile ? '0 0 1240 1020' : '0 0 1520 980'}
           className="w-full h-full select-none"
         >
+          {/* Ligne directrice technique blueprint & en-tête de section ÉQUIPEMENTS SOL sur desktop */}
+          {!isMobile && (
+            <g className="select-none pointer-events-none">
+              <line
+                x1="1220"
+                y1="85"
+                x2="1220"
+                y2="905"
+                stroke="#000000"
+                strokeWidth="1.2"
+                strokeDasharray="4 6"
+                opacity="0.18"
+              />
+              <text
+                x="1370"
+                y="75"
+                textAnchor="middle"
+                fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif"
+                fontSize="10"
+                fontWeight="800"
+                letterSpacing="0.14em"
+                fill="#71717a"
+                className="uppercase"
+              >
+                Équipements Sol
+              </text>
+            </g>
+          )}
+
           {/* ====================================================================
               13 COMPOSANTS DU DRONE VECTORISÉS (STYLE MULTI-MOTORS PUR SANS OMBRE)
              ==================================================================== */}
@@ -414,10 +442,10 @@ export function MonochromeDetailedCanvas({
         </svg>
 
         {/* ====================================================================
-            À DROITE SUR DESKTOP (>= 1024px) : JUSTE LE LOGO (MINIMALISTE & DESIGN CAD)
+            À DROITE SUR DESKTOP (>= 1024px) : ÉQUIPEMENTS SOL (HOMOGÈNE & ALIGNÉ CAD)
             FONDU ENCHAÎNÉ SANS SURVOL • AFFICHAGE DES AUTRES MARQUES AU SURVOL
            ==================================================================== */}
-        <div className="hidden lg:flex absolute right-4 sm:right-7 lg:right-10 top-1/2 -translate-y-1/2 flex-col items-center gap-7 sm:gap-9 z-40 select-none">
+        <div className="hidden lg:flex absolute right-[2.5%] sm:right-[3.5%] top-1/2 -translate-y-1/2 flex-col justify-between items-center h-[760px] w-[140px] sm:w-[150px] z-40 select-none">
           
           {/* STATION 1 : LUNETTES FPV */}
           <div
