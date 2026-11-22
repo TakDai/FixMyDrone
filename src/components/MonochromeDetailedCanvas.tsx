@@ -11,9 +11,6 @@ import {
 } from '@/data/figmaComponents';
 import { BrandLogo } from '@/components/BrandLogos';
 import {
-  Radio,
-  Glasses,
-  Cpu,
   ChevronRight,
 } from 'lucide-react';
 
@@ -464,15 +461,25 @@ export function MonochromeDetailedCanvas({
               className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Lunettes FPV — Cliquer pour diagnostiquer"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl border border-black/20 group-hover/btn:border-white/40 bg-zinc-50 group-hover/btn:bg-zinc-800 flex items-center justify-center shrink-0 transition-colors">
-                  <Glasses className="w-4 h-4 text-black group-hover/btn:text-white" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
+                  {GOGGLE_BRANDS.map((gb, i) => (
+                    <div
+                      key={gb.id}
+                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
+                      style={{
+                        opacity: i === goggleIdx ? 1 : 0,
+                      }}
+                    >
+                      <BrandLogo brandId={gb.id} width={34} height={20} />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex flex-col text-left">
+                <div className="flex flex-col text-left min-w-0">
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Lunettes
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
                     {currentGoggle.brand} • DJI • HD
                   </span>
                 </div>
@@ -534,15 +541,25 @@ export function MonochromeDetailedCanvas({
               className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Radiocommande — Cliquer pour diagnostiquer"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl border border-black/20 group-hover/btn:border-white/40 bg-zinc-50 group-hover/btn:bg-zinc-800 flex items-center justify-center shrink-0 transition-colors">
-                  <Radio className="w-4 h-4 text-black group-hover/btn:text-white" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
+                  {RADIO_BRANDS.map((rb, i) => (
+                    <div
+                      key={rb.id}
+                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
+                      style={{
+                        opacity: i === radioIdx ? 1 : 0,
+                      }}
+                    >
+                      <BrandLogo brandId={rb.id} width={36} height={20} />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex flex-col text-left">
+                <div className="flex flex-col text-left min-w-0">
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Radio
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
                     {currentRadio.brand} • TBS • ELRS
                   </span>
                 </div>
@@ -604,15 +621,25 @@ export function MonochromeDetailedCanvas({
               className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-black bg-white hover:bg-black text-black hover:text-white transition-all shadow-xs hover:shadow-md group/btn cursor-pointer"
               title="Configurateur — Cliquer pour diagnostiquer"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl border border-black/20 group-hover/btn:border-white/40 bg-zinc-50 group-hover/btn:bg-zinc-800 flex items-center justify-center shrink-0 transition-colors">
-                  <Cpu className="w-4 h-4 text-black group-hover/btn:text-white" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative w-11 h-8 rounded-xl border border-black/20 bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden transition-all shadow-2xs">
+                  {CONFIGURATOR_BRANDS.map((cb, i) => (
+                    <div
+                      key={cb.id}
+                      className="absolute inset-0 flex items-center justify-center p-1 transition-opacity duration-500 ease-in-out pointer-events-none"
+                      style={{
+                        opacity: i === configIdx ? 1 : 0,
+                      }}
+                    >
+                      <BrandLogo brandId={cb.id} width={32} height={20} />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex flex-col text-left">
+                <div className="flex flex-col text-left min-w-0">
                   <span className="font-mono text-[11px] font-black uppercase tracking-wider">
                     Config
                   </span>
-                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[125px]">
+                  <span className="font-mono text-[9px] text-zinc-500 group-hover/btn:text-zinc-300 font-semibold truncate max-w-[120px]">
                     {currentConfig.brand} • EdgeTX • ESC
                   </span>
                 </div>
@@ -698,7 +725,9 @@ export function MonochromeDetailedCanvas({
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
           >
-            <Glasses className="w-3.5 h-3.5" />
+            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
+              <BrandLogo brandId={currentGoggle.id} width={20} height={12} />
+            </div>
             <span>Lunettes</span>
           </button>
 
@@ -760,7 +789,9 @@ export function MonochromeDetailedCanvas({
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
           >
-            <Radio className="w-3.5 h-3.5" />
+            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
+              <BrandLogo brandId={currentRadio.id} width={20} height={12} />
+            </div>
             <span>Radio</span>
           </button>
 
@@ -821,7 +852,9 @@ export function MonochromeDetailedCanvas({
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black bg-white hover:bg-black text-black hover:text-white font-mono text-[10px] font-bold uppercase transition-all shadow-xs cursor-pointer"
           >
-            <Cpu className="w-3.5 h-3.5" />
+            <div className="w-5 h-3.5 flex items-center justify-center shrink-0">
+              <BrandLogo brandId={currentConfig.id} width={18} height={12} />
+            </div>
             <span>Config</span>
           </button>
 
