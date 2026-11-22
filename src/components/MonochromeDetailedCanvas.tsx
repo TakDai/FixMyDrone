@@ -133,7 +133,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     height: 125,
     labelX: 805,
     labelY: 215,
-    label: 'RÉCEPTEUR',
+    label: 'RX',
   },
   // 9. Antenne RX (Dipôle) : 440 × 45 à (360, 30) - Étiquette au-dessus
   {
@@ -145,7 +145,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     height: 45,
     labelX: 580,
     labelY: 14,
-    label: 'ANTENNE RX',
+    label: 'ANTENNE',
   },
   // 10. Antenne VTX : 55 × 260 à (960, 130)
   {
@@ -157,7 +157,7 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     height: 260,
     labelX: 987,
     labelY: 418,
-    label: 'ANTENNE VTX',
+    label: 'ANTENNE',
   },
   // 11. Condensateur : 60 × 60 à (65, 500)
   {
@@ -199,18 +199,18 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
 
 const getPillWidth = (id: string): number => {
   switch (id) {
-    case 'fc': return 52;
-    case 'esc': return 58;
-    case 'vtx': return 58;
+    case 'fc':
+    case 'rx': return 52;
+    case 'esc':
+    case 'vtx':
     case 'gps': return 58;
-    case 'cam': return 84;
-    case 'motor': return 84;
     case 'vifly': return 80;
-    case 'lipo': return 88;
+    case 'cam':
+    case 'motor':
     case 'frame': return 84;
-    case 'rx': return 98;
-    case 'antenna-rx': return 110;
-    case 'antenna-vtx': return 114;
+    case 'antenna-rx':
+    case 'antenna-vtx': return 86;
+    case 'lipo': return 88;
     case 'condo': return 120;
     default: return 80;
   }
@@ -448,7 +448,7 @@ export function MonochromeDetailedCanvas({
 
             {/* Étiquette capsule noir sur blanc haute précision */}
             <span className="mt-2 px-3.5 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-wider shadow-2xs group-hover:scale-105 transition-transform">
-              Lunettes FPV
+              Lunettes
             </span>
 
             {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
@@ -522,7 +522,7 @@ export function MonochromeDetailedCanvas({
 
             {/* Étiquette capsule noir sur blanc haute précision */}
             <span className="mt-2 px-3.5 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-wider shadow-2xs group-hover:scale-105 transition-transform">
-              Radiocommande
+              Radio
             </span>
 
             {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
@@ -596,7 +596,7 @@ export function MonochromeDetailedCanvas({
 
             {/* Étiquette capsule noir sur blanc haute précision */}
             <span className="mt-2 px-3.5 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9.5px] font-black uppercase tracking-wider shadow-2xs group-hover:scale-105 transition-transform">
-              Configurateur
+              Config
             </span>
 
             {/* Au survol : palette compacte 2 colonnes (garantie zéro superposition avec le drone) */}
@@ -678,7 +678,7 @@ export function MonochromeDetailedCanvas({
             ))}
           </div>
           <span className="mt-1.5 px-3 py-0.5 rounded-full bg-white text-black border-[1.5px] border-black font-mono text-[9px] font-black uppercase tracking-wider shadow-2xs">
-            Lunettes FPV
+            Lunettes
           </span>
 
           {/* Palette mobile au clic/survol : s'ouvre vers le bas, totalement hors du drone */}
