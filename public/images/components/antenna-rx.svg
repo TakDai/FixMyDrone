@@ -1,23 +1,60 @@
-<svg viewBox="0 0 600 60" width="600" height="60" xmlns="http://www.w3.org/2000/svg">
-  <!-- ANTENNE IMMORTAL-T DIPOLE (VUE DU DESSUS STYLE MULTI-MOTORS NOIR & BLANC SANS OMBRE) -->
+<svg viewBox="0 0 500 130" width="500" height="130" xmlns="http://www.w3.org/2000/svg">
+  <!-- ANTENNE IMMORTAL-T TBS / ELRS (FIDÈLE À ANTENNA-RX.PNG - STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
   <g id="antenna-rx-top-view">
-    <!-- Brins dipôles horizontaux gauche et droite en acier inox -->
-    <line x1="20" y1="30" x2="260" y2="30" stroke="#000000" stroke-width="5" stroke-linecap="round" />
-    <line x1="340" y1="30" x2="580" y2="30" stroke="#000000" stroke-width="5" stroke-linecap="round" />
     
-    <!-- Embouts de protection en caoutchouc aux extrémités -->
-    <rect x="12" y="24" width="16" height="12" rx="4" fill="#000000" />
-    <rect x="572" y="24" width="16" height="12" rx="4" fill="#000000" />
+    <!-- 1. BRINS DIPÔLES HORIZONTAUX GAUCHE ET DROITE EN ACIER INOX -->
+    <line x1="25" y1="36" x2="220" y2="36" stroke="#000000" stroke-width="5" stroke-linecap="round" />
+    <line x1="280" y1="36" x2="475" y2="36" stroke="#000000" stroke-width="5" stroke-linecap="round" />
 
-    <!-- Corps central surmoulé TPU en T -->
+    <!-- Embouts en caoutchouc aux deux extrémités -->
+    <rect x="12" y="28" width="18" height="16" rx="5" fill="#000000" />
+    <circle cx="16" cy="36" r="2.5" fill="#ffffff" />
+    <rect x="470" y="28" width="18" height="16" rx="5" fill="#000000" />
+    <circle cx="484" cy="36" r="2.5" fill="#ffffff" />
+
+    <!-- 2. BAGUES / MANCHONS DE REPÉRAGE NOIRS (CORRESPONDANT AUX ANNEAUX ROUGES DE ANTENNA-RX.PNG) -->
+    <g fill="#000000" stroke="#000000" stroke-width="1.5">
+      <!-- Manchon gauche -->
+      <rect x="208" y="27" width="18" height="18" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <rect x="212" y="29" width="10" height="14" rx="2" fill="#000000" />
+      
+      <!-- Manchon droit -->
+      <rect x="274" y="27" width="18" height="18" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <rect x="278" y="29" width="10" height="14" rx="2" fill="#000000" />
+    </g>
+
+    <!-- 3. CORPS CENTRAL SURMOULÉ TPU EN TÉ -->
     <path
-      d="M 260 20 L 340 20 C 348 20, 352 24, 352 30 C 352 36, 348 40, 340 40 L 314 40 L 314 56 L 286 56 L 286 40 L 260 40 C 252 40, 248 36, 248 30 C 248 24, 252 20, 260 20 Z"
+      d="M 226 24 
+         L 274 24 
+         C 282 24, 288 28, 288 36 
+         C 288 44, 280 48, 272 48 
+         L 260 48 
+         C 258 58, 256 68, 254 75 
+         L 246 75 
+         C 244 68, 242 58, 240 48 
+         L 228 48 
+         C 220 48, 212 44, 212 36 
+         C 212 28, 218 24, 226 24 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="3.5"
+      stroke-width="3"
       stroke-linejoin="round"
     />
-    <circle cx="300" cy="30" r="5" fill="#000000" />
-    <text x="300" y="33" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="6" font-weight="900" fill="#ffffff">T</text>
+    <circle cx="250" cy="36" r="6" fill="#000000" />
+    <circle cx="250" cy="36" r="2.5" fill="#ffffff" />
+
+    <!-- 4. CÂBLE COAXIAL RG178 DESCENDANT VERS LE RÉCEPTEUR -->
+    <path d="M 250 75 L 250 115" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round" />
+    
+    <!-- Connecteur miniature IPEX U.FL en bout de câble -->
+    <circle cx="250" cy="120" r="6" fill="#ffffff" stroke="#000000" stroke-width="2" />
+    <circle cx="250" cy="120" r="3" fill="#000000" />
+    <circle cx="250" cy="120" r="1" fill="#ffffff" />
+
+    <!-- Sérigraphie discrète -->
+    <text x="250" y="16" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" font-weight="900" fill="#000000" letter-spacing="1">
+      IMMORTAL-T • 2.4GHz / 915MHz
+    </text>
   </g>
 </svg>

@@ -88,16 +88,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 1060,
     label: 'MOTEUR BRUSHLESS 2207',
   },
-  // 5. Caméra FPV Micro : 94 × 80 à (733, 940)
+  // 5. Caméra FPV Micro : 90 × 112 à (735, 920)
   {
     id: 'cam',
     image: '/images/components/camera.svg',
-    x: 733,
-    y: 940,
-    width: 94,
-    height: 80,
+    x: 735,
+    y: 920,
+    width: 90,
+    height: 112,
     labelX: 780,
-    labelY: 1040,
+    labelY: 1045,
     label: 'CAMÉRA FPV MICRO',
   },
   // 6. Émetteur Vidéo VTX : 90 × 145 à (430, 130)
@@ -136,16 +136,16 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 275,
     label: 'RÉCEPTEUR RX ELRS',
   },
-  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 26 à (560, 60)
+  // 9. Antenne RX Immortal-T (Dipôle) : 440 × 110 à (560, 35)
   {
     id: 'antenna-rx',
     image: '/images/components/antenna-rx.svg',
     x: 560,
-    y: 60,
+    y: 35,
     width: 440,
-    height: 26,
+    height: 110,
     labelX: 780,
-    labelY: 46,
+    labelY: 26,
     label: 'ANTENNE IMMORTAL-T',
   },
   // 10. Antenne VTX RHCP Lollipop : 60 × 260 à (1140, 75)

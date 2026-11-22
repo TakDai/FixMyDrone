@@ -1,36 +1,39 @@
-<svg viewBox="0 0 100 400" width="100" height="400" xmlns="http://www.w3.org/2000/svg">
-  <!-- ANTENNE VTX RHCP LOLLIPOP (VUE DU DESSUS/AXIALE STYLE MULTI-MOTORS NOIR & BLANC SANS OMBRE) -->
+<svg viewBox="0 0 80 400" width="80" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- ANTENNE VTX LOLLIPOP RHCP (FIDÈLE À ANTENNA-VTX.PNG - STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
   <g id="antenna-vtx-top-view">
-    <!-- Câble coaxial semi-rigide RG402 noir avec gaine thermorétractable -->
-    <line x1="50" y1="90" x2="50" y2="340" stroke="#000000" stroke-width="9" stroke-linecap="round" />
-    <line x1="50" y1="90" x2="50" y2="340" stroke="#ffffff" stroke-width="2.5" />
-
-    <!-- Connecteur SMA mâle en laiton moleté en bas -->
-    <rect x="36" y="340" width="28" height="45" rx="3" fill="#ffffff" stroke="#000000" stroke-width="3.5" />
-    <line x1="38" y1="352" x2="62" y2="352" stroke="#000000" stroke-width="2" />
-    <line x1="38" y1="364" x2="62" y2="364" stroke="#000000" stroke-width="2" />
-    <line x1="38" y1="374" x2="62" y2="374" stroke="#000000" stroke-width="2" />
-    <circle cx="50" cy="385" r="3.5" fill="#000000" />
-
-    <!-- Tête champignon Lollipop / cloche de polarisation circulaire RHCP -->
-    <circle cx="50" cy="50" r="38" fill="#ffffff" stroke="#000000" stroke-width="4" />
-    <circle cx="50" cy="50" r="30" fill="#ffffff" stroke="#000000" stroke-width="1.8" stroke-dasharray="6 3" />
     
-    <!-- Motifs des 4 lobes de trèfle polarisés en croix -->
-    <g transform="rotate(0 50 50)">
-        <ellipse cx="50" cy="32" rx="8" ry="12" fill="#000000" />
-      </g>
-    <g transform="rotate(90 50 50)">
-        <ellipse cx="50" cy="32" rx="8" ry="12" fill="#000000" />
-      </g>
-    <g transform="rotate(180 50 50)">
-        <ellipse cx="50" cy="32" rx="8" ry="12" fill="#000000" />
-      </g>
-    <g transform="rotate(270 50 50)">
-        <ellipse cx="50" cy="32" rx="8" ry="12" fill="#000000" />
-      </g>
+    <!-- 1. TÊTE RADOME CHAMPIGNON COMPACTE NOIRE (HAUT DE ANTENNA-VTX.PNG) -->
+    <rect x="18" y="10" width="44" height="48" rx="10" fill="#ffffff" stroke="#000000" stroke-width="3.5" />
+    <rect x="22" y="14" width="36" height="40" rx="7" fill="#000000" />
+    <!-- Reflet blanc épuré sur le dôme -->
+    <path d="M 26 18 Q 40 14 54 18" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
 
-    <circle cx="50" cy="50" r="10" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-    <circle cx="50" cy="50" r="4" fill="#000000" />
+    <!-- 2. BASE ÉVASÉE DE DÉCHARGE DE TRACTION TPU -->
+    <path
+      d="M 28 58 L 52 58 L 48 85 L 32 85 Z"
+      fill="#ffffff"
+      stroke="#000000"
+      stroke-width="2.5"
+    />
+    <line x1="30" y1="68" x2="50" y2="68" stroke="#000000" stroke-width="1.5" />
+    <line x1="31" y1="76" x2="49" y2="76" stroke="#000000" stroke-width="1.5" />
+
+    <!-- 3. TIGE GAINÉE THERMORÉTRACTABLE NOIRE (PARTIE ÉPAISSE) -->
+    <rect x="33" y="85" width="14" height="80" rx="3" fill="#000000" stroke="#000000" stroke-width="1.5" />
+    <line x1="40" y1="88" x2="40" y2="162" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="8 6" />
+
+    <!-- 4. CÂBLE COAXIAL RG402 SEMI-RIGIDE NOIR FIN -->
+    <line x1="40" y1="165" x2="40" y2="355" stroke="#000000" stroke-width="4.5" stroke-linecap="round" />
+
+    <!-- 5. CONNECTEUR MMCX DROIT / SMA EN LAITON (BAS DE ANTENNA-VTX.PNG) -->
+    <!-- Bague moletée du connecteur -->
+    <rect x="30" y="355" width="20" height="30" rx="2" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+    <line x1="30" y1="363" x2="50" y2="363" stroke="#000000" stroke-width="1.5" />
+    <line x1="30" y1="371" x2="50" y2="371" stroke="#000000" stroke-width="1.5" />
+    <line x1="30" y1="379" x2="50" y2="379" stroke="#000000" stroke-width="1.5" />
+
+    <!-- Embout de connexion et broche centrale dorée -->
+    <circle cx="40" cy="390" r="4.5" fill="#000000" />
+    <circle cx="40" cy="390" r="1.8" fill="#ffffff" />
   </g>
 </svg>

@@ -1,140 +1,202 @@
 <svg viewBox="0 0 500 480" width="500" height="480" xmlns="http://www.w3.org/2000/svg">
-  <!-- CHÂSSIS CARBONE TRUE-X (VUE DU DESSUS STYLE MULTI-MOTORS NOIR & BLANC SANS OMBRE) -->
+  <!-- CHÂSSIS CARBONE DEADCAT / TRUE-X 5" (FIDÈLE À FRAME.PNG - STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
   <g id="frame-top-view">
-    <!-- LES 4 BRAS CARBONE TRUE-X ÉPAISSEUR 5MM -->
-    <!-- Bras Avant-Gauche (vers 60, 60) -->
+    
+    <!-- ==========================================
+         1. LES 4 BRAS CARBONE 5MM AVEC BUMPERS
+         ========================================== -->
+    <!-- Bras Avant-Gauche (vers 55, 60) -->
     <path
-      d="M 220 200 L 78 58 C 68 48, 48 58, 48 76 C 48 94, 66 106, 84 94 L 204 218 Z"
+      d="M 216 195 
+         L 85 68 
+         C 75 58, 62 52, 45 52 
+         C 32 52, 22 62, 22 75 
+         C 22 92, 35 105, 52 105 
+         C 65 105, 78 98, 88 88 
+         L 205 225 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="4"
+      stroke-width="3.5"
       stroke-linejoin="round"
     />
-    <!-- Bras Avant-Droit (vers 440, 60) -->
+    <!-- Bras Avant-Droit (vers 445, 60) -->
     <path
-      d="M 280 200 L 422 58 C 432 48, 452 58, 452 76 C 452 94, 434 106, 416 94 L 296 218 Z"
+      d="M 284 195 
+         L 415 68 
+         C 425 58, 438 52, 455 52 
+         C 468 52, 478 62, 478 75 
+         C 478 92, 465 105, 448 105 
+         C 435 105, 422 98, 412 88 
+         L 295 225 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="4"
+      stroke-width="3.5"
       stroke-linejoin="round"
     />
-    <!-- Bras Arrière-Gauche (vers 60, 420) -->
+    <!-- Bras Arrière-Gauche (vers 55, 420) -->
     <path
-      d="M 204 262 L 84 386 C 66 374, 48 386, 48 404 C 48 422, 68 432, 78 422 L 220 280 Z"
+      d="M 205 255 
+         L 88 392 
+         C 78 382, 65 375, 52 375 
+         C 35 375, 22 388, 22 405 
+         C 22 418, 32 428, 45 428 
+         C 62 428, 75 422, 85 412 
+         L 216 285 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="4"
+      stroke-width="3.5"
       stroke-linejoin="round"
     />
-    <!-- Bras Arrière-Droit (vers 440, 420) -->
+    <!-- Bras Arrière-Droit (vers 445, 420) -->
     <path
-      d="M 296 262 L 416 386 C 434 374, 452 386, 452 404 C 452 422, 432 432, 422 422 L 280 280 Z"
+      d="M 295 255 
+         L 412 392 
+         C 422 382, 435 375, 448 375 
+         C 465 375, 478 388, 478 405 
+         C 478 418, 468 428, 455 428 
+         C 438 428, 425 422, 415 412 
+         L 284 285 Z"
       fill="#ffffff"
       stroke="#000000"
-      stroke-width="4"
-      stroke-linejoin="round"
-    />
-
-    <!-- PADS MOTEURS AUX 4 EXTRÉMITÉS (Trous 16x16 et trou central 4mm) -->
-    
-      <g transform="translate(64, 76)">
-        <circle cx="0" cy="0" r="16" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-        <circle cx="0" cy="0" r="6" fill="#000000" />
-        <circle cx="-8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="-8" cy="8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="8" r="2.5" fill="#000000" />
-      </g>
-    
-      <g transform="translate(436, 76)">
-        <circle cx="0" cy="0" r="16" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-        <circle cx="0" cy="0" r="6" fill="#000000" />
-        <circle cx="-8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="-8" cy="8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="8" r="2.5" fill="#000000" />
-      </g>
-    
-      <g transform="translate(64, 404)">
-        <circle cx="0" cy="0" r="16" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-        <circle cx="0" cy="0" r="6" fill="#000000" />
-        <circle cx="-8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="-8" cy="8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="8" r="2.5" fill="#000000" />
-      </g>
-    
-      <g transform="translate(436, 404)">
-        <circle cx="0" cy="0" r="16" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-        <circle cx="0" cy="0" r="6" fill="#000000" />
-        <circle cx="-8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="-8" r="2.5" fill="#000000" />
-        <circle cx="-8" cy="8" r="2.5" fill="#000000" />
-        <circle cx="8" cy="8" r="2.5" fill="#000000" />
-      </g>
-    
-
-    <!-- PLAQUE SUPÉRIEURE / FUSELAGE CENTRAL CARBONE (TOP PLATE) -->
-    <path
-      d="M 224 40 L 276 40 C 286 40, 292 48, 292 58 L 292 422 C 292 432, 286 440, 276 440 L 224 440 C 214 440, 208 432, 208 422 L 208 58 C 208 48, 214 40, 224 40 Z"
-      fill="#ffffff"
-      stroke="#000000"
-      stroke-width="4"
+      stroke-width="3.5"
       stroke-linejoin="round"
     />
 
-    <!-- Ajourages d'allègement et passages de straps LiPo -->
-    <g fill="#000000" stroke="#000000" stroke-width="1.5">
-      <!-- Fente caméra avant -->
-      <rect x="235" y="55" width="30" height="12" rx="2" />
-      <!-- Passage strap LiPo 1 -->
-      <rect x="220" y="115" width="60" height="7" rx="1.5" />
-      <!-- Trous de fixation stack 30.5x30.5 & 20x20 -->
-      <circle cx="230" cy="220" r="3" />
-      <circle cx="270" cy="220" r="3" />
-      <circle cx="230" cy="260" r="3" />
-      <circle cx="270" cy="260" r="3" />
-      <!-- Passage strap LiPo 2 -->
-      <rect x="220" y="355" width="60" height="7" rx="1.5" />
-      <!-- Fixation support antenne / GPS TPU arrière -->
-      <rect x="235" y="415" width="30" height="12" rx="2" />
+    <!-- ==========================================
+         2. PADS MOTEURS AVEC BUMPERS CRASH-PROTECT
+         (Forme en trèfle avec butée de bout de bras)
+         ========================================== -->
+    <!-- Avant-Gauche (55, 75) -->
+    <g transform="translate(55, 75)">
+      <!-- Bumper de protection extérieur -->
+      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="7" fill="#000000" />
+      <circle cx="-10" cy="-10" r="3" fill="#000000" />
+      <circle cx="10" cy="-10" r="3" fill="#000000" />
+      <circle cx="-10" cy="10" r="3" fill="#000000" />
+      <circle cx="10" cy="10" r="3" fill="#000000" />
+      <!-- Ergot crash protector au bout du bras -->
+      <rect x="-26" y="-5" width="5" height="10" rx="2" fill="#000000" />
     </g>
 
-    <!-- Standoffs alu moletés noirs aux 6 points clés -->
-    
-      <g transform="translate(216, 75)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
-      <g transform="translate(284, 75)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
-      <g transform="translate(216, 175)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
-      <g transform="translate(284, 175)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
-      <g transform="translate(216, 395)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
-      <g transform="translate(284, 395)">
-        <circle cx="0" cy="0" r="5.5" fill="#000000" stroke="#000000" stroke-width="2" />
-        <circle cx="0" cy="0" r="2" fill="#ffffff" />
-      </g>
-    
+    <!-- Avant-Droit (445, 75) -->
+    <g transform="translate(445, 75)">
+      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="7" fill="#000000" />
+      <circle cx="-10" cy="-10" r="3" fill="#000000" />
+      <circle cx="10" cy="-10" r="3" fill="#000000" />
+      <circle cx="-10" cy="10" r="3" fill="#000000" />
+      <circle cx="10" cy="10" r="3" fill="#000000" />
+      <rect x="21" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    </g>
 
-    <text x="250" y="304" text-anchor="middle" font-family="monospace, sans-serif" font-size="4.8" font-weight="900" fill="#000000">
-      TRUE-X 5" • 3K T700
+    <!-- Arrière-Gauche (55, 405) -->
+    <g transform="translate(55, 405)">
+      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="7" fill="#000000" />
+      <circle cx="-10" cy="-10" r="3" fill="#000000" />
+      <circle cx="10" cy="-10" r="3" fill="#000000" />
+      <circle cx="-10" cy="10" r="3" fill="#000000" />
+      <circle cx="10" cy="10" r="3" fill="#000000" />
+      <rect x="-26" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    </g>
+
+    <!-- Arrière-Droit (445, 405) -->
+    <g transform="translate(445, 405)">
+      <path d="M -30 -12 L -30 12 C -30 18, -24 24, -18 24 L -12 24 C -6 30, 6 30, 12 24 L 20 24 C 26 24, 30 18, 30 12 L 30 -12 C 30 -18, 26 -24, 20 -24 L 12 -24 C 6 -30, -6 -30, -12 -24 L -18 -24 C -24 -24, -30 -18, -30 -12 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="7" fill="#000000" />
+      <circle cx="-10" cy="-10" r="3" fill="#000000" />
+      <circle cx="10" cy="-10" r="3" fill="#000000" />
+      <circle cx="-10" cy="10" r="3" fill="#000000" />
+      <circle cx="10" cy="10" r="3" fill="#000000" />
+      <rect x="21" y="-5" width="5" height="10" rx="2" fill="#000000" />
+    </g>
+
+    <!-- ==========================================
+         3. TOP PLATE CARBONE DU FUSELAGE CENTRAL
+         (Silhouette exacte de frame.png avec découpes X et standoffs)
+         ========================================== -->
+    <path
+      d="M 232 35 
+         L 242 35 C 245 42, 255 42, 258 35 L 268 35 
+         C 278 35, 284 41, 284 50 
+         L 284 165 
+         C 284 175, 292 185, 292 195 
+         L 292 285 
+         C 292 295, 284 305, 284 315 
+         L 284 430 
+         C 284 439, 278 445, 268 445 
+         L 258 445 C 255 438, 245 438, 242 445 L 232 445 
+         C 222 445, 216 439, 216 430 
+         L 216 315 
+         C 216 305, 208 295, 208 285 
+         L 208 195 
+         C 208 185, 216 175, 216 165 
+         L 216 50 
+         C 216 41, 222 35, 232 35 Z"
+      fill="#ffffff"
+      stroke="#000000"
+      stroke-width="3.5"
+      stroke-linejoin="round"
+    />
+
+    <!-- ==========================================
+         4. DÉCOUPES TECHNIQUES & AJOURAGES CAD
+         ========================================== -->
+    <!-- Encoche Caméra avant & standoffs avant -->
+    <g fill="#000000">
+      <!-- 2 Standoffs alu avant -->
+      <circle cx="226" cy="46" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="226" cy="46" r="1.5" />
+      <circle cx="274" cy="46" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="274" cy="46" r="1.5" />
+
+      <!-- Fentes longitudinales supérieures (passage straps / rislan) -->
+      <rect x="225" y="68" width="6" height="42" rx="3" />
+      <rect x="269" y="68" width="6" height="42" rx="3" />
+
+      <!-- Découpe en 'X' avant (haut du châssis) -->
+      <path d="M 238 74 L 246 88 L 238 102 L 245 102 L 250 93 L 255 102 L 262 102 L 254 88 L 262 74 L 255 74 L 250 83 L 245 74 Z" />
+
+      <!-- Vis de fixation des bras (4 vis BTR fraisées avec empreinte 6 pans) -->
+      <g stroke="#000000" stroke-width="1.5" fill="#ffffff">
+        <circle cx="224" cy="155" r="5" />
+        <circle cx="276" cy="155" r="5" />
+        <circle cx="224" cy="325" r="5" />
+        <circle cx="276" cy="325" r="5" />
+      </g>
+      <circle cx="224" cy="155" r="2" fill="#000000" />
+      <circle cx="276" cy="155" r="2" fill="#000000" />
+      <circle cx="224" cy="325" r="2" fill="#000000" />
+      <circle cx="276" cy="325" r="2" fill="#000000" />
+
+      <!-- Découpe centrale 'X' avec trou circulaire au centre -->
+      <path d="M 235 170 L 244 185 L 235 200 L 243 200 L 250 191 L 257 200 L 265 200 L 256 185 L 265 170 L 257 170 L 250 179 L 243 170 Z" />
+      
+      <!-- Trou central d'axe stack / passage de fils -->
+      <circle cx="250" cy="240" r="12" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+      <circle cx="250" cy="240" r="5" fill="#000000" />
+
+      <!-- Découpe 'X' inférieure -->
+      <path d="M 235 280 L 244 295 L 235 310 L 243 310 L 250 301 L 257 310 L 265 310 L 256 295 L 265 280 L 257 280 L 250 289 L 243 280 Z" />
+
+      <!-- Fentes longitudinales inférieures -->
+      <rect x="225" y="370" width="6" height="42" rx="3" />
+      <rect x="269" y="370" width="6" height="42" rx="3" />
+
+      <!-- 2 Standoffs alu arrière -->
+      <circle cx="226" cy="434" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="226" cy="434" r="1.5" />
+      <circle cx="274" cy="434" r="4.5" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="274" cy="434" r="1.5" />
+    </g>
+
+    <!-- Sérigraphie technique gravée dans la colonne centrale -->
+    <text x="250" y="352" text-anchor="middle" font-family="monospace, sans-serif" font-size="5.5" font-weight="900" fill="#000000" letter-spacing="0.5">
+      TRUE-X 5"
+    </text>
+    <text x="250" y="362" text-anchor="middle" font-family="monospace, sans-serif" font-size="4.8" font-weight="bold" fill="#52525b" letter-spacing="0.5">
+      3K T700
     </text>
   </g>
 </svg>

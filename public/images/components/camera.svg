@@ -1,37 +1,77 @@
-<svg viewBox="0 0 200 180" width="200" height="180" xmlns="http://www.w3.org/2000/svg">
-  <!-- CAMÉRA FPV MICRO 19x19 (VUE DU DESSUS STYLE MULTI-MOTORS NOIR & BLANC SANS OMBRE) -->
+<svg viewBox="0 0 160 200" width="160" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- CAMÉRA FPV MICRO 19X19 (FIDÈLE À CAMERA.PNG - VUE DU DESSUS STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
   <g id="camera-top-view">
-    <!-- Objectif / lentille optique frontale M12 pointant vers le haut -->
-    <rect x="75" y="10" width="50" height="42" rx="4" fill="#ffffff" stroke="#000000" stroke-width="3" />
-    <circle cx="100" cy="26" r="18" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
-    <circle cx="100" cy="26" r="12" fill="#000000" stroke="#000000" stroke-width="2" />
-    <circle cx="100" cy="26" r="5" fill="#ffffff" />
-    <!-- Bague de mise au point crantée -->
-    <line x1="82" y1="42" x2="118" y2="42" stroke="#000000" stroke-width="2" stroke-dasharray="3 3" />
+    
+    <!-- 1. PARE-SOLEIL ET LENTILLE FRONTALE (AVANT) -->
+    <!-- Bord extérieur du cylindre d'objectif M12 -->
+    <rect x="52" y="10" width="56" height="32" rx="4" fill="#000000" stroke="#000000" stroke-width="2" />
+    <!-- Lentille optique frontale traitée antireflet -->
+    <circle cx="80" cy="26" r="18" fill="#ffffff" stroke="#000000" stroke-width="2.5" />
+    <circle cx="80" cy="26" r="12" fill="#27272a" stroke="#000000" stroke-width="2" />
+    <circle cx="80" cy="26" r="6" fill="#000000" />
+    <circle cx="82" cy="24" r="2" fill="#ffffff" />
 
-    <!-- Boîtier principal en aluminium usiné 19x19 -->
-    <rect x="60" y="52" width="80" height="80" rx="6" fill="#ffffff" stroke="#000000" stroke-width="3.5" />
-    <rect x="68" y="60" width="64" height="64" rx="4" fill="#fcfcfc" stroke="#000000" stroke-width="1.5" stroke-dasharray="4 3" />
+    <!-- 2. BAGUE DE MISE AU POINT CRANTÉE (FOCUS RING) -->
+    <rect x="56" y="42" width="48" height="24" fill="#ffffff" stroke="#000000" stroke-width="2" />
+    
+      <rect x="60" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="65" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="70" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="75" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="80" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="85" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="90" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="95" y="42" width="2.5" height="24" fill="#000000" />
+    
+      <rect x="100" y="42" width="2.5" height="24" fill="#000000" />
+    
 
-    <!-- Supports de fixation latéraux gauche et droite avec vis M2 -->
-    <g stroke="#000000" stroke-width="2.5" fill="#ffffff">
-      <path d="M 60 76 L 36 76 L 36 108 L 60 108 Z" rx="2" />
-      <circle cx="48" cy="92" r="5" fill="#000000" />
-      <circle cx="48" cy="92" r="2" fill="#ffffff" />
+    <!-- 3. CÔNE MÉTALLIQUE DE RACCORDEMENT USINÉ -->
+    <path
+      d="M 56 66 L 36 102 L 124 102 L 104 66 Z"
+      fill="#ffffff"
+      stroke="#000000"
+      stroke-width="3"
+      stroke-linejoin="round"
+    />
+    <line x1="44" y1="84" x2="116" y2="84" stroke="#000000" stroke-width="1.5" stroke-dasharray="4 2" />
 
-      <path d="M 140 76 L 164 76 L 164 108 L 140 108 Z" rx="2" />
-      <circle cx="152" cy="92" r="5" fill="#000000" />
-      <circle cx="152" cy="92" r="2" fill="#ffffff" />
-    </g>
+    <!-- 4. BOÎTIER PRINCIPAL EN MAGNÉSIUM / ALUMINIUM 19X19 -->
+    <rect x="30" y="102" width="100" height="70" rx="6" fill="#ffffff" stroke="#000000" stroke-width="3.5" />
+    
+    <!-- Pattes de fixation latérales arrondies avec perçage M2 pour inclinaison -->
+    <!-- Patte Gauche -->
+    <path d="M 30 114 C 18 114, 14 124, 14 135 C 14 146, 18 156, 30 156 Z" fill="#ffffff" stroke="#000000" stroke-width="3" />
+    <circle cx="24" cy="135" r="5" fill="#000000" />
+    <circle cx="24" cy="135" r="2" fill="#ffffff" />
+    
+    <!-- Patte Droite -->
+    <path d="M 130 114 C 142 114, 146 124, 146 135 C 146 146, 142 156, 130 156 Z" fill="#ffffff" stroke="#000000" stroke-width="3" />
+    <circle cx="136" cy="135" r="5" fill="#000000" />
+    <circle cx="136" cy="135" r="2" fill="#ffffff" />
 
-    <!-- Connecteur 3-pins arrière JST-GH -->
-    <rect x="85" y="132" width="30" height="14" rx="2" fill="#000000" stroke="#000000" stroke-width="2" />
-    <line x1="93" y1="146" x2="93" y2="158" stroke="#000000" stroke-width="2" />
-    <line x1="100" y1="146" x2="100" y2="158" stroke="#000000" stroke-width="2" />
-    <line x1="107" y1="146" x2="107" y2="158" stroke="#000000" stroke-width="2" />
+    <!-- 5. PLAQUE ARRIÈRE CAPTEUR & CONNECTEUR JST-GH -->
+    <!-- Plaque arrière noire du capteur CMOS -->
+    <rect x="34" y="166" width="92" height="12" rx="2" fill="#000000" />
+    <!-- Prise connecteur 3 broches (GND, 5V, VIDEO) sortant à l'arrière -->
+    <rect x="65" y="178" width="30" height="14" rx="2" fill="#ffffff" stroke="#000000" stroke-width="2" />
+    <line x1="72" y1="184" x2="72" y2="198" stroke="#000000" stroke-width="2" />
+    <line x1="80" y1="184" x2="80" y2="198" stroke="#000000" stroke-width="2" />
+    <line x1="88" y1="184" x2="88" y2="198" stroke="#000000" stroke-width="2" />
 
-    <text x="100" y="96" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="8.5" font-weight="900" fill="#000000">
+    <!-- Marquage technique laser sur le capot -->
+    <text x="80" y="132" text-anchor="middle" font-family="monospace, sans-serif" font-size="8.5" font-weight="900" fill="#000000" letter-spacing="1">
       FPV 1200TVL
+    </text>
+    <text x="80" y="146" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" font-weight="bold" fill="#52525b" letter-spacing="0.5">
+      M12 • WDR 16:9
     </text>
   </g>
 </svg>

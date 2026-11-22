@@ -1,42 +1,87 @@
-<svg viewBox="0 0 160 220" width="160" height="220" xmlns="http://www.w3.org/2000/svg">
-  <!-- RÉCEPTEUR RX ELRS 2.4G (VUE DU DESSUS STYLE MULTI-MOTORS NOIR & BLANC SANS OMBRE) -->
+<svg viewBox="0 0 140 240" width="140" height="240" xmlns="http://www.w3.org/2000/svg">
+  <!-- RÉCEPTEUR RX ELRS / CROSSFIRE NANO (FIDÈLE À RX.PNG - STYLE MULTI-MOTORS 100% NOIR & BLANC SANS OMBRE) -->
   <g id="rx-top-view">
-    <!-- PCB miniature rectangulaire blanc -->
-    <rect x="24" y="24" width="112" height="172" rx="6" fill="#ffffff" stroke="#000000" stroke-width="3" />
     
-    <!-- Connecteur antenne micro-coaxial IPEX / U.FL doré étamé en haut -->
-    <circle cx="80" cy="50" r="12" fill="#ffffff" stroke="#000000" stroke-width="2" />
-    <circle cx="80" cy="50" r="6" fill="#000000" />
-    <circle cx="80" cy="50" r="2.5" fill="#ffffff" />
+    <!-- 1. PCB NOIR DOUBLE COUCHE AVEC COINS ARRONDIS -->
+    <rect x="12" y="10" width="116" height="210" rx="6" fill="#ffffff" stroke="#000000" stroke-width="3.5" />
+    <rect x="16" y="14" width="108" height="202" rx="4" fill="#000000" />
 
-    <!-- Puce principale MCU ESP8285 / Semtech SX1280 -->
-    <rect x="46" y="80" width="68" height="56" rx="3" fill="#000000" stroke="#000000" stroke-width="2" />
-    <circle cx="54" cy="88" r="2" fill="#ffffff" />
-    <text x="80" y="108" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="8" font-weight="900" fill="#ffffff">
-      ELRS
+    <!-- 2. CONNECTEUR D'ANTENNE IPEX / U.FL EN HAUT -->
+    <g transform="translate(70, 36)">
+      <!-- Embase ronde dorée étamée -->
+      <circle cx="0" cy="0" r="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+      <circle cx="0" cy="0" r="9" fill="#000000" stroke="#000000" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="4.5" fill="#ffffff" />
+      <circle cx="0" cy="0" r="2" fill="#000000" />
+    </g>
+
+    <!-- Pad carré de test / Boot pad à gauche -->
+    <rect x="24" y="24" width="16" height="18" rx="2" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
+    <circle cx="32" cy="33" r="3" fill="#000000" />
+
+    <!-- Quartz oscillateur TCXO à droite -->
+    <rect x="94" y="38" width="20" height="16" rx="2" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
+    <circle cx="98" cy="42" r="1.5" fill="#000000" />
+
+    <!-- 3. PUCE RF SEMTECH SX1280 (CENTRE HAUT) -->
+    <rect x="38" y="70" width="52" height="44" rx="2" fill="#27272a" stroke="#ffffff" stroke-width="1.5" />
+    <circle cx="44" cy="76" r="2" fill="#ffffff" />
+    <!-- Pistes et pattes QFN -->
+    
+      <rect x="42" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="42" y="114" width="3" height="3" fill="#ffffff" />
+    
+      <rect x="50" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="50" y="114" width="3" height="3" fill="#ffffff" />
+    
+      <rect x="58" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="58" y="114" width="3" height="3" fill="#ffffff" />
+    
+      <rect x="66" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="66" y="114" width="3" height="3" fill="#ffffff" />
+    
+      <rect x="74" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="74" y="114" width="3" height="3" fill="#ffffff" />
+    
+      <rect x="82" y="67" width="3" height="3" fill="#ffffff" />
+      <rect x="82" y="114" width="3" height="3" fill="#ffffff" />
+    
+
+    <!-- 4. MICROCONTRÔLEUR ESP8285 / MCU (CENTRE BAS) -->
+    <rect x="36" y="130" width="56" height="48" rx="2" fill="#27272a" stroke="#ffffff" stroke-width="1.5" />
+    <circle cx="42" cy="136" r="2" fill="#ffffff" />
+    <text x="64" y="152" text-anchor="middle" font-family="monospace, sans-serif" font-size="7.5" font-weight="900" fill="#ffffff">
+      ESP
     </text>
-    <text x="80" y="122" text-anchor="middle" font-family="system-ui, monospace, sans-serif" font-size="7" font-weight="bold" fill="#ffffff">
-      2.4GHz
+    <text x="64" y="164" text-anchor="middle" font-family="monospace, sans-serif" font-size="6.5" font-weight="bold" fill="#ffffff">
+      8285
     </text>
 
-    <!-- Bouton Boot / Bind & LED -->
-    <circle cx="56" cy="154" r="4.5" fill="#000000" stroke="#000000" stroke-width="1.5" />
-    <circle cx="56" cy="154" r="2" fill="#ffffff" />
-    <circle cx="70" cy="154" r="3" fill="#000000" />
+    <!-- Puce mémoire / amplificateur LNA à gauche -->
+    <rect x="22" y="138" width="10" height="16" rx="1" fill="#ffffff" />
 
-    <!-- 4 Pads de soudure en bas (5V, GND, TX, RX) -->
+    <!-- 5. SÉRIGRAPHIE VERTICALE IDENTIQUE À RX.PNG -->
+    <text x="106" y="85" font-family="monospace, sans-serif" font-size="6" font-weight="bold" fill="#ffffff" transform="rotate(90 106 85)" letter-spacing="0.5">
+      ELRS2400RX
+    </text>
+
+    <!-- 6. LES 4 PADS DE SOUDURE CASTELLÉS AU BAS (RX, TX, 5V, GND) -->
     <g stroke="#000000" stroke-width="1.8">
-      <rect x="36" y="174" width="16" height="22" rx="3" fill="#000000" />
-      <text x="44" y="189" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">5V</text>
-
-      <rect x="58" y="174" width="16" height="22" rx="3" fill="#000000" />
-      <text x="66" y="189" font-family="monospace" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">G</text>
-
-      <rect x="80" y="174" width="16" height="22" rx="3" fill="#ffffff" />
-      <text x="88" y="189" font-family="monospace" font-size="7" font-weight="bold" fill="#000000" text-anchor="middle">TX</text>
-
-      <rect x="102" y="174" width="16" height="22" rx="3" fill="#ffffff" />
-      <text x="110" y="189" font-family="monospace" font-size="7" font-weight="bold" fill="#000000" text-anchor="middle">RX</text>
+      <!-- Pad RX -->
+      <path d="M 20 200 L 38 200 L 38 218 C 38 224, 20 224, 20 218 Z" fill="#ffffff" />
+      <text x="29" y="194" text-anchor="middle" font-family="monospace, sans-serif" font-size="6" font-weight="900" fill="#ffffff">RX</text>
+      
+      <!-- Pad TX -->
+      <path d="M 46 200 L 64 200 L 64 218 C 64 224, 46 224, 46 218 Z" fill="#ffffff" />
+      <text x="55" y="194" text-anchor="middle" font-family="monospace, sans-serif" font-size="6" font-weight="900" fill="#ffffff">TX</text>
+      
+      <!-- Pad 5V -->
+      <path d="M 72 200 L 90 200 L 90 218 C 90 224, 72 224, 72 218 Z" fill="#ffffff" />
+      <text x="81" y="194" text-anchor="middle" font-family="monospace, sans-serif" font-size="5.5" font-weight="900" fill="#ffffff">VCC</text>
+      
+      <!-- Pad GND -->
+      <path d="M 98 200 L 116 200 L 116 218 C 116 224, 98 224, 98 218 Z" fill="#ffffff" />
+      <text x="107" y="194" text-anchor="middle" font-family="monospace, sans-serif" font-size="5.5" font-weight="900" fill="#ffffff">GND</text>
     </g>
   </g>
 </svg>
