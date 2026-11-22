@@ -100,18 +100,18 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
         </div>
 
         {/* Pilules de Navigation Style Multi-Motors */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Onglet Actualités / News (Dashboard Forum) */}
           <Link
             href="/forum"
-            className={`inline-flex items-center gap-1.5 h-8 px-3.5 border-2 rounded-[13px] font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-all duration-150 ${
+            className={`inline-flex items-center gap-2 h-9 px-4 sm:px-4.5 border-2 rounded-[13px] font-mono text-xs font-bold uppercase tracking-[0.14em] transition-all duration-150 ${
               activeTab === 'news'
                 ? 'border-solid border-black bg-black text-white shadow-sm'
-                : 'border-dashed border-black/30 hover:border-solid hover:border-black bg-white text-black/80 hover:text-black'
+                : 'border-dashed border-black/35 hover:border-solid hover:border-black bg-white text-black/80 hover:text-black hover:shadow-xs'
             }`}
           >
             <span>Actualités</span>
-            <span className={`px-1.5 py-0.2 rounded-[6px] text-[9px] font-mono font-black tracking-normal uppercase ${
+            <span className={`px-1.5 py-0.5 rounded-[6px] text-[9.5px] font-mono font-black tracking-normal uppercase ${
               activeTab === 'news' ? 'bg-red-500 text-white' : 'bg-red-600 text-white'
             }`}>
               Forum
@@ -125,15 +125,15 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
               <button
                 type="button"
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="inline-flex items-center gap-2 h-8 px-2.5 sm:px-3 border-2 border-solid border-black rounded-[13px] bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.12em] hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-2.5 h-9 px-3.5 sm:px-4 border-2 border-solid border-black rounded-[13px] bg-black text-white font-mono text-xs font-bold uppercase tracking-[0.12em] hover:bg-zinc-800 transition-all cursor-pointer shadow-sm"
               >
-                <div className="w-4 h-4 rounded-full bg-amber-400 text-black flex items-center justify-center font-black text-[9px]">
+                <div className="w-4.5 h-4.5 rounded-full bg-amber-400 text-black flex items-center justify-center font-black text-[10px]">
                   {pilot.callsign ? pilot.callsign.charAt(0).toUpperCase() : 'P'}
                 </div>
-                <span className="max-w-[85px] sm:max-w-[130px] truncate">
+                <span className="max-w-[90px] sm:max-w-[140px] truncate">
                   {pilot.callsign || 'PILOTE'}
                 </span>
-                <span className="hidden xs:inline-block px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-amber-400 text-[9px] font-black">
+                <span className="hidden xs:inline-block px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-amber-400 text-[9.5px] font-black">
                   Niv.{pilot.level}
                 </span>
                 <ChevronDown
@@ -147,7 +147,7 @@ export function EcosystemTopNav({ className = '', activeTab }: EcosystemTopNavPr
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="inline-flex items-center gap-1.5 h-8 px-3 sm:px-3.5 border-2 border-dashed border-black/30 hover:border-solid hover:border-black rounded-[13px] bg-white text-black/80 hover:text-black font-mono text-[11px] font-bold uppercase tracking-[0.14em] transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 h-9 px-4 sm:px-4.5 border-2 border-dashed border-black/35 hover:border-solid hover:border-black rounded-[13px] bg-white text-black/80 hover:text-black font-mono text-xs font-bold uppercase tracking-[0.14em] transition-all cursor-pointer hover:shadow-xs"
               >
                 <User className="w-3.5 h-3.5" />
                 <span>Connexion</span>
