@@ -133,11 +133,8 @@
       </g>
     
 
-    <text x="250" y="300" text-anchor="middle" font-family="monospace, sans-serif" font-size="6.5" font-weight="900" fill="#000000" letter-spacing="0.5">
-      TRUE-X 5"
-    </text>
-    <text x="250" y="311" text-anchor="middle" font-family="monospace, sans-serif" font-size="5.5" font-weight="bold" fill="#52525b" letter-spacing="0.5">
-      3K T700
+    <text x="250" y="304" text-anchor="middle" font-family="monospace, sans-serif" font-size="4.8" font-weight="900" fill="#000000">
+      TRUE-X 5" • 3K T700
     </text>
   </g>
 </svg>

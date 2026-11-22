@@ -172,15 +172,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 610,
     label: 'CONDENSATEUR LOW ESR',
   },
-  // 12. Buzzer ViFly : 55 × 95 à (885, 770)
+  // 12. Buzzer ViFly : 55 × 95 à (935, 760)
   {
     id: 'vifly',
     image: '/images/components/vifly.svg',
-    x: 885,
-    y: 770,
+    x: 935,
+    y: 760,
     width: 55,
     height: 95,
-    labelX: 912,
+    labelX: 962,
     labelY: 885,
     label: 'BUZZER AUTONOME',
   },
@@ -316,7 +316,7 @@ export function MonochromeDetailedCanvas({
             <line x1="330" y1="562" x2="980" y2="567" stroke="#18181b" strokeWidth="1.5" strokeDasharray="6 4" />
 
             {/* Câble ViFly Buzzer vers FC (Monochrome) */}
-            <line x1="885" y1="817" x2="576" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="935" y1="807" x2="576" y2="564" stroke="#18181b" strokeWidth="1.5" strokeDasharray="3 3" />
 
             {/* Câble LiPo XT60 vers ESC (Monochrome) */}
             <line x1="1070" y1="750" x2="1062" y2="645" stroke="#18181b" strokeWidth="2" strokeDasharray="5 5" />
@@ -329,7 +329,7 @@ export function MonochromeDetailedCanvas({
             const isSelected = selectedCompId === comp.id;
             const isHov = hoveredId === comp.id;
             const active = isSelected || isHov;
-            const pillW = comp.id === 'condo' ? 144 : 176;
+            const pillW = comp.id === 'condo' || comp.id === 'vifly' ? 144 : 176;
 
             return (
               <g
@@ -664,12 +664,6 @@ export function MonochromeDetailedCanvas({
           </div>
         )}
 
-        {/* Repère d'atelier discret en bas à gauche style Multi-Motors */}
-        <div className="absolute bottom-3 left-4 bg-white/95 px-3 py-1.5 rounded-xl border border-black/30 text-[11px] text-zinc-700 flex items-center gap-2 pointer-events-none shadow-xs">
-          <Flame className="w-3.5 h-3.5 text-black" />
-          <span>Style Multi-Motors.fr • Moteur vectoriel • Grille de marques au survol</span>
-        </div>
-
       </div>
 
       {/* Barre d'état sous le schéma */}
@@ -682,9 +676,15 @@ export function MonochromeDetailedCanvas({
             Lunettes : <b className="text-black">{currentGoggle.name}</b> • Radio : <b className="text-black">{currentRadio.name}</b> • Firmware : <b className="text-black">{currentConfig.name}</b>
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-black font-semibold">
-          <CheckCircle2 className="w-3.5 h-3.5 text-black" />
-          <span>14 Vrais Logos Officiels Intégrés • Synchronisation instantanée</span>
+        <div className="flex items-center gap-4 text-[11px] text-black font-semibold">
+          <span className="flex items-center gap-1.5 text-zinc-700">
+            <Flame className="w-3.5 h-3.5 text-black" />
+            Style Multi-Motors.fr • 100% Vectoriel CAD
+          </span>
+          <span className="flex items-center gap-1.5 text-black">
+            <CheckCircle2 className="w-3.5 h-3.5 text-black" />
+            14 Vrais Logos Officiels
+          </span>
         </div>
       </div>
     </section>
