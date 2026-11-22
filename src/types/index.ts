@@ -1,15 +1,29 @@
 export type ComponentCategory =
   | 'frame'
   | 'motors'
+  | 'motor'
   | 'esc-stack'
+  | 'esc'
   | 'flight-controller'
+  | 'fc'
   | 'vtx-camera'
+  | 'vtx'
+  | 'cam'
   | 'receiver-rx'
+  | 'rx'
   | 'propellers'
   | 'battery-lipo'
+  | 'lipo'
   | 'gps-rescue'
+  | 'gps'
   | 'antennas'
-  | 'radio-goggles';
+  | 'antenna-rx'
+  | 'antenna-vtx'
+  | 'radio-goggles'
+  | 'radio'
+  | 'goggle'
+  | 'configurator'
+  | 'betaflight';
 
 export interface ComponentIssue {
   id: string;

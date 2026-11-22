@@ -1,0 +1,59 @@
+[
+  {
+    "date": "2026-11-22",
+    "timestamp": "2026-11-22T15:51:27.124Z",
+    "issuesAddedCount": 5,
+    "issues": [
+      {
+        "id": "post-watch-1795362687123-95",
+        "component": "T-Motor Velox V2207.5 1950KV",
+        "category": "motors",
+        "brand": "T-Motor",
+        "title": "[VEILLE WEareFPV] T-Motor Velox V2207.5 : Vibrations résiduelles sur DSHOT bidirectionnel Betaflight 4.5",
+        "rarity": "Panne fréquente (8/10)",
+        "source": "WEareFPV.fr (Forum)",
+        "url": "https://forum.wearefpv.fr/topic/18420-t-motor-velox-v2207-vibration-rpm-filter/"
+      },
+      {
+        "id": "post-watch-1795362687123-421",
+        "component": "RadioMaster RP1 ExpressLRS 2.4GHz",
+        "category": "rx",
+        "brand": "RadioMaster",
+        "title": "[VEILLE IntoFPV] RadioMaster RP1 ELRS : Failsafe intermittent et perte de télémétrie dès 50mW",
+        "rarity": "Panne courante (7/10)",
+        "source": "IntoFPV.com",
+        "url": "https://intofpv.com/t-radiomaster-rp1-expresslrs-failsafe-telemetry-lost"
+      },
+      {
+        "id": "post-watch-1795362687123-14",
+        "component": "SpeedyBee F405 V4 FC",
+        "category": "fc",
+        "brand": "SpeedyBee",
+        "title": "[VEILLE GitHub] SpeedyBee F405 V3 / V4 : Arming Disabled \"RPMFILTER\" au démarrage sur 6S",
+        "rarity": "Panne très fréquente (9/10)",
+        "source": "Betaflight GitHub Discussions",
+        "url": "https://github.com/betaflight/betaflight/discussions/arming-flags-rpmfilter"
+      },
+      {
+        "id": "post-watch-1795362687123-365",
+        "component": "Caddx Vista Kit Polar / Nebula Pro",
+        "category": "vtx-camera",
+        "brand": "Caddx",
+        "title": "[VEILLE Reddit r/fpv] Caddx Vista / Runcam Link : Écran noir avec OSD visible dans les DJI Goggles",
+        "rarity": "Panne modérée (5/10)",
+        "source": "Reddit r/fpv",
+        "url": "https://reddit.com/r/fpv/comments/caddx-vista-black-screen-osd-only"
+      },
+      {
+        "id": "post-watch-1795362687123-924",
+        "component": "EMAX ECO II 2207 1700KV / 2400KV",
+        "category": "motors",
+        "brand": "EMAX",
+        "title": "[VEILLE RCGroups] EMAX ECO II 2207 : Jeu axial prononcé et bruit de cliquetis après 20 packs",
+        "rarity": "Panne d usure mécanique (6/10)",
+        "source": "RCGroups",
+        "url": "https://rcgroups.com/forums/showthread.php?t-emax-eco-ii-bearing-play"
+      }
+    ]
+  }
+]
