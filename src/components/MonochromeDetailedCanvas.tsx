@@ -148,15 +148,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 34,
     label: 'ANTENNE IMMORTAL-T',
   },
-  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1040, 70)
+  // 10. Antenne VTX RHCP Lollipop : 55 × 275 à (1010, 70)
   {
     id: 'antenna-vtx',
     image: '/images/components/antenna-vtx.svg?v=5',
-    x: 1040,
+    x: 1010,
     y: 70,
     width: 55,
     height: 275,
-    labelX: 1067,
+    labelX: 1035,
     labelY: 360,
     label: 'ANTENNE RHCP VTX',
   },
@@ -184,15 +184,15 @@ const DRONE_COMPONENT_CONFIGS: ComponentVisualConfig[] = [
     labelY: 890,
     label: 'BUZZER AUTONOME',
   },
-  // 13. Batterie LiPo 6S : 140 × 320 à (975, 715)
+  // 13. Batterie LiPo 6S : 140 × 320 à (960, 715)
   {
     id: 'lipo',
     image: '/images/components/lipo.svg?v=3',
-    x: 975,
+    x: 960,
     y: 715,
     width: 140,
     height: 320,
-    labelX: 1045,
+    labelX: 1030,
     labelY: 1055,
     label: 'BATTERIE LIPO 6S XT60',
   },
@@ -279,11 +279,11 @@ export function MonochromeDetailedCanvas({
     <section className="flex-1 w-full flex flex-col items-center justify-center select-none bg-white">
       
       {/* Conteneur principal plein écran style pur : fond blanc pur sans bordure ni pointillés */}
-      <div className="relative w-full max-w-[1780px] aspect-[1640/980] bg-white flex items-center justify-center overflow-visible">
+      <div className="relative w-full max-w-[1780px] aspect-[1860/1040] bg-white flex items-center justify-center overflow-visible">
 
         {/* SVG Vectoriel Haute Fidélité du Drone (les 13 composants embarqués) */}
         <svg
-          viewBox="60 20 1640 1060"
+          viewBox="40 20 1860 1060"
           className="w-full h-full select-none"
         >
           {/* ====================================================================
@@ -362,7 +362,7 @@ export function MonochromeDetailedCanvas({
             À DROITE : SÉLECTION ÉCOSYSTÈME PILOTE (LUNETTES, RADIO, CONFIGURATEUR)
             LOGOS EN ÉVIDENCE & AUCUNE SUPERPOSITION SUR LE SCHÉMA
            ==================================================================== */}
-        <div className="absolute right-2 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 sm:gap-5 z-40 w-[380px] sm:w-[420px] lg:w-[450px] xl:w-[470px] select-none">
+        <div className="absolute right-2 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3.5 sm:gap-4 z-40 w-[360px] sm:w-[400px] lg:w-[430px] select-none">
           
           <div className="flex items-center justify-between px-1">
             <div className="text-xs sm:text-sm font-mono font-black text-black uppercase tracking-wider flex items-center gap-2.5">
