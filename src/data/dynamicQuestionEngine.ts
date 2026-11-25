@@ -672,7 +672,7 @@ export function runFullTreeSimulation(
   // Simuler un chemin moyen par symptôme
   let totalDepth = 0;
   for (const sym of symptoms) {
-    let remaining = symptoms.map((s) => ({
+    let remaining: ScoredCandidate[] = symptoms.map((s) => ({
       symptom: s,
       score: 10,
       matchReasons: [],
