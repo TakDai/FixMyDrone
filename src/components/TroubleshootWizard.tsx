@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { FigmaComponentData } from '@/data/figmaComponents';
 import { getDiagnosticDefinition, DiagnosticSymptomOption } from '@/data/diagnosticKnowledgeBase';
 import { MULTI_MOTORS_CATALOGUE, MOTOR_GAMMES_BY_BRAND, MultiMotorsItem } from '@/data/multiMotorsCatalogueList';
@@ -11,6 +12,13 @@ import {
   rankDynamicResolutions,
 } from '@/data/dynamicResolutions';
 import {
+  MOTOR_STATIC_QUESTIONS,
+  DiagnosticQuestion,
+  QuestionAnswerRecord,
+  evaluateCandidatesLive,
+  generateDynamicFollowUpQuestion,
+} from '@/data/dynamicQuestionEngine';
+import {
   Search,
   ArrowLeft,
   ArrowRight,
@@ -18,7 +26,6 @@ import {
   AlertTriangle,
   Wrench,
   Cpu,
-  Clock,
   ShieldAlert,
   Sparkles,
   RotateCcw,
@@ -27,6 +34,9 @@ import {
   MessageSquarePlus,
   SlidersHorizontal,
   Users,
+  Bot,
+  Send,
+  MessageSquare,
 } from 'lucide-react';
 
 interface TroubleshootWizardProps {
@@ -266,6 +276,13 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const [contextMode, setContextMode] = useState<'guided' | 'prompt'>('guided');
   const [contextPrompt, setContextPrompt] = useState('');
   const [questionIdx, setQuestionIdx] = useState<number>(0);
+  const [answerRecords, setAnswerRecords] = useState<QuestionAnswerRecord[]>([]);
+  const [extraQuestions, setExtraQuestions] = useState<DiagnosticQuestion[]>([]);
+  const [noMatchAction, setNoMatchAction] = useState<'none' | 'ai' | 'forum'>('none');
+  const [forumPostTitle, setForumPostTitle] = useState('');
+  const [forumPostBody, setForumPostBody] = useState('');
+  const [forumPostSent, setForumPostSent] = useState(false);
+
   const [selectedCircumstanceId, setSelectedCircumstanceId] = useState('');
   const [selectedCircumstance, setSelectedCircumstance] = useState('');
   const [behaviorFamily, setBehaviorFamily] = useState<string>('all');
@@ -316,6 +333,16 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const rankedSymptoms = useMemo(
     () => rankSymptomsDynamically(def.symptoms, queryContext),
     [def.symptoms, queryContext]
+  );
+
+  const liveCandidates = useMemo(
+    () => evaluateCandidatesLive(def.symptoms, answerRecords, contextPrompt),
+    [def.symptoms, answerRecords, contextPrompt]
+  );
+
+  const activeCandidates = useMemo(
+    () => liveCandidates.filter((c) => !c.eliminated),
+    [liveCandidates]
   );
 
   const rankedResolutions = useMemo(
@@ -425,6 +452,12 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     setContextMode('guided');
     setContextPrompt('');
     setQuestionIdx(0);
+    setAnswerRecords([]);
+    setExtraQuestions([]);
+    setNoMatchAction('none');
+    setForumPostTitle('');
+    setForumPostBody('');
+    setForumPostSent(false);
     setSelectedCircumstanceId('');
     setSelectedCircumstance('');
     setBehaviorFamily('all');
@@ -969,301 +1002,394 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
             </div>
           )}
 
-          {/* MODE B : QUESTIONNAIRE ENCHAÎNÉ (1 QUESTION À LA FOIS) */}
+          {/* MODE B : QUESTIONNAIRE ENCHAÎNÉ (12+ QUESTIONS + GÉNÉRATION DYNAMIQUE) */}
           {contextMode === 'guided' && (() => {
-            const guidedQuestions: {
-              id: string;
-              question: string;
-              hint: string;
-              options: { id: string; label: string; sub?: string; tokens: string[]; onPick?: () => void }[];
-            }[] = [
-              {
-                id: 'when',
-                question: '1. Quand est survenu le problème ?',
-                hint: 'Sélectionnez le moment d’apparition pour passer à la question suivante.',
-                options: def.circumstances.map((c) => ({
-                  id: c.id,
-                  label: c.label,
-                  sub: c.description,
-                  tokens: [c.label],
-                  onPick: () => {
-                    setSelectedCircumstanceId(c.id);
-                    setSelectedCircumstance(c.label);
-                  },
-                })),
-              },
-              {
-                id: 'family',
-                question: '2. Quel type de comportement observez-vous principalement ?',
-                hint: 'Cela permet d’écarter les pistes non pertinentes.',
-                options: [
-                  {
-                    id: 'mecanique',
-                    label: 'Mécanique (bruit, jeu, frottement, choc)',
-                    sub: 'Cloche voilée, roulement qui gratte, aimant décollé...',
-                    tokens: ['bruit', 'roulement', 'cloche', 'jeu', 'aimant'],
-                    onPick: () => setBehaviorFamily('mecanique'),
-                  },
-                  {
-                    id: 'electrique',
-                    label: 'Électrique (broute, saccade, pas de bips, chauffe)',
-                    sub: 'Soudure, bobinage, vis trop longue, MOSFET...',
-                    tokens: ['broute', 'soudure', 'bips', 'chaud', 'bobinage'],
-                    onPick: () => setBehaviorFamily('electrique'),
-                  },
-                  {
-                    id: 'vol',
-                    label: 'En vol (desync, coupure gaz, death roll, vibrations)',
-                    sub: 'Perte de synchro ESC, D-term, jello, crash en vol...',
-                    tokens: ['desync', 'coupure', 'vol', 'vibrations', 'roll'],
-                    onPick: () => setBehaviorFamily('vol'),
-                  },
-                  {
-                    id: 'all',
-                    label: 'Je ne sais pas / Plusieurs symptômes',
-                    tokens: [],
-                    onPick: () => setBehaviorFamily('all'),
-                  },
-                ],
-              },
-              {
-                id: 'hand-spin',
-                question: '3. Sans batterie, en tournant la cloche à la main, que sentez-vous ?',
-                hint: 'Test mécanique rapide à la main (sécurité : hélices démontées).',
-                options: [
-                  {
-                    id: 'smooth',
-                    label: 'Tourne librement et sans bruit anormal',
-                    tokens: [],
-                  },
-                  {
-                    id: 'scratch',
-                    label: 'Frottement, point dur ou bruit de sable / crécelle',
-                    tokens: ['roulement', 'sable', 'frottement', 'cloche', 'aimant'],
-                  },
-                  {
-                    id: 'play',
-                    label: 'Jeu vertical ou latéral sur la cloche',
-                    tokens: ['jeu', 'roulement', 'circlip', 'axe'],
-                  },
-                  {
-                    id: 'blocked',
-                    label: 'Cloche bloquée ou axe visiblement tordu',
-                    tokens: ['voilee', 'tordu', 'bloque', 'vis'],
-                  },
-                ],
-              },
-              {
-                id: 'temp',
-                question: '4. Quelle est la température après un court essai / vol ?',
-                hint: 'Indicateur clé pour distinguer un souci électrique/PID d’un souci mécanique.',
-                options: [
-                  {
-                    id: 'normal',
-                    label: 'Normal / tiède',
-                    tokens: [],
-                  },
-                  {
-                    id: 'warm',
-                    label: 'Chaud mais supportable au doigt',
-                    tokens: ['chaud', 'pid', 'filtres'],
-                  },
-                  {
-                    id: 'burning',
-                    label: 'Brûlant (impossible de laisser le doigt)',
-                    tokens: ['brulant', 'chaud', 'vis', 'bobinage', 'd-term'],
-                  },
-                  {
-                    id: 'cold',
-                    label: 'Ne tourne pas du tout (reste froid)',
-                    tokens: ['broute', 'pas de bips', 'phase', 'soudure'],
-                  },
-                ],
-              },
-              {
-                id: 'beeps',
-                question: '5. Au branchement de la LiPo, les bips de démarrage ESC sont-ils normaux ?',
-                hint: 'Les 3 premiers bips indiquent l’alim ESC, les 2 derniers le signal de la FC.',
-                options: [
-                  {
-                    id: 'ok',
-                    label: 'Oui, tous les bips habituels (3 + 2 bips)',
-                    tokens: [],
-                  },
-                  {
-                    id: 'missing-2',
-                    label: 'Il manque les 2 derniers bips (pas de signal FC)',
-                    tokens: ['signal', 'bips', 'esc', 'fc'],
-                  },
-                  {
-                    id: 'none-or-loop',
-                    label: 'Aucun bip ou bips en boucle sur ce moteur',
-                    tokens: ['pas de bips', 'esc', 'soudure', 'phase', 'mosfet'],
-                  },
-                  {
-                    id: 'unknown',
-                    label: 'Pas encore branché / Je ne sais pas',
-                    tokens: [],
-                  },
-                ],
-              },
-              {
-                id: 'recent-change',
-                question: '6. Avez-vous fait une modification récente avant la panne ?',
-                hint: 'Dernière question avant d’afficher le diagnostic affiné.',
-                options: [
-                  {
-                    id: 'screws',
-                    label: 'Oui : vis de fixation moteur changées ou resserrées',
-                    tokens: ['vis', 'bobinage', 'longue', 'brulant'],
-                  },
-                  {
-                    id: 'settings',
-                    label: 'Oui : réglages ESC (Bluejay/BLHeli) ou PID / RPM Filter',
-                    tokens: ['bluejay', 'demag', 'desync', 'filtres', 'pid'],
-                  },
-                  {
-                    id: 'props-lipo',
-                    label: 'Oui : changement d’hélices ou de LiPo (ex: 4S → 6S)',
-                    tokens: ['vibrations', 'jello', 'chaud', 'desync'],
-                  },
-                  {
-                    id: 'none',
-                    label: 'Non, aucune modification récente',
-                    tokens: [],
-                  },
-                ],
-              },
+            const allQuestions: DiagnosticQuestion[] = [
+              ...MOTOR_STATIC_QUESTIONS,
+              ...extraQuestions,
             ];
+            const totalQ = allQuestions.length;
+            const currentQ = allQuestions[Math.min(questionIdx, totalQ - 1)];
 
-            const totalQ = guidedQuestions.length;
-            const currentQ = guidedQuestions[Math.min(questionIdx, totalQ - 1)];
-            const answeredEntries = Object.entries(chainedAnswers);
+            const handleAnswerOption = (opt: DiagnosticQuestion['options'][number]) => {
+              const newRecord: QuestionAnswerRecord = {
+                questionId: currentQ.id,
+                questionLabel: currentQ.question,
+                optionId: opt.id,
+                optionLabel: opt.label,
+                boostTokens: opt.boostTokens,
+                excludeTokens: opt.excludeTokens,
+                preferCategories: opt.preferCategories,
+                isHealthy: opt.isHealthy,
+              };
+
+              const updatedRecords = [
+                ...answerRecords.filter((r) => r.questionId !== currentQ.id),
+                newRecord,
+              ];
+              setAnswerRecords(updatedRecords);
+              setChainedAnswers((prev) => ({
+                ...prev,
+                [currentQ.id]: { label: opt.label, tokens: opt.boostTokens },
+              }));
+              if (currentQ.id === 'when') {
+                setSelectedCircumstanceId(opt.id);
+                setSelectedCircumstance(opt.label);
+              }
+              if (currentQ.id === 'family') {
+                setBehaviorFamily(opt.id);
+              }
+
+              const nextEvaluated = evaluateCandidatesLive(
+                def.symptoms,
+                updatedRecords,
+                contextPrompt
+              );
+              const nextActive = nextEvaluated.filter((c) => !c.eliminated);
+
+              // S'il n'y a plus aucun résultat, on arrête les questions (l'écran IA / Forum s'affiche)
+              if (nextActive.length === 0) {
+                setNoMatchAction('none');
+                return;
+              }
+
+              // S'il ne reste qu'un seul résultat exact après au moins 2 questions, on peut passer ou continuer
+              if (questionIdx + 1 < allQuestions.length) {
+                setQuestionIdx(questionIdx + 1);
+                return;
+              }
+
+              // Si toutes les questions statiques sont posées et qu'il reste >= 2 résultats,
+              // on génère dynamiquement une nouvelle question discriminante !
+              if (nextActive.length >= 2) {
+                const askedIds = allQuestions.map((q) => q.id);
+                const generated = generateDynamicFollowUpQuestion(
+                  nextActive,
+                  dynamicResolutions,
+                  askedIds,
+                  allQuestions.length + 1
+                );
+                if (generated) {
+                  setExtraQuestions((prev) => [...prev, generated]);
+                  setQuestionIdx(allQuestions.length);
+                  return;
+                }
+              }
+
+              // Sinon on affiche le résultat final
+              setSelectedSymptom(nextActive[0].symptom);
+              setStep(5);
+            };
 
             return (
               <div className="space-y-3">
-                {/* Barre de progression des questions + retour question précédente */}
+                {/* En-tête progression + retour question précédente */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    {questionIdx > 0 && (
+                    {answerRecords.length > 0 && (
                       <button
                         type="button"
-                        onClick={() => setQuestionIdx((q) => Math.max(0, q - 1))}
+                        onClick={() => {
+                          const prevRecords = answerRecords.slice(0, -1);
+                          setAnswerRecords(prevRecords);
+                          setNoMatchAction('none');
+                          setQuestionIdx((q) => Math.max(0, q - 1));
+                        }}
                         className="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-600 hover:text-black cursor-pointer"
                       >
                         <ArrowLeft className="w-3.5 h-3.5" />
-                        <span>Précédente</span>
+                        <span>Question précédente</span>
                       </button>
                     )}
-                    <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
-                      Question {questionIdx + 1} / {totalQ}
-                    </span>
+                    {activeCandidates.length > 0 && (
+                      <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
+                        Question {questionIdx + 1} / {totalQ}
+                        {currentQ.isGenerated ? ' • Auto' : ''}
+                      </span>
+                    )}
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (rankedSymptoms[0]) {
-                        setSelectedSymptom(rankedSymptoms[0].symptom);
+                  {activeCandidates.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSymptom(activeCandidates[0].symptom);
                         setStep(5);
-                      }
-                    }}
-                    className="text-[11px] font-bold text-zinc-600 hover:text-black underline cursor-pointer"
-                  >
-                    Voir le diagnostic ({rankedSymptoms.length} pistes) →
-                  </button>
+                      }}
+                      className="text-[11px] font-bold text-zinc-600 hover:text-black underline cursor-pointer"
+                    >
+                      Ouvrir le meilleur résultat →
+                    </button>
+                  )}
                 </div>
 
-                {/* Barre de progression visuelle */}
-                <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-black transition-all duration-300"
-                    style={{ width: `${((questionIdx + 1) / totalQ) * 100}%` }}
-                  />
-                </div>
-
-                {/* Récapitulatif compact des réponses déjà données */}
-                {answeredEntries.length > 0 && (
+                {/* Récapitulatif cliquable des réponses déjà données */}
+                {answerRecords.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {answeredEntries.map(([qId, ans], i) => {
-                      const targetQIndex = guidedQuestions.findIndex((gq) => gq.id === qId);
-                      return (
-                        <button
-                          key={qId}
-                          type="button"
-                          onClick={() => targetQIndex >= 0 && setQuestionIdx(targetQIndex)}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#cbf3d2]/50 border border-black/20 text-black hover:border-black transition-colors cursor-pointer truncate max-w-[200px]"
-                          title="Cliquer pour modifier cette réponse"
-                        >
-                          Q{i + 1}: {ans.label}
-                        </button>
-                      );
-                    })}
+                    {answerRecords.map((rec, i) => (
+                      <span
+                        key={rec.questionId}
+                        className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#cbf3d2]/50 border border-black/20 text-black truncate max-w-[210px]"
+                        title={rec.questionLabel}
+                      >
+                        Q{i + 1}: {rec.optionLabel}
+                      </span>
+                    ))}
                   </div>
                 )}
 
-                {/* QUESTION ACTUELLE (UNE SEULE À LA FOIS) */}
-                <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50/70 space-y-3 animate-in fade-in duration-150">
-                  <div>
-                    <h3 className="text-sm font-bold text-black">{currentQ.question}</h3>
-                    <p className="text-[11px] text-zinc-500 mt-0.5">{currentQ.hint}</p>
-                  </div>
+                {/* CAS 0 RÉSULTAT : ARRÊT DES QUESTIONS -> PROPOSER IA OU FORUM */}
+                {activeCandidates.length === 0 ? (
+                  <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50 space-y-3.5 animate-in fade-in duration-150">
+                    <div className="space-y-1">
+                      <div className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-amber-100 border border-amber-400 text-amber-900">
+                        0 résultat exact dans la base
+                      </div>
+                      <h3 className="text-sm font-bold text-black">
+                        Aucune panne standard ne correspond à toutes vos réponses
+                      </h3>
+                      <p className="text-[11px] text-zinc-600">
+                        Nous arrêtons le questionnaire ici. Comment souhaitez-vous résoudre ce cas particulier sur votre{' '}
+                        <strong className="text-black">{activeRefLabel}</strong> ?
+                      </p>
+                    </div>
 
-                  <div className="grid grid-cols-1 gap-2">
-                    {currentQ.options.map((opt) => {
-                      const isPicked = chainedAnswers[currentQ.id]?.label === opt.label;
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => {
-                            opt.onPick?.();
-                            setChainedAnswers((prev) => ({
-                              ...prev,
-                              [currentQ.id]: { label: opt.label, tokens: opt.tokens },
-                            }));
-                            if (questionIdx < totalQ - 1) {
-                              setQuestionIdx(questionIdx + 1);
-                            } else if (rankedSymptoms[0]) {
-                              setSelectedSymptom(rankedSymptoms[0].symptom);
-                              setStep(5);
-                            }
-                          }}
-                          className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                            isPicked
-                              ? 'border-black bg-black text-white'
-                              : 'border-black/25 bg-white hover:border-black hover:shadow-xs text-black'
-                          }`}
-                        >
-                          <div className="min-w-0">
-                            <div className="font-bold text-xs">{opt.label}</div>
-                            {opt.sub && (
-                              <div
-                                className={`text-[10px] mt-0.5 ${
-                                  isPicked ? 'text-zinc-300' : 'text-zinc-500'
-                                }`}
-                              >
-                                {opt.sub}
-                              </div>
-                            )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setNoMatchAction('ai')}
+                        className={`p-3.5 rounded-2xl border-[1.5px] text-left transition-all cursor-pointer flex items-start gap-3 ${
+                          noMatchAction === 'ai'
+                            ? 'border-black bg-black text-white'
+                            : 'border-black bg-white hover:bg-zinc-100 text-black'
+                        }`}
+                      >
+                        <Bot className="w-5 h-5 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-bold text-xs">Résoudre avec l’IA</div>
+                          <div className={`text-[10px] mt-0.5 ${noMatchAction === 'ai' ? 'text-zinc-300' : 'text-zinc-500'}`}>
+                            Analyse croisée de vos {answerRecords.length} réponses et piste personnalisée.
                           </div>
-                          <ArrowRight className="w-4 h-4 shrink-0 opacity-60" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                        </div>
+                      </button>
 
-                {/* Aperçu discret de la meilleure piste en cours */}
-                {rankedSymptoms[0] && (
-                  <div className="px-3 py-2 rounded-xl bg-white border border-zinc-200 flex items-center justify-between gap-2 text-[11px]">
-                    <span className="text-zinc-500 truncate">
-                      Piste n°1 actuelle : <strong className="text-black">{rankedSymptoms[0].symptom.title}</strong>
-                    </span>
-                    <span className="font-mono text-[10px] text-emerald-700 font-bold shrink-0">
-                      {rankedSymptoms[0].symptom.aiDiagnostic.probability}%
-                    </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNoMatchAction('forum');
+                          if (!forumPostTitle) {
+                            setForumPostTitle(`[${activeBrandLabel}] Panne atypique sur ${activeRefLabel}`);
+                          }
+                          if (!forumPostBody) {
+                            const summary = answerRecords
+                              .map((r, idx) => `- Q${idx + 1} (${r.questionLabel}) : ${r.optionLabel}`)
+                              .join('\n');
+                            setForumPostBody(
+                              `Bonjour à tous,\n\nMatériel : ${activeBrandLabel} — ${activeRefLabel}\n${
+                                contextPrompt ? `Description : ${contextPrompt}\n` : ''
+                              }\nContrôles déjà effectués :\n${summary}\n\nMerci d'avance pour vos avis !`
+                            );
+                          }
+                        }}
+                        className={`p-3.5 rounded-2xl border-[1.5px] text-left transition-all cursor-pointer flex items-start gap-3 ${
+                          noMatchAction === 'forum'
+                            ? 'border-black bg-black text-white'
+                            : 'border-black bg-white hover:bg-zinc-100 text-black'
+                        }`}
+                      >
+                        <MessageSquare className="w-5 h-5 shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-bold text-xs">Envoyer un post sur le forum</div>
+                          <div className={`text-[10px] mt-0.5 ${noMatchAction === 'forum' ? 'text-zinc-300' : 'text-zinc-500'}`}>
+                            Sujet pré-rempli avec votre matériel et vos contrôles.
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* PANNEAU IA */}
+                    {noMatchAction === 'ai' && (
+                      <div className="p-4 rounded-2xl bg-white border border-black space-y-2.5 text-xs">
+                        <div className="font-bold text-black flex items-center gap-1.5">
+                          <Sparkles className="w-4 h-4" />
+                          <span>Synthèse IA personnalisée ({activeRefLabel})</span>
+                        </div>
+                        <p className="text-zinc-700 leading-relaxed">
+                          D’après vos {answerRecords.length} réponses, les pannes classiques sont écartées. Il s’agit probablement d’un défaut intermittent ou externe au moteur seul :
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1 text-zinc-700">
+                          <li>
+                            <strong>Test croisé ESC/FC :</strong> inversez deux moteurs sur l’ESC pour isoler si le souci vient du bobinage ou d’un MOSFET/driver ESC.
+                          </li>
+                          <li>
+                            <strong>Contrôle d’isolement :</strong> vérifiez au multimètre l’absence de continuité entre les 3 phases et la cloche/châssis carbone.
+                          </li>
+                          <li>
+                            <strong>Blackbox & Config :</strong> relevez un court log Blackbox (Gyro + Debug DSHOT_RPM) pour repérer une anomalie invisible au banc.
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* PANNEAU POST FORUM */}
+                    {noMatchAction === 'forum' && (
+                      <div className="p-4 rounded-2xl bg-white border border-black space-y-2.5 text-xs">
+                        {forumPostSent ? (
+                          <div className="space-y-2 py-2">
+                            <div className="font-bold text-emerald-700 flex items-center gap-1.5">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Post enregistré et prêt pour la communauté !</span>
+                            </div>
+                            <p className="text-[11px] text-zinc-600">
+                              Votre demande a été indexée dynamiquement. Vous pouvez aussi consulter les discussions sur le forum.
+                            </p>
+                            <Link
+                              href="/forum"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black text-white font-bold text-[11px]"
+                            >
+                              <span>Aller sur le Forum</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="font-bold text-black">Nouveau sujet forum pré-rempli :</div>
+                            <input
+                              type="text"
+                              value={forumPostTitle}
+                              onChange={(e) => setForumPostTitle(e.target.value)}
+                              className="w-full px-3 py-2 border border-zinc-300 rounded-xl text-black focus:outline-none focus:border-black"
+                              placeholder="Titre de votre sujet..."
+                            />
+                            <textarea
+                              value={forumPostBody}
+                              onChange={(e) => setForumPostBody(e.target.value)}
+                              rows={4}
+                              className="w-full px-3 py-2 border border-zinc-300 rounded-xl text-black focus:outline-none focus:border-black"
+                            />
+                            <div className="flex justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (!forumPostTitle.trim() || !forumPostBody.trim()) return;
+                                  saveDynamicResolution({
+                                    componentId: targetId,
+                                    brand: activeBrandLabel,
+                                    model: activeRefLabel,
+                                    issue: forumPostTitle.trim(),
+                                    fix: forumPostBody.trim(),
+                                    author: 'Pilote_Atelier',
+                                  });
+                                  setResolutionsVersion((v) => v + 1);
+                                  setForumPostSent(true);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black text-white font-bold text-[11px] uppercase tracking-wider hover:bg-zinc-800 cursor-pointer"
+                              >
+                                <Send className="w-3.5 h-3.5" />
+                                <span>Publier sur le forum</span>
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  /* QUESTION ACTUELLE + RÉSULTATS EN DIRECT EN DESSOUS */
+                  <>
+                    <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50/70 space-y-2.5 animate-in fade-in duration-150">
+                      <div>
+                        <h3 className="text-sm font-bold text-black">{currentQ.question}</h3>
+                        <p className="text-[11px] text-zinc-500 mt-0.5">{currentQ.hint}</p>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {currentQ.options.map((opt) => {
+                          const isPicked = answerRecords.some(
+                            (r) => r.questionId === currentQ.id && r.optionId === opt.id
+                          );
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => handleAnswerOption(opt)}
+                              className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                                isPicked
+                                  ? 'border-black bg-black text-white'
+                                  : 'border-black/25 bg-white hover:border-black hover:shadow-xs text-black'
+                              }`}
+                            >
+                              <div className="min-w-0">
+                                <div className="font-bold text-xs">{opt.label}</div>
+                                {opt.sub && (
+                                  <div
+                                    className={`text-[10px] mt-0.5 ${
+                                      isPicked ? 'text-zinc-300' : 'text-zinc-500'
+                                    }`}
+                                  >
+                                    {opt.sub}
+                                  </div>
+                                )}
+                              </div>
+                              <ArrowRight className="w-4 h-4 shrink-0 opacity-60" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* RÉSULTATS EN DIRECT AU FIL DES RÉPONSES */}
+                    <div className="pt-2 border-t border-zinc-200 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Résultats en direct ({activeCandidates.length})</span>
+                        </span>
+                        {rankedResolutions.length > 0 && (
+                          <span className="text-[10px] font-mono text-emerald-700 font-bold">
+                            + {rankedResolutions.length} retours communauté
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                        {activeCandidates.map(({ symptom, matchReasons }, idx) => (
+                          <button
+                            key={symptom.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedSymptom(symptom);
+                              setStep(5);
+                            }}
+                            className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                              idx === 0
+                                ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
+                                : 'border-black/20 hover:border-black bg-white'
+                            }`}
+                          >
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                {idx === 0 && (
+                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
+                                    #1
+                                  </span>
+                                )}
+                                <span className="font-bold text-black text-xs truncate">
+                                  {symptom.title}
+                                </span>
+                              </div>
+                              {matchReasons.length > 0 && (
+                                <div className="text-[10px] font-mono text-emerald-700 mt-0.5 truncate">
+                                  {matchReasons.join(' • ')}
+                                </div>
+                              )}
+                            </div>
+                            <ArrowRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             );
