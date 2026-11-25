@@ -116,8 +116,8 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
   }[] = [
     {
       id: 'issues',
-      title: 'Résoudre une Panne',
-      subtitle: 'Symptômes fréquents, causes identifiées, solutions d’atelier et diagnostic guidé.',
+      title: 'Diagnostic Guidé — Résoudre une Panne',
+      subtitle: 'Identification (Marque, Gamme, Référence), questions enchaînées ou prompt et solutions d’atelier.',
       badge: `${totalIssuesCount} fiches`,
       icon: <Wrench className="w-5 h-5" />,
     },
@@ -492,7 +492,7 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
           </>
         )}
 
-        {/* Pied de pop-up : accès optionnel au diagnostic guidé et au forum */}
+        {/* Pied de pop-up : accès optionnel au forum ou au diagnostic guidé dans la pop-up */}
         <div className="mt-6 pt-4 border-t-[1.5px] border-dashed border-black/30 flex flex-wrap items-center justify-between gap-3">
           <Link
             href="/forum"
@@ -501,13 +501,24 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
             <MessageSquare className="w-3.5 h-3.5" />
             <span>Voir le forum</span>
           </Link>
-          <Link
-            href={`/diagnostic/${targetId}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider transition-colors"
-          >
-            <span>Lancer le diagnostic guidé</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {selectedIntent !== 'issues' ? (
+            <button
+              type="button"
+              onClick={() => setSelectedIntent('issues')}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              <span>Lancer le diagnostic guidé</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-bold text-black transition-colors cursor-pointer"
+            >
+              <span>Fermer</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
