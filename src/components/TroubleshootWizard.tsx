@@ -262,13 +262,15 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const [selectedMotor, setSelectedMotor] = useState<MultiMotorsItem | null>(null);
   const [customRef, setCustomRef] = useState('');
 
-  // Étape 4 : Contexte (Mode guidé progressif ou Prompt libre) + Symptôme
+  // Étape 4 : Contexte (Questionnaire enchaîné 1 question à la fois ou Prompt libre)
   const [contextMode, setContextMode] = useState<'guided' | 'prompt'>('guided');
   const [contextPrompt, setContextPrompt] = useState('');
+  const [questionIdx, setQuestionIdx] = useState<number>(0);
   const [selectedCircumstanceId, setSelectedCircumstanceId] = useState('');
   const [selectedCircumstance, setSelectedCircumstance] = useState('');
   const [behaviorFamily, setBehaviorFamily] = useState<string>('all');
   const [selectedObservations, setSelectedObservations] = useState<string[]>([]);
+  const [chainedAnswers, setChainedAnswers] = useState<Record<string, { label: string; tokens: string[] }>>({});
   const [selectedSymptom, setSelectedSymptom] = useState<DiagnosticSymptomOption | null>(null);
 
   // Résolutions dynamiques (futures résolutions pilotes + forum)
@@ -282,12 +284,18 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     return getDynamicResolutionsForComponent(targetId);
   }, [targetId, resolutionsVersion]);
 
+  const guidedTokens = useMemo(
+    () => Object.values(chainedAnswers).flatMap((a) => a.tokens),
+    [chainedAnswers]
+  );
+
   const queryContext = useMemo(
     () => ({
       promptText: contextPrompt,
       circumstanceId: selectedCircumstanceId,
       behaviorFamily,
       selectedObservations,
+      guidedTokens,
       brand: selectedBrand || customBrand,
       model: selectedMotor?.fullName || customRef || selectedGamme,
     }),
@@ -296,6 +304,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
       selectedCircumstanceId,
       behaviorFamily,
       selectedObservations,
+      guidedTokens,
       selectedBrand,
       customBrand,
       selectedMotor,
@@ -415,10 +424,12 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     setCustomRef('');
     setContextMode('guided');
     setContextPrompt('');
+    setQuestionIdx(0);
     setSelectedCircumstanceId('');
     setSelectedCircumstance('');
     setBehaviorFamily('all');
     setSelectedObservations([]);
+    setChainedAnswers({});
     setSelectedSymptom(null);
   };
 
@@ -958,164 +969,363 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
             </div>
           )}
 
-          {/* MODE B : QUESTIONNAIRE PROGRESSIF POUR AFFINER */}
-          {contextMode === 'guided' && (
-            <div className="space-y-3.5">
-              {/* Question 1 : Quand ? */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-bold text-black flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span>1. Quand est survenu le problème ?</span>
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  {def.circumstances.map((circ) => {
-                    const active = selectedCircumstanceId === circ.id;
-                    return (
+          {/* MODE B : QUESTIONNAIRE ENCHAÎNÉ (1 QUESTION À LA FOIS) */}
+          {contextMode === 'guided' && (() => {
+            const guidedQuestions: {
+              id: string;
+              question: string;
+              hint: string;
+              options: { id: string; label: string; sub?: string; tokens: string[]; onPick?: () => void }[];
+            }[] = [
+              {
+                id: 'when',
+                question: '1. Quand est survenu le problème ?',
+                hint: 'Sélectionnez le moment d’apparition pour passer à la question suivante.',
+                options: def.circumstances.map((c) => ({
+                  id: c.id,
+                  label: c.label,
+                  sub: c.description,
+                  tokens: [c.label],
+                  onPick: () => {
+                    setSelectedCircumstanceId(c.id);
+                    setSelectedCircumstance(c.label);
+                  },
+                })),
+              },
+              {
+                id: 'family',
+                question: '2. Quel type de comportement observez-vous principalement ?',
+                hint: 'Cela permet d’écarter les pistes non pertinentes.',
+                options: [
+                  {
+                    id: 'mecanique',
+                    label: 'Mécanique (bruit, jeu, frottement, choc)',
+                    sub: 'Cloche voilée, roulement qui gratte, aimant décollé...',
+                    tokens: ['bruit', 'roulement', 'cloche', 'jeu', 'aimant'],
+                    onPick: () => setBehaviorFamily('mecanique'),
+                  },
+                  {
+                    id: 'electrique',
+                    label: 'Électrique (broute, saccade, pas de bips, chauffe)',
+                    sub: 'Soudure, bobinage, vis trop longue, MOSFET...',
+                    tokens: ['broute', 'soudure', 'bips', 'chaud', 'bobinage'],
+                    onPick: () => setBehaviorFamily('electrique'),
+                  },
+                  {
+                    id: 'vol',
+                    label: 'En vol (desync, coupure gaz, death roll, vibrations)',
+                    sub: 'Perte de synchro ESC, D-term, jello, crash en vol...',
+                    tokens: ['desync', 'coupure', 'vol', 'vibrations', 'roll'],
+                    onPick: () => setBehaviorFamily('vol'),
+                  },
+                  {
+                    id: 'all',
+                    label: 'Je ne sais pas / Plusieurs symptômes',
+                    tokens: [],
+                    onPick: () => setBehaviorFamily('all'),
+                  },
+                ],
+              },
+              {
+                id: 'hand-spin',
+                question: '3. Sans batterie, en tournant la cloche à la main, que sentez-vous ?',
+                hint: 'Test mécanique rapide à la main (sécurité : hélices démontées).',
+                options: [
+                  {
+                    id: 'smooth',
+                    label: 'Tourne librement et sans bruit anormal',
+                    tokens: [],
+                  },
+                  {
+                    id: 'scratch',
+                    label: 'Frottement, point dur ou bruit de sable / crécelle',
+                    tokens: ['roulement', 'sable', 'frottement', 'cloche', 'aimant'],
+                  },
+                  {
+                    id: 'play',
+                    label: 'Jeu vertical ou latéral sur la cloche',
+                    tokens: ['jeu', 'roulement', 'circlip', 'axe'],
+                  },
+                  {
+                    id: 'blocked',
+                    label: 'Cloche bloquée ou axe visiblement tordu',
+                    tokens: ['voilee', 'tordu', 'bloque', 'vis'],
+                  },
+                ],
+              },
+              {
+                id: 'temp',
+                question: '4. Quelle est la température après un court essai / vol ?',
+                hint: 'Indicateur clé pour distinguer un souci électrique/PID d’un souci mécanique.',
+                options: [
+                  {
+                    id: 'normal',
+                    label: 'Normal / tiède',
+                    tokens: [],
+                  },
+                  {
+                    id: 'warm',
+                    label: 'Chaud mais supportable au doigt',
+                    tokens: ['chaud', 'pid', 'filtres'],
+                  },
+                  {
+                    id: 'burning',
+                    label: 'Brûlant (impossible de laisser le doigt)',
+                    tokens: ['brulant', 'chaud', 'vis', 'bobinage', 'd-term'],
+                  },
+                  {
+                    id: 'cold',
+                    label: 'Ne tourne pas du tout (reste froid)',
+                    tokens: ['broute', 'pas de bips', 'phase', 'soudure'],
+                  },
+                ],
+              },
+              {
+                id: 'beeps',
+                question: '5. Au branchement de la LiPo, les bips de démarrage ESC sont-ils normaux ?',
+                hint: 'Les 3 premiers bips indiquent l’alim ESC, les 2 derniers le signal de la FC.',
+                options: [
+                  {
+                    id: 'ok',
+                    label: 'Oui, tous les bips habituels (3 + 2 bips)',
+                    tokens: [],
+                  },
+                  {
+                    id: 'missing-2',
+                    label: 'Il manque les 2 derniers bips (pas de signal FC)',
+                    tokens: ['signal', 'bips', 'esc', 'fc'],
+                  },
+                  {
+                    id: 'none-or-loop',
+                    label: 'Aucun bip ou bips en boucle sur ce moteur',
+                    tokens: ['pas de bips', 'esc', 'soudure', 'phase', 'mosfet'],
+                  },
+                  {
+                    id: 'unknown',
+                    label: 'Pas encore branché / Je ne sais pas',
+                    tokens: [],
+                  },
+                ],
+              },
+              {
+                id: 'recent-change',
+                question: '6. Avez-vous fait une modification récente avant la panne ?',
+                hint: 'Dernière question avant d’afficher le diagnostic affiné.',
+                options: [
+                  {
+                    id: 'screws',
+                    label: 'Oui : vis de fixation moteur changées ou resserrées',
+                    tokens: ['vis', 'bobinage', 'longue', 'brulant'],
+                  },
+                  {
+                    id: 'settings',
+                    label: 'Oui : réglages ESC (Bluejay/BLHeli) ou PID / RPM Filter',
+                    tokens: ['bluejay', 'demag', 'desync', 'filtres', 'pid'],
+                  },
+                  {
+                    id: 'props-lipo',
+                    label: 'Oui : changement d’hélices ou de LiPo (ex: 4S → 6S)',
+                    tokens: ['vibrations', 'jello', 'chaud', 'desync'],
+                  },
+                  {
+                    id: 'none',
+                    label: 'Non, aucune modification récente',
+                    tokens: [],
+                  },
+                ],
+              },
+            ];
+
+            const totalQ = guidedQuestions.length;
+            const currentQ = guidedQuestions[Math.min(questionIdx, totalQ - 1)];
+            const answeredEntries = Object.entries(chainedAnswers);
+
+            return (
+              <div className="space-y-3">
+                {/* Barre de progression des questions + retour question précédente */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    {questionIdx > 0 && (
                       <button
-                        key={circ.id}
                         type="button"
-                        onClick={() => {
-                          setSelectedCircumstanceId(active ? '' : circ.id);
-                          setSelectedCircumstance(active ? '' : circ.label);
-                        }}
-                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                          active
-                            ? 'border-black bg-black text-white'
-                            : 'border-black/20 bg-zinc-50/70 hover:border-black text-black'
-                        }`}
+                        onClick={() => setQuestionIdx((q) => Math.max(0, q - 1))}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-600 hover:text-black cursor-pointer"
                       >
-                        <div className="font-bold text-[11px]">{circ.label}</div>
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        <span>Précédente</span>
                       </button>
-                    );
-                  })}
-                </div>
-              </div>
+                    )}
+                    <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
+                      Question {questionIdx + 1} / {totalQ}
+                    </span>
+                  </div>
 
-              {/* Question 2 : Quel type de comportement ? */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-bold text-black flex items-center gap-1.5">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  <span>2. Quel type de comportement observez-vous ?</span>
-                </h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { id: 'all', label: 'Tous' },
-                    { id: 'mecanique', label: 'Mécanique (bruit, jeu, choc)' },
-                    { id: 'electrique', label: 'Électrique (broute, bips, chaud)' },
-                    { id: 'vol', label: 'En vol (desync, coupure)' },
-                  ].map((fam) => (
-                    <button
-                      key={fam.id}
-                      type="button"
-                      onClick={() => setBehaviorFamily(fam.id)}
-                      className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer ${
-                        behaviorFamily === fam.id
-                          ? 'border-black bg-black text-white'
-                          : 'border-black/20 bg-white hover:border-black text-zinc-700'
-                      }`}
-                    >
-                      {fam.label}
-                    </button>
-                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (rankedSymptoms[0]) {
+                        setSelectedSymptom(rankedSymptoms[0].symptom);
+                        setStep(5);
+                      }
+                    }}
+                    className="text-[11px] font-bold text-zinc-600 hover:text-black underline cursor-pointer"
+                  >
+                    Voir le diagnostic ({rankedSymptoms.length} pistes) →
+                  </button>
                 </div>
-              </div>
 
-              {/* Question 3 : Vérifications rapides */}
-              {def.quickObservations.length > 0 && (
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-bold text-black">
-                    3. Vérifications rapides (optionnel) :
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    {def.quickObservations.map((obs) => {
-                      const checked = selectedObservations.includes(obs.id);
+                {/* Barre de progression visuelle */}
+                <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-black transition-all duration-300"
+                    style={{ width: `${((questionIdx + 1) / totalQ) * 100}%` }}
+                  />
+                </div>
+
+                {/* Récapitulatif compact des réponses déjà données */}
+                {answeredEntries.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {answeredEntries.map(([qId, ans], i) => {
+                      const targetQIndex = guidedQuestions.findIndex((gq) => gq.id === qId);
                       return (
                         <button
-                          key={obs.id}
+                          key={qId}
                           type="button"
-                          onClick={() =>
-                            setSelectedObservations((prev) =>
-                              checked ? prev.filter((x) => x !== obs.id) : [...prev, obs.id]
-                            )
-                          }
-                          className={`p-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer flex items-center gap-2 ${
-                            checked
-                              ? 'border-black bg-[#cbf3d2]/40 font-bold text-black'
-                              : 'border-zinc-200 bg-white hover:border-black/40 text-zinc-700'
+                          onClick={() => targetQIndex >= 0 && setQuestionIdx(targetQIndex)}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#cbf3d2]/50 border border-black/20 text-black hover:border-black transition-colors cursor-pointer truncate max-w-[200px]"
+                          title="Cliquer pour modifier cette réponse"
+                        >
+                          Q{i + 1}: {ans.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* QUESTION ACTUELLE (UNE SEULE À LA FOIS) */}
+                <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50/70 space-y-3 animate-in fade-in duration-150">
+                  <div>
+                    <h3 className="text-sm font-bold text-black">{currentQ.question}</h3>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">{currentQ.hint}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2">
+                    {currentQ.options.map((opt) => {
+                      const isPicked = chainedAnswers[currentQ.id]?.label === opt.label;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => {
+                            opt.onPick?.();
+                            setChainedAnswers((prev) => ({
+                              ...prev,
+                              [currentQ.id]: { label: opt.label, tokens: opt.tokens },
+                            }));
+                            if (questionIdx < totalQ - 1) {
+                              setQuestionIdx(questionIdx + 1);
+                            } else if (rankedSymptoms[0]) {
+                              setSelectedSymptom(rankedSymptoms[0].symptom);
+                              setStep(5);
+                            }
+                          }}
+                          className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                            isPicked
+                              ? 'border-black bg-black text-white'
+                              : 'border-black/25 bg-white hover:border-black hover:shadow-xs text-black'
                           }`}
                         >
-                          <span
-                            className={`w-4 h-4 rounded border flex items-center justify-center text-[10px] shrink-0 ${
-                              checked ? 'bg-black text-white border-black' : 'border-zinc-400'
-                            }`}
-                          >
-                            {checked ? '✓' : ''}
-                          </span>
-                          <span className="truncate">{obs.label}</span>
+                          <div className="min-w-0">
+                            <div className="font-bold text-xs">{opt.label}</div>
+                            {opt.sub && (
+                              <div
+                                className={`text-[10px] mt-0.5 ${
+                                  isPicked ? 'text-zinc-300' : 'text-zinc-500'
+                                }`}
+                              >
+                                {opt.sub}
+                              </div>
+                            )}
+                          </div>
+                          <ArrowRight className="w-4 h-4 shrink-0 opacity-60" />
                         </button>
                       );
                     })}
                   </div>
                 </div>
-              )}
+
+                {/* Aperçu discret de la meilleure piste en cours */}
+                {rankedSymptoms[0] && (
+                  <div className="px-3 py-2 rounded-xl bg-white border border-zinc-200 flex items-center justify-between gap-2 text-[11px]">
+                    <span className="text-zinc-500 truncate">
+                      Piste n°1 actuelle : <strong className="text-black">{rankedSymptoms[0].symptom.title}</strong>
+                    </span>
+                    <span className="font-mono text-[10px] text-emerald-700 font-bold shrink-0">
+                      {rankedSymptoms[0].symptom.aiDiagnostic.probability}%
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* RÉSULTATS AFFINÉS EN DIRECT (AFFICHÉS EN MODE PROMPT LIBRE) */}
+          {contextMode === 'prompt' && (
+            <div className="pt-3 border-t border-zinc-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Pistes affinées dynamiquement ({rankedSymptoms.length})</span>
+                </span>
+                {rankedResolutions.length > 0 && (
+                  <span className="text-[10px] font-mono text-emerald-700 font-bold">
+                    + {rankedResolutions.length} résolutions communauté
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {rankedSymptoms.map(({ symptom, matchReasons }, idx) => (
+                  <button
+                    key={symptom.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedSymptom(symptom);
+                      setStep(5);
+                    }}
+                    className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      idx === 0
+                        ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
+                        : 'border-black/20 hover:border-black bg-white'
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {idx === 0 && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
+                            Meilleure piste
+                          </span>
+                        )}
+                        <span className="font-bold text-black text-xs">{symptom.title}</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
+                          {symptom.rarityLabel}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
+                        {symptom.description}
+                      </p>
+                      {matchReasons.length > 0 && (
+                        <div className="text-[10px] font-mono text-emerald-700 mt-0.5">
+                          {matchReasons.join(' • ')}
+                        </div>
+                      )}
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                  </button>
+                ))}
+              </div>
             </div>
           )}
-
-          {/* RÉSULTATS AFFINÉS EN DIRECT */}
-          <div className="pt-3 border-t border-zinc-200 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Pistes affinées dynamiquement ({rankedSymptoms.length})</span>
-              </span>
-              {rankedResolutions.length > 0 && (
-                <span className="text-[10px] font-mono text-emerald-700 font-bold">
-                  + {rankedResolutions.length} résolutions communauté
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-              {rankedSymptoms.map(({ symptom, matchReasons }, idx) => (
-                <button
-                  key={symptom.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedSymptom(symptom);
-                    setStep(5);
-                  }}
-                  className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                    idx === 0
-                      ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
-                      : 'border-black/20 hover:border-black bg-white'
-                  }`}
-                >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {idx === 0 && (
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
-                          Meilleure piste
-                        </span>
-                      )}
-                      <span className="font-bold text-black text-xs">{symptom.title}</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
-                        {symptom.rarityLabel}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
-                      {symptom.description}
-                    </p>
-                    {matchReasons.length > 0 && (
-                      <div className="text-[10px] font-mono text-emerald-700 mt-0.5">
-                        {matchReasons.join(' • ')}
-                      </div>
-                    )}
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 

@@ -100,6 +100,7 @@ export interface DiagnosticQueryContext {
   circumstanceId: string;
   behaviorFamily: string; // 'all' | 'mecanique' | 'electrique' | 'vol' | 'signal' | 'logiciel' | 'alimentation'
   selectedObservations: string[];
+  guidedTokens?: string[];
   brand?: string;
   model?: string;
 }
@@ -115,6 +116,8 @@ export function rankSymptomsDynamically(
   ctx: DiagnosticQueryContext
 ): RankedSymptom[] {
   const promptTokens = tokenize(ctx.promptText);
+  const guidedTokens = (ctx.guidedTokens || []).flatMap(tokenize);
+  const allQueryTokens = Array.from(new Set([...promptTokens, ...guidedTokens]));
 
   return symptoms
     .map((symptom) => {
@@ -152,17 +155,17 @@ export function rankSymptomsDynamically(
         }
       }
 
-      // 3. Correspondance par prompt libre
-      if (promptTokens.length > 0) {
+      // 3. Correspondance par prompt libre & réponses enchaînées
+      if (allQueryTokens.length > 0) {
         const symptomCorpus = tokenize(
           `${symptom.title} ${symptom.description} ${symptom.likelyCause} ${symptom.aiDiagnostic.rootCause} ${symptom.matchingForumQuery.join(' ')}`
         );
-        const hits = promptTokens.filter((t) =>
+        const hits = allQueryTokens.filter((t) =>
           symptomCorpus.some((c) => c.includes(t) || t.includes(c))
         );
         if (hits.length > 0) {
-          score += Math.min(60, hits.length * 18);
-          matchReasons.push(`Mots-clés : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
+          score += Math.min(70, hits.length * 16);
+          matchReasons.push(`Indices : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
         }
       }
 
