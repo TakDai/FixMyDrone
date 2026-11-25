@@ -476,7 +476,6 @@ export function generateDynamicFollowUpQuestion(
     tokenize(`${topB.title} ${topB.likelyCause} ${topB.matchingForumQuery.join(' ')}`)
   );
 
-  // Trouver un mot-clé propre à A et absent de B, et inversement
   const uniqueA = Array.from(tokensA).filter((t) => !tokensB.has(t) && t.length >= 4).slice(0, 3);
   const uniqueB = Array.from(tokensB).filter((t) => !tokensA.has(t) && t.length >= 4).slice(0, 3);
 
@@ -492,7 +491,7 @@ export function generateDynamicFollowUpQuestion(
     id: qId,
     isGenerated: true,
     question: `${stepNumber}. Pour départager les 2 pistes restantes${extraCommunityHint} :`,
-    hint: 'Question générée automatiquement pour affiner entre les derniers résultats.',
+    hint: 'Question générée automatiquement par simulation pour affiner les derniers résultats.',
     options: [
       {
         id: `${qId}-a`,
@@ -518,3 +517,222 @@ export function generateDynamicFollowUpQuestion(
     ],
   };
 }
+
+export interface SimulationSummary {
+  totalScenarios: number;
+  resolutionPostsCount: number;
+  synthesizedQuestionsCount: number;
+  averageDepth: number;
+  simulatedAt: string;
+}
+
+const STOP_WORDS = new Set([
+  'pour', 'avec', 'dans', 'sans', 'apres', 'avant', 'sous', 'entre', 'vers',
+  'etre', 'avoir', 'faire', 'plus', 'moins', 'tres', 'bien', 'tout', 'tous',
+  'cette', 'cela', 'sont', 'mais', 'donc', 'alors', 'quand', 'quel', 'quelle',
+  'moteur', 'moteurs', 'drone', 'quad', 'fpv', 'veille', 'rcgroups', 'wearefpv',
+]);
+
+/**
+ * Synthétise des questions candidates à partir des posts/résolutions dynamiques
+ * et mesure le pouvoir discriminant (simulation d'arbre de décision).
+ */
+export function synthesizeQuestionsFromResolutions(
+  dynamicResolutions: DynamicResolution[],
+  alreadyAskedIds: string[]
+): DiagnosticQuestion[] {
+  if (dynamicResolutions.length === 0) return [];
+
+  // Compter la fréquence des mots-clés dans les résolutions dynamiques (surtout les nouveaux posts)
+  const docFreq = new Map<string, { count: number; sampleIssue: string }>();
+  for (const res of dynamicResolutions) {
+    const uniq = new Set(tokenize(`${res.issue} ${res.fix} ${res.keywords.join(' ')}`));
+    for (const tok of uniq) {
+      if (tok.length < 4 || STOP_WORDS.has(tok)) continue;
+      const cur = docFreq.get(tok) || { count: 0, sampleIssue: res.issue };
+      cur.count += 1;
+      docFreq.set(tok, cur);
+    }
+  }
+
+  // Garder les termes qui divisent bien les cas (présents dans 1 à N-1 résolutions)
+  const candidates = Array.from(docFreq.entries())
+    .filter(([, info]) => info.count >= 1 && info.count <= Math.max(1, dynamicResolutions.length - 1))
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 5);
+
+  return candidates
+    .map(([keyword, info], idx) => {
+      const qId = `sim-post-q-${keyword}`;
+      if (alreadyAskedIds.includes(qId)) return null;
+      return {
+        id: qId,
+        isGenerated: true,
+        question: `Question simulée #${idx + 1} : Observez-vous un indice lié à « ${keyword} » ?`,
+        hint: `Générée par simulation à partir des retours communauté (ex : ${info.sampleIssue.slice(0, 60)}...)`,
+        options: [
+          {
+            id: `${qId}-yes`,
+            label: `Oui, « ${keyword} » correspond à mon symptôme`,
+            boostTokens: [keyword],
+          },
+          {
+            id: `${qId}-no`,
+            label: `Non, pas de lien avec « ${keyword} »`,
+            boostTokens: [],
+            excludeTokens: [keyword],
+          },
+        ],
+      } as DiagnosticQuestion;
+    })
+    .filter((q): q is DiagnosticQuestion => q !== null);
+}
+
+/**
+ * Simule quelle question (statique ou générée depuis les posts) sépare le mieux
+ * les candidats restants (score de gain d'information).
+ */
+export function simulateBestNextQuestion(
+  remainingCandidates: ScoredCandidate[],
+  dynamicResolutions: DynamicResolution[],
+  askedIds: string[],
+  stepNumber: number
+): DiagnosticQuestion | null {
+  const pool: DiagnosticQuestion[] = [
+    ...MOTOR_STATIC_QUESTIONS.filter((q) => !askedIds.includes(q.id)),
+    ...synthesizeQuestionsFromResolutions(dynamicResolutions, askedIds),
+  ];
+
+  // Toujours garder la question 'when' en tout premier pour une UX logique
+  if (!askedIds.includes('when')) {
+    const whenQ = MOTOR_STATIC_QUESTIONS.find((q) => q.id === 'when');
+    if (whenQ) return whenQ;
+  }
+
+  let bestQ: DiagnosticQuestion | null = null;
+  let bestScore = -1;
+
+  for (const q of pool) {
+    // Simuler chaque option sur remainingCandidates
+    const branchSizes: number[] = [];
+    for (const opt of q.options) {
+      const optTokens = tokenize(opt.boostTokens.join(' '));
+      let matches = 0;
+      for (const cand of remainingCandidates) {
+        const corpus = tokenize(
+          `${cand.symptom.title} ${cand.symptom.description} ${cand.symptom.likelyCause} ${cand.symptom.matchingForumQuery.join(' ')}`
+        );
+        const catOk =
+          !opt.preferCategories || opt.preferCategories.includes(cand.symptom.category);
+        const tokOk =
+          optTokens.length === 0 ||
+          optTokens.some((t) => corpus.some((c) => c.includes(t) || t.includes(c)));
+        if (catOk && tokOk) matches++;
+      }
+      branchSizes.push(matches);
+    }
+
+    // Score de séparation : plus les tailles de branches diffèrent (ni tout 100%, ni tout 0%), meilleur est le split
+    const nonZero = branchSizes.filter((s) => s > 0 && s < remainingCandidates.length).length;
+    const spread = Math.max(...branchSizes) - Math.min(...branchSizes);
+    const splitScore = nonZero * 10 + spread + (q.isGenerated ? 2 : 0);
+
+    if (splitScore > bestScore) {
+      bestScore = splitScore;
+      bestQ = q;
+    }
+  }
+
+  if (bestQ) {
+    return {
+      ...bestQ,
+      question: bestQ.question.replace(/^\d+\.\s*/, `${stepNumber}. `),
+    };
+  }
+
+  return generateDynamicFollowUpQuestion(
+    remainingCandidates,
+    dynamicResolutions,
+    askedIds,
+    stepNumber
+  );
+}
+
+/**
+ * Exécute une simulation complète sur tous les symptômes + tous les posts/résolutions
+ * (relancée automatiquement à chaque nouveau post).
+ */
+export function runFullTreeSimulation(
+  symptoms: DiagnosticSymptomOption[],
+  dynamicResolutions: DynamicResolution[]
+): SimulationSummary {
+  const synthesized = synthesizeQuestionsFromResolutions(dynamicResolutions, []);
+  const totalScenarios = symptoms.length + dynamicResolutions.length;
+
+  // Simuler un chemin moyen par symptôme
+  let totalDepth = 0;
+  for (const sym of symptoms) {
+    let remaining = symptoms.map((s) => ({
+      symptom: s,
+      score: 10,
+      matchReasons: [],
+      eliminated: false,
+    }));
+    const asked: string[] = [];
+    let depth = 0;
+
+    while (remaining.length > 1 && depth < 8) {
+      const nextQ = simulateBestNextQuestion(remaining, dynamicResolutions, asked, depth + 1);
+      if (!nextQ) break;
+      asked.push(nextQ.id);
+      depth++;
+
+      // Choisir l'option simulée la plus proche du symptôme cible `sym`
+      const symCorpus = tokenize(
+        `${sym.title} ${sym.description} ${sym.likelyCause} ${sym.matchingForumQuery.join(' ')}`
+      );
+      let chosenOpt = nextQ.options[0];
+      let bestHits = -1;
+      for (const opt of nextQ.options) {
+        const hits = tokenize(opt.boostTokens.join(' ')).filter((t) =>
+          symCorpus.some((c) => c.includes(t) || t.includes(c))
+        ).length;
+        if (hits > bestHits) {
+          bestHits = hits;
+          chosenOpt = opt;
+        }
+      }
+
+      const simEval = evaluateCandidatesLive(
+        remaining.map((r) => r.symptom),
+        [
+          {
+            questionId: nextQ.id,
+            questionLabel: nextQ.question,
+            optionId: chosenOpt.id,
+            optionLabel: chosenOpt.label,
+            boostTokens: chosenOpt.boostTokens,
+            excludeTokens: chosenOpt.excludeTokens,
+            preferCategories: chosenOpt.preferCategories,
+            isHealthy: chosenOpt.isHealthy,
+          },
+        ],
+        ''
+      ).filter((c) => !c.eliminated);
+
+      if (simEval.length === 0 || simEval.length === remaining.length) break;
+      remaining = simEval;
+    }
+
+    totalDepth += Math.max(1, depth);
+  }
+
+  return {
+    totalScenarios,
+    resolutionPostsCount: dynamicResolutions.length,
+    synthesizedQuestionsCount: synthesized.length,
+    averageDepth: symptoms.length > 0 ? Number((totalDepth / symptoms.length).toFixed(1)) : 0,
+    simulatedAt: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+  };
+}
+

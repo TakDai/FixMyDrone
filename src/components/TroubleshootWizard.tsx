@@ -16,7 +16,8 @@ import {
   DiagnosticQuestion,
   QuestionAnswerRecord,
   evaluateCandidatesLive,
-  generateDynamicFollowUpQuestion,
+  simulateBestNextQuestion,
+  runFullTreeSimulation,
 } from '@/data/dynamicQuestionEngine';
 import {
   Search,
@@ -277,7 +278,9 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const [contextPrompt, setContextPrompt] = useState('');
   const [questionIdx, setQuestionIdx] = useState<number>(0);
   const [answerRecords, setAnswerRecords] = useState<QuestionAnswerRecord[]>([]);
-  const [extraQuestions, setExtraQuestions] = useState<DiagnosticQuestion[]>([]);
+  const [questionHistory, setQuestionHistory] = useState<DiagnosticQuestion[]>([
+    MOTOR_STATIC_QUESTIONS[0],
+  ]);
   const [noMatchAction, setNoMatchAction] = useState<'none' | 'ai' | 'forum'>('none');
   const [forumPostTitle, setForumPostTitle] = useState('');
   const [forumPostBody, setForumPostBody] = useState('');
@@ -348,6 +351,12 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const rankedResolutions = useMemo(
     () => rankDynamicResolutions(dynamicResolutions, queryContext),
     [dynamicResolutions, queryContext]
+  );
+
+  // Simulation complète relancée automatiquement à chaque nouveau post / résolution
+  const simulationSummary = useMemo(
+    () => runFullTreeSimulation(def.symptoms, dynamicResolutions),
+    [def.symptoms, dynamicResolutions]
   );
 
   // Liste dynamique des marques Multi-Motors
@@ -453,7 +462,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     setContextPrompt('');
     setQuestionIdx(0);
     setAnswerRecords([]);
-    setExtraQuestions([]);
+    setQuestionHistory([MOTOR_STATIC_QUESTIONS[0]]);
     setNoMatchAction('none');
     setForumPostTitle('');
     setForumPostBody('');
@@ -1002,14 +1011,11 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
             </div>
           )}
 
-          {/* MODE B : QUESTIONNAIRE ENCHAÎNÉ (12+ QUESTIONS + GÉNÉRATION DYNAMIQUE) */}
+          {/* MODE B : QUESTIONNAIRE ENCHAÎNÉ PILOTÉ PAR SIMULATION */}
           {contextMode === 'guided' && (() => {
-            const allQuestions: DiagnosticQuestion[] = [
-              ...MOTOR_STATIC_QUESTIONS,
-              ...extraQuestions,
-            ];
-            const totalQ = allQuestions.length;
-            const currentQ = allQuestions[Math.min(questionIdx, totalQ - 1)];
+            const currentQ =
+              questionHistory[Math.min(questionIdx, questionHistory.length - 1)] ||
+              MOTOR_STATIC_QUESTIONS[0];
 
             const handleAnswerOption = (opt: DiagnosticQuestion['options'][number]) => {
               const newRecord: QuestionAnswerRecord = {
@@ -1053,36 +1059,43 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                 return;
               }
 
-              // S'il ne reste qu'un seul résultat exact après au moins 2 questions, on peut passer ou continuer
-              if (questionIdx + 1 < allQuestions.length) {
+              // Si l'utilisateur naviguait dans l'historique et a déjà une question suivante
+              if (questionIdx + 1 < questionHistory.length) {
                 setQuestionIdx(questionIdx + 1);
                 return;
               }
 
-              // Si toutes les questions statiques sont posées et qu'il reste >= 2 résultats,
-              // on génère dynamiquement une nouvelle question discriminante !
+              // Sinon, simuler quelle question (statique ou générée depuis les posts) sépare le mieux les candidats restants
+              const askedIds = questionHistory.map((q) => q.id);
               if (nextActive.length >= 2) {
-                const askedIds = allQuestions.map((q) => q.id);
-                const generated = generateDynamicFollowUpQuestion(
+                const nextBestQ = simulateBestNextQuestion(
                   nextActive,
                   dynamicResolutions,
                   askedIds,
-                  allQuestions.length + 1
+                  questionHistory.length + 1
                 );
-                if (generated) {
-                  setExtraQuestions((prev) => [...prev, generated]);
-                  setQuestionIdx(allQuestions.length);
+                if (nextBestQ) {
+                  setQuestionHistory((prev) => [...prev, nextBestQ]);
+                  setQuestionIdx(questionHistory.length);
                   return;
                 }
               }
 
-              // Sinon on affiche le résultat final
+              // Plus qu'un résultat ou plus de question discriminante -> résultat final
               setSelectedSymptom(nextActive[0].symptom);
               setStep(5);
             };
 
             return (
               <div className="space-y-3">
+                {/* Badge simulation dynamique */}
+                <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 border border-zinc-200 text-[10px] font-mono text-zinc-600">
+                  <span>
+                    Simu active · {simulationSummary.totalScenarios} scénarios ({simulationSummary.resolutionPostsCount} posts) · {simulationSummary.synthesizedQuestionsCount} questions générées
+                  </span>
+                  <span className="text-zinc-400">MàJ {simulationSummary.simulatedAt}</span>
+                </div>
+
                 {/* En-tête progression + retour question précédente */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
@@ -1103,8 +1116,8 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     )}
                     {activeCandidates.length > 0 && (
                       <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
-                        Question {questionIdx + 1} / {totalQ}
-                        {currentQ.isGenerated ? ' • Auto' : ''}
+                        Question {questionIdx + 1}
+                        {currentQ.isGenerated ? ' • Simulée' : ''}
                       </span>
                     )}
                   </div>
