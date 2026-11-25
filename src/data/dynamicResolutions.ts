@@ -73,21 +73,24 @@ export function getDynamicResolutionsForComponent(componentId: string): DynamicR
 
   const forumMatches: DynamicResolution[] = FORUM_POSTS.filter((p) => {
     const pCat = p.category === 'motor' ? 'motors' : p.category;
-    return pCat === normalizedId;
-  }).map((p) => ({
-    id: `forum-${p.id}`,
-    componentId: normalizedId,
-    brand: p.brand,
-    model: p.model,
-    issue: p.title,
-    fix: p.solutionSummary,
-    keywords: Array.from(
-      new Set([...tokenize(p.title), ...tokenize(p.solutionSummary), ...p.tags.flatMap(tokenize)])
-    ),
-    author: p.author.callsign || p.author.name,
-    createdAt: p.createdAt,
-    source: 'forum',
-  }));
+    return pCat === normalizedId && Boolean(p.solutionSummary);
+  }).map((p) => {
+    const summary = p.solutionSummary || '';
+    return {
+      id: `forum-${p.id}`,
+      componentId: normalizedId,
+      brand: p.brand,
+      model: p.model,
+      issue: p.title,
+      fix: summary,
+      keywords: Array.from(
+        new Set([...tokenize(p.title), ...tokenize(summary), ...p.tags.flatMap(tokenize)])
+      ),
+      author: p.author.callsign || p.author.name,
+      createdAt: p.createdAt,
+      source: 'forum',
+    };
+  });
 
   return [...stored, ...forumMatches];
 }
