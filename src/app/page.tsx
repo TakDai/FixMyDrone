@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { MonochromeDetailedCanvas } from '@/components/MonochromeDetailedCanvas';
 import { EcosystemTopNav } from '@/components/EcosystemTopNav';
+import { ComponentDetailModal } from '@/components/ComponentDetailModal';
+import { FigmaComponentData } from '@/data/figmaComponents';
 
 export default function Home() {
-  const router = useRouter();
+  const [selectedComp, setSelectedComp] = useState<FigmaComponentData | null>(null);
 
   return (
     <div className="h-screen w-screen bg-white text-black flex flex-col items-center justify-between overflow-hidden font-sans selection:bg-[#000000] selection:text-white">
@@ -18,13 +19,17 @@ export default function Home() {
       {/* Table principale du drone : élément central unique et plein écran */}
       <main className="w-full flex-1 flex flex-col items-center justify-center overflow-hidden">
         <MonochromeDetailedCanvas
-          onSelectComponent={(comp) => {
-            // Redirection immédiate vers le cheminement de résolution de problème & diagnostic IA
-            const targetId = comp.id === 'motor' ? 'motors' : comp.id;
-            router.push(`/diagnostic/${targetId}`);
-          }}
+          onSelectComponent={(comp) => setSelectedComp(comp)}
+          selectedCompId={selectedComp?.id}
         />
       </main>
+
+      {/* Pop-up de fiche composant au clic (sans redirection immédiate vers le forum/diagnostic) */}
+      <ComponentDetailModal
+        key={selectedComp?.id}
+        component={selectedComp}
+        onClose={() => setSelectedComp(null)}
+      />
     </div>
   );
 }

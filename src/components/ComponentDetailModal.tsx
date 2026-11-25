@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FigmaComponentData } from '@/data/figmaComponents';
-import { X, Wrench, CheckCircle2, AlertTriangle, Send, Plus, Sparkles, MessageSquare } from 'lucide-react';
+import { X, CheckCircle2, AlertTriangle, Send, Plus, ArrowRight, MessageSquare } from 'lucide-react';
 
 interface ComponentDetailModalProps {
   component: FigmaComponentData | null;
@@ -47,9 +48,17 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
     }, 1000);
   };
 
+  const targetId = component.id === 'motor' ? 'motors' : component.id;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none">
-      <div className="relative w-full max-w-2xl bg-white border-[1.5px] border-dashed border-black rounded-3xl p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-2xl bg-white border-[1.5px] border-dashed border-black rounded-3xl p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto"
+      >
         
         {/* Bouton fermeture */}
         <button
@@ -257,6 +266,24 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
             )}
           </form>
         )}
+
+        {/* Pied de pop-up : accès optionnel au diagnostic guidé et au forum */}
+        <div className="mt-6 pt-4 border-t-[1.5px] border-dashed border-black/30 flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/forum"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-medium text-zinc-700 hover:text-black transition-colors"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Voir le forum</span>
+          </Link>
+          <Link
+            href={`/diagnostic/${targetId}`}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider transition-colors"
+          >
+            <span>Lancer le diagnostic guidé</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
 
       </div>
     </div>
