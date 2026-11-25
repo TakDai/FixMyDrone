@@ -77,11 +77,15 @@ export function getDynamicResolutionsForComponent(componentId: string): DynamicR
   }).map((p) => ({
     id: `forum-${p.id}`,
     componentId: normalizedId,
+    brand: p.brand,
+    model: p.model,
     issue: p.title,
-    fix: p.content,
-    keywords: Array.from(new Set([...tokenize(p.title), ...tokenize(p.content), ...p.tags.flatMap(tokenize)])),
-    author: p.author,
-    createdAt: p.date,
+    fix: p.solutionSummary,
+    keywords: Array.from(
+      new Set([...tokenize(p.title), ...tokenize(p.solutionSummary), ...p.tags.flatMap(tokenize)])
+    ),
+    author: p.author.callsign || p.author.name,
+    createdAt: p.createdAt,
     source: 'forum',
   }));
 
