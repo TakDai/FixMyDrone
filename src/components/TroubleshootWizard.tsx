@@ -109,6 +109,43 @@ function parseMultiMotorsCsv(text: string): MultiMotorsItem[] {
   return items;
 }
 
+function BrandAvatar({
+  brandName,
+  logoUrl,
+  size = 'md',
+}: {
+  brandName: string;
+  logoUrl?: string;
+  size?: 'sm' | 'md';
+}) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const dim = size === 'sm' ? 'w-8 h-8 rounded-lg' : 'w-10 h-10 rounded-xl';
+
+  if (logoUrl && !imgFailed) {
+    return (
+      <span
+        className={`${dim} bg-white border border-black/15 flex items-center justify-center shrink-0 overflow-hidden p-1`}
+      >
+        <img
+          src={logoUrl}
+          alt={brandName}
+          onError={() => setImgFailed(true)}
+          className="w-full h-full object-contain"
+          loading="lazy"
+        />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={`${dim} bg-zinc-100 border border-black/15 flex items-center justify-center font-mono font-black text-xs text-black shrink-0`}
+    >
+      {brandName.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
 export function TroubleshootWizard({ component, targetId }: TroubleshootWizardProps) {
   const isMotor = targetId === 'motors' || component.id === 'motor';
   const def = useMemo(() => getDiagnosticDefinition(targetId), [targetId]);
@@ -117,6 +154,9 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
 
   // Base de données Multi-Motors dynamique (live CSV si CORS autorisé, sinon JSON synchronisé depuis multi-motors.fr)
   const [motorCatalogue, setMotorCatalogue] = useState<MultiMotorsItem[]>(MULTI_MOTORS_CATALOGUE);
+  const [brandLogos, setBrandLogos] = useState<Record<string, string>>({
+    'T-MOTOR': 'https://multi-motors.fr/assets/img/logo-t-motor.png',
+  });
   const [isSyncingMotors, setIsSyncingMotors] = useState(false);
 
   useEffect(() => {
@@ -125,6 +165,41 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
 
     async function loadDynamicMultiMotors() {
       setIsSyncingMotors(true);
+
+      // Chargement des logos Multi-Motors (live puis fallback local synchronisé)
+      (async () => {
+        try {
+          const liveLogos = await fetch('https://multi-motors.fr/data/logos.json', { cache: 'no-store' });
+          if (liveLogos.ok) {
+            const raw: Record<string, string> = await liveLogos.json();
+            const mapped: Record<string, string> = {
+              'T-MOTOR': 'https://multi-motors.fr/assets/img/logo-t-motor.png',
+            };
+            for (const [k, v] of Object.entries(raw)) {
+              if (typeof v === 'string' && v.trim()) {
+                mapped[k.toUpperCase()] = `https://multi-motors.fr/assets/${v.replace(/^\/+/, '')}`;
+              }
+            }
+            if (!cancelled) setBrandLogos(mapped);
+            return;
+          }
+        } catch {
+          // repli sur le JSON local synchronisé
+        }
+
+        try {
+          const localLogos = await fetch('/data/multi-motors-logos.json', { cache: 'no-cache' });
+          if (localLogos.ok) {
+            const mapped: Record<string, string> = await localLogos.json();
+            if (!cancelled && mapped && typeof mapped === 'object') {
+              setBrandLogos(mapped);
+            }
+          }
+        } catch {
+          // ignore
+        }
+      })();
+
       try {
         // 1. Tentative en direct depuis multi-motors.fr
         const liveRes = await fetch('https://multi-motors.fr/data/moteurs.csv', { cache: 'no-store' });
@@ -392,9 +467,11 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     onClick={() => selectBrandAndNext(b.name)}
                     className="group p-2.5 rounded-2xl border-[1.5px] border-black/80 bg-white hover:bg-black hover:text-white transition-all cursor-pointer flex items-center gap-2.5 text-left shadow-2xs"
                   >
-                    <span className="w-8 h-8 rounded-xl bg-zinc-100 group-hover:bg-white/15 border border-black/15 group-hover:border-white/25 flex items-center justify-center font-mono font-black text-xs text-black group-hover:text-white shrink-0">
-                      {b.name.charAt(0).toUpperCase()}
-                    </span>
+                    <BrandAvatar
+                      brandName={b.name}
+                      logoUrl={brandLogos[b.name.toUpperCase()]}
+                      size="md"
+                    />
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-xs truncate">{b.name}</div>
                       <div className="text-[10px] font-mono text-zinc-500 group-hover:text-zinc-300">
@@ -452,9 +529,11 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                       className="group p-2.5 rounded-xl border border-black/20 hover:border-black bg-zinc-50/70 hover:bg-white text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 hover:shadow-xs"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-7 h-7 rounded-lg bg-white border border-black/15 group-hover:bg-black group-hover:text-white flex items-center justify-center font-mono font-bold text-[11px] text-black shrink-0 transition-colors">
-                          {b.name.charAt(0).toUpperCase()}
-                        </span>
+                        <BrandAvatar
+                          brandName={b.name}
+                          logoUrl={brandLogos[b.name.toUpperCase()]}
+                          size="sm"
+                        />
                         <span className="font-bold text-black truncate">{b.name}</span>
                       </div>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white border border-zinc-200 text-zinc-600 group-hover:border-black/30 shrink-0">

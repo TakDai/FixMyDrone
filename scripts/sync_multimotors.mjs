@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const CSV_URL = 'https://multi-motors.fr/data/moteurs.csv';
+const LOGOS_URL = 'https://multi-motors.fr/data/logos.json';
 const OUT_FILE = path.resolve(process.cwd(), 'public/data/multi-motors-catalogue.json');
+const OUT_LOGOS_FILE = path.resolve(process.cwd(), 'public/data/multi-motors-logos.json');
 
 function parseCSV(text) {
   const rows = [];
@@ -117,6 +119,28 @@ async function main() {
   fs.writeFileSync(OUT_FILE, JSON.stringify(items), 'utf-8');
   const brandsCount = new Set(items.map((x) => x.brand)).size;
   console.log(`Synced ${items.length} motors across ${brandsCount} brands -> ${OUT_FILE}`);
+
+  // Sync logos mapping
+  const logosMap = {
+    'T-MOTOR': 'https://multi-motors.fr/assets/img/logo-t-motor.png',
+  };
+  try {
+    console.log(`Fetching ${LOGOS_URL}...`);
+    const logosRes = await fetch(LOGOS_URL, { cache: 'no-store' });
+    if (logosRes.ok) {
+      const rawLogos = await logosRes.json();
+      for (const [brandKey, relPath] of Object.entries(rawLogos)) {
+        if (typeof relPath === 'string' && relPath.trim()) {
+          const clean = relPath.replace(/^\/+/, '');
+          logosMap[brandKey.toUpperCase()] = `https://multi-motors.fr/assets/${clean}`;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch logos.json:', err);
+  }
+  fs.writeFileSync(OUT_LOGOS_FILE, JSON.stringify(logosMap), 'utf-8');
+  console.log(`Synced ${Object.keys(logosMap).length} brand logos -> ${OUT_LOGOS_FILE}`);
 }
 
 main().catch((err) => {
