@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FigmaComponentData } from '@/data/figmaComponents';
 import { getComponentReliabilityStats } from '@/data/componentReliabilityStats';
 import { getGeneralGuidesForComponent } from '@/data/componentGenericsGuides';
+import { TroubleshootWizard } from './TroubleshootWizard';
 import {
   X,
   Wrench,
@@ -41,7 +42,21 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
   const [authorName, setAuthorName] = useState('');
   const [justAdded, setJustAdded] = useState(false);
 
-  const targetId = component ? (component.id === 'motor' ? 'motors' : component.id) : '';
+  const targetId = useMemo(() => {
+    if (!component) return '';
+    switch (component.id) {
+      case 'motor':
+        return 'motors';
+      case 'fatshark':
+        return 'goggle';
+      case 'tango':
+        return 'radio';
+      case 'betaflight':
+        return 'configurator';
+      default:
+        return component.id;
+    }
+  }, [component]);
 
   const reliabilityStats = useMemo(() => {
     if (!component) return null;
@@ -245,67 +260,30 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
               </div>
             </div>
 
-            {/* CATÉGORIE 1 : Résoudre une Panne */}
+            {/* CATÉGORIE 1 : Résoudre une Panne (Cheminement Marque -> Gamme -> Référence -> Contexte -> Diagnostic) */}
             {selectedIntent === 'issues' && (
               <div className="space-y-4">
-                {currentCustomFixes.map((cf, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-2xl bg-[#cbf3d2]/20 border border-emerald-600/40 space-y-2 text-xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-black flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        {cf.issue}
-                      </span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                        Fix Pilote Récent
-                      </span>
+                <TroubleshootWizard component={component} targetId={targetId} />
+
+                {currentCustomFixes.length > 0 && (
+                  <div className="pt-3 border-t border-zinc-200 space-y-2">
+                    <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
+                      Fixes ajoutés dans cette session
                     </div>
-                    <p className="text-zinc-700 leading-relaxed">
-                      <strong>Solution d’atelier : </strong>
-                      {cf.fix}
-                    </p>
-                    <div className="text-[10px] text-zinc-500 pt-1">
-                      Par <span className="font-semibold text-black">@{cf.author}</span> • Vérifié par la communauté FixMyDrone
-                    </div>
+                    {currentCustomFixes.map((cf, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-2xl bg-[#cbf3d2]/20 border border-emerald-600/40 space-y-1 text-xs"
+                      >
+                        <div className="font-bold text-black flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <span>{cf.issue}</span>
+                        </div>
+                        <p className="text-zinc-700">{cf.fix}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-
-                {component.commonIssues.map((issue, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-2xl border-[1.5px] border-dashed border-black/60 bg-zinc-50/70 space-y-2.5 text-xs"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="font-semibold text-sm text-black flex items-center gap-1.5">
-                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                        <span>{issue.title}</span>
-                      </h4>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black text-white shrink-0">
-                        {issue.successRate}% succès
-                      </span>
-                    </div>
-
-                    <div className="space-y-1 text-zinc-600 text-[11px]">
-                      <p>
-                        <strong className="text-black">Symptôme : </strong>
-                        {issue.symptoms}
-                      </p>
-                      <p>
-                        <strong className="text-black">Cause : </strong>
-                        {issue.cause}
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white border border-black/20 text-zinc-800 text-xs">
-                      <p className="leading-relaxed">
-                        <strong className="text-black">Fix recommandé : </strong>
-                        {issue.fix}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                )}
               </div>
             )}
 
