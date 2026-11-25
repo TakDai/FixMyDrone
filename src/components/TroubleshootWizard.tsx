@@ -5,6 +5,12 @@ import { FigmaComponentData } from '@/data/figmaComponents';
 import { getDiagnosticDefinition, DiagnosticSymptomOption } from '@/data/diagnosticKnowledgeBase';
 import { MULTI_MOTORS_CATALOGUE, MOTOR_GAMMES_BY_BRAND, MultiMotorsItem } from '@/data/multiMotorsCatalogueList';
 import {
+  getDynamicResolutionsForComponent,
+  saveDynamicResolution,
+  rankSymptomsDynamically,
+  rankDynamicResolutions,
+} from '@/data/dynamicResolutions';
+import {
   Search,
   ArrowLeft,
   ArrowRight,
@@ -18,6 +24,9 @@ import {
   RotateCcw,
   X,
   RefreshCw,
+  MessageSquarePlus,
+  SlidersHorizontal,
+  Users,
 } from 'lucide-react';
 
 interface TroubleshootWizardProps {
@@ -253,9 +262,57 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   const [selectedMotor, setSelectedMotor] = useState<MultiMotorsItem | null>(null);
   const [customRef, setCustomRef] = useState('');
 
-  // Étape 4 : Circonstance + Symptôme
+  // Étape 4 : Contexte (Mode guidé progressif ou Prompt libre) + Symptôme
+  const [contextMode, setContextMode] = useState<'guided' | 'prompt'>('guided');
+  const [contextPrompt, setContextPrompt] = useState('');
+  const [selectedCircumstanceId, setSelectedCircumstanceId] = useState('');
   const [selectedCircumstance, setSelectedCircumstance] = useState('');
+  const [behaviorFamily, setBehaviorFamily] = useState<string>('all');
+  const [selectedObservations, setSelectedObservations] = useState<string[]>([]);
   const [selectedSymptom, setSelectedSymptom] = useState<DiagnosticSymptomOption | null>(null);
+
+  // Résolutions dynamiques (futures résolutions pilotes + forum)
+  const [resolutionsVersion, setResolutionsVersion] = useState(0);
+  const [newFixIssue, setNewFixIssue] = useState('');
+  const [newFixText, setNewFixText] = useState('');
+  const [newFixSaved, setNewFixSaved] = useState(false);
+
+  const dynamicResolutions = useMemo(() => {
+    void resolutionsVersion;
+    return getDynamicResolutionsForComponent(targetId);
+  }, [targetId, resolutionsVersion]);
+
+  const queryContext = useMemo(
+    () => ({
+      promptText: contextPrompt,
+      circumstanceId: selectedCircumstanceId,
+      behaviorFamily,
+      selectedObservations,
+      brand: selectedBrand || customBrand,
+      model: selectedMotor?.fullName || customRef || selectedGamme,
+    }),
+    [
+      contextPrompt,
+      selectedCircumstanceId,
+      behaviorFamily,
+      selectedObservations,
+      selectedBrand,
+      customBrand,
+      selectedMotor,
+      customRef,
+      selectedGamme,
+    ]
+  );
+
+  const rankedSymptoms = useMemo(
+    () => rankSymptomsDynamically(def.symptoms, queryContext),
+    [def.symptoms, queryContext]
+  );
+
+  const rankedResolutions = useMemo(
+    () => rankDynamicResolutions(dynamicResolutions, queryContext),
+    [dynamicResolutions, queryContext]
+  );
 
   // Liste dynamique des marques Multi-Motors
   const motorBrands = useMemo(() => {
@@ -356,7 +413,12 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     setRefQuery('');
     setSelectedMotor(null);
     setCustomRef('');
+    setContextMode('guided');
+    setContextPrompt('');
+    setSelectedCircumstanceId('');
     setSelectedCircumstance('');
+    setBehaviorFamily('all');
+    setSelectedObservations([]);
     setSelectedSymptom(null);
   };
 
@@ -819,7 +881,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
         </div>
       )}
 
-      {/* ÉTAPE 4 : QUAND EST SURVENU LE PROBLÈME & SYMPTÔME */}
+      {/* ÉTAPE 4 : CONTEXTE (QUESTIONNAIRE PROGRESSIF OU PROMPT LIBRE) + AFFINAGE DYNAMIQUE */}
       {step === 4 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">
@@ -834,82 +896,230 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
             <span className="text-[10px] font-mono text-zinc-500">Étape 4 / 5</span>
           </div>
 
-          {/* Quand est survenu le problème ? */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-bold text-black flex items-center gap-1.5">
-              <Clock className="w-4 h-4" />
-              <span>4a. Quand est survenu le problème ?</span>
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {def.circumstances.map((circ) => {
-                const active = selectedCircumstance === circ.label;
-                return (
-                  <button
-                    key={circ.id}
-                    type="button"
-                    onClick={() => setSelectedCircumstance(circ.label)}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      active
-                        ? 'border-black bg-black text-white'
-                        : 'border-black/25 bg-zinc-50/70 hover:border-black text-black'
-                    }`}
-                  >
-                    <div className="font-bold text-[11px]">{circ.label}</div>
-                    {circ.description && (
-                      <div className={`text-[10px] mt-0.5 ${active ? 'text-zinc-300' : 'text-zinc-500'}`}>
-                        {circ.description}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          {/* Sélecteur de mode : Questionnaire guidé vs Prompt libre */}
+          <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-zinc-100 border border-zinc-200">
+            <button
+              type="button"
+              onClick={() => setContextMode('guided')}
+              className={`py-2 px-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                contextMode === 'guided'
+                  ? 'bg-black text-white shadow-xs'
+                  : 'text-zinc-600 hover:text-black'
+              }`}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Questions guidées</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setContextMode('prompt')}
+              className={`py-2 px-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                contextMode === 'prompt'
+                  ? 'bg-black text-white shadow-xs'
+                  : 'text-zinc-600 hover:text-black'
+              }`}
+            >
+              <MessageSquarePlus className="w-3.5 h-3.5" />
+              <span>Expliquer par prompt</span>
+            </button>
           </div>
 
-          {/* Quel symptôme observez-vous ? */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-bold text-black flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
-              <span>4b. Quel symptôme constatez-vous ?</span>
-            </h3>
-            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
-              {def.symptoms.map((sym) => {
-                const active = selectedSymptom?.id === sym.id;
-                return (
+          {/* MODE A : PROMPT LIBRE */}
+          {contextMode === 'prompt' && (
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold text-black">
+                Décrivez votre problème librement :
+              </label>
+              <textarea
+                value={contextPrompt}
+                onChange={(e) => setContextPrompt(e.target.value)}
+                rows={3}
+                placeholder="Ex: Après un crash dans l'herbe, le moteur 3 broute au ralenti et chauffe beaucoup après 20 secondes de vol..."
+                className="w-full p-3 border-[1.5px] border-dashed border-black rounded-2xl text-xs text-black focus:outline-none bg-white"
+              />
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  'Moteur qui broute au ralenti',
+                  'Moteur brûlant après 1 min',
+                  'Desync / coupure en plein gaz',
+                  'Cloche voilée après crash',
+                  'Bruit de roulement / jello',
+                ].map((chip) => (
                   <button
-                    key={sym.id}
+                    key={chip}
                     type="button"
-                    onClick={() => {
-                      setSelectedSymptom(sym);
-                      setStep(5);
-                    }}
-                    className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                      active
-                        ? 'border-black bg-zinc-100'
-                        : 'border-black/25 hover:border-black bg-white'
-                    }`}
+                    onClick={() => setContextPrompt(chip)}
+                    className="px-2.5 py-1 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-[10px] font-mono text-zinc-700 transition-colors cursor-pointer"
                   >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-black text-xs">{sym.title}</span>
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
-                          {sym.rarityLabel}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-zinc-600 mt-0.5 line-clamp-2">
-                        {sym.description}
-                      </p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                    + {chip}
                   </button>
-                );
-              })}
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* MODE B : QUESTIONNAIRE PROGRESSIF POUR AFFINER */}
+          {contextMode === 'guided' && (
+            <div className="space-y-3.5">
+              {/* Question 1 : Quand ? */}
+              <div className="space-y-1.5">
+                <h3 className="text-xs font-bold text-black flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>1. Quand est survenu le problème ?</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {def.circumstances.map((circ) => {
+                    const active = selectedCircumstanceId === circ.id;
+                    return (
+                      <button
+                        key={circ.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCircumstanceId(active ? '' : circ.id);
+                          setSelectedCircumstance(active ? '' : circ.label);
+                        }}
+                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                          active
+                            ? 'border-black bg-black text-white'
+                            : 'border-black/20 bg-zinc-50/70 hover:border-black text-black'
+                        }`}
+                      >
+                        <div className="font-bold text-[11px]">{circ.label}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Question 2 : Quel type de comportement ? */}
+              <div className="space-y-1.5">
+                <h3 className="text-xs font-bold text-black flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                  <span>2. Quel type de comportement observez-vous ?</span>
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { id: 'all', label: 'Tous' },
+                    { id: 'mecanique', label: 'Mécanique (bruit, jeu, choc)' },
+                    { id: 'electrique', label: 'Électrique (broute, bips, chaud)' },
+                    { id: 'vol', label: 'En vol (desync, coupure)' },
+                  ].map((fam) => (
+                    <button
+                      key={fam.id}
+                      type="button"
+                      onClick={() => setBehaviorFamily(fam.id)}
+                      className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer ${
+                        behaviorFamily === fam.id
+                          ? 'border-black bg-black text-white'
+                          : 'border-black/20 bg-white hover:border-black text-zinc-700'
+                      }`}
+                    >
+                      {fam.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question 3 : Vérifications rapides */}
+              {def.quickObservations.length > 0 && (
+                <div className="space-y-1.5">
+                  <h3 className="text-xs font-bold text-black">
+                    3. Vérifications rapides (optionnel) :
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {def.quickObservations.map((obs) => {
+                      const checked = selectedObservations.includes(obs.id);
+                      return (
+                        <button
+                          key={obs.id}
+                          type="button"
+                          onClick={() =>
+                            setSelectedObservations((prev) =>
+                              checked ? prev.filter((x) => x !== obs.id) : [...prev, obs.id]
+                            )
+                          }
+                          className={`p-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer flex items-center gap-2 ${
+                            checked
+                              ? 'border-black bg-[#cbf3d2]/40 font-bold text-black'
+                              : 'border-zinc-200 bg-white hover:border-black/40 text-zinc-700'
+                          }`}
+                        >
+                          <span
+                            className={`w-4 h-4 rounded border flex items-center justify-center text-[10px] shrink-0 ${
+                              checked ? 'bg-black text-white border-black' : 'border-zinc-400'
+                            }`}
+                          >
+                            {checked ? '✓' : ''}
+                          </span>
+                          <span className="truncate">{obs.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* RÉSULTATS AFFINÉS EN DIRECT */}
+          <div className="pt-3 border-t border-zinc-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Pistes affinées dynamiquement ({rankedSymptoms.length})</span>
+              </span>
+              {rankedResolutions.length > 0 && (
+                <span className="text-[10px] font-mono text-emerald-700 font-bold">
+                  + {rankedResolutions.length} résolutions communauté
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              {rankedSymptoms.map(({ symptom, matchReasons }, idx) => (
+                <button
+                  key={symptom.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSymptom(symptom);
+                    setStep(5);
+                  }}
+                  className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                    idx === 0
+                      ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
+                      : 'border-black/20 hover:border-black bg-white'
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {idx === 0 && (
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
+                          Meilleure piste
+                        </span>
+                      )}
+                      <span className="font-bold text-black text-xs">{symptom.title}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
+                        {symptom.rarityLabel}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
+                      {symptom.description}
+                    </p>
+                    {matchReasons.length > 0 && (
+                      <div className="text-[10px] font-mono text-emerald-700 mt-0.5">
+                        {matchReasons.join(' • ')}
+                      </div>
+                    )}
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                </button>
+              ))}
             </div>
           </div>
         </div>
       )}
 
-      {/* ÉTAPE 5 : RÉSULTAT DU DIAGNOSTIC D'ATELIER */}
+      {/* ÉTAPE 5 : RÉSULTAT DYNAMIQUE + RÉSOLUTIONS FUTURES / COMMUNAUTÉ */}
       {step === 5 && selectedSymptom && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">
@@ -919,7 +1129,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
               className="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-600 hover:text-black cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Modifier le symptôme</span>
+              <span>Affiner le contexte</span>
             </button>
             <button
               type="button"
@@ -950,15 +1160,15 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                 Matériel identifié • {activeBrandLabel}
               </div>
               <div className="font-bold text-black truncate">{activeRefLabel}</div>
-              {selectedCircumstance && (
-                <div className="text-[11px] text-zinc-600 mt-0.5">
-                  Contexte : {selectedCircumstance}
+              {(selectedCircumstance || contextPrompt) && (
+                <div className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
+                  Contexte : {contextPrompt || selectedCircumstance}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Diagnostic & Fix */}
+          {/* Diagnostic principal */}
           <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-white space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-1.5 font-bold text-sm text-black">
@@ -1016,6 +1226,99 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     {tool}
                   </span>
                 ))}
+              </div>
+            )}
+          </div>
+
+          {/* RÉSOLUTIONS DYNAMIQUES (FUTURES RÉSOLUTIONS PILOTES + FORUM) */}
+          {rankedResolutions.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Résolutions communauté & retours récents</span>
+                </span>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Mise à jour dynamique
+                </span>
+              </div>
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {rankedResolutions.slice(0, 4).map(({ resolution }) => (
+                  <div
+                    key={resolution.id}
+                    className={`p-3 rounded-xl border text-xs space-y-1 ${
+                      resolution.source === 'community-fix'
+                        ? 'bg-[#cbf3d2]/20 border-emerald-600/40'
+                        : 'bg-zinc-50 border-zinc-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-black truncate">{resolution.issue}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white border border-black/15 shrink-0">
+                        {resolution.source === 'community-fix' ? 'Fix Pilote' : 'Forum'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-700 line-clamp-2">{resolution.fix}</p>
+                    <div className="text-[10px] text-zinc-500">
+                      Par @{resolution.author}
+                      {resolution.brand ? ` • ${resolution.brand}` : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ENREGISTRER UNE NOUVELLE RÉSOLUTION POUR LES FUTURS DIAGNOSTICS */}
+          <div className="p-3.5 rounded-2xl border border-dashed border-black/40 bg-zinc-50/60 space-y-2">
+            <div className="font-bold text-black text-xs">
+              Vous avez trouvé une autre solution ? Enregistrez-la pour les prochains diagnostics :
+            </div>
+            {newFixSaved ? (
+              <div className="text-emerald-700 font-bold flex items-center gap-1.5 py-1">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Résolution ajoutée ! Elle apparaîtra désormais automatiquement dans les résultats.</span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={newFixIssue}
+                  onChange={(e) => setNewFixIssue(e.target.value)}
+                  placeholder="Problème exact (ex: Vis M3 trop longue touchant le bobinage)..."
+                  className="w-full px-3 py-2 border border-zinc-300 rounded-xl bg-white text-black focus:outline-none focus:border-black"
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newFixText}
+                    onChange={(e) => setNewFixText(e.target.value)}
+                    placeholder="Solution appliquée..."
+                    className="flex-1 px-3 py-2 border border-zinc-300 rounded-xl bg-white text-black focus:outline-none focus:border-black"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newFixIssue.trim() || !newFixText.trim()) return;
+                      saveDynamicResolution({
+                        componentId: targetId,
+                        brand: activeBrandLabel,
+                        model: activeRefLabel,
+                        issue: newFixIssue.trim(),
+                        fix: newFixText.trim(),
+                        author: 'Pilote_Atelier',
+                      });
+                      setNewFixIssue('');
+                      setNewFixText('');
+                      setNewFixSaved(true);
+                      setResolutionsVersion((v) => v + 1);
+                      setTimeout(() => setNewFixSaved(false), 3000);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-black text-white font-bold text-[11px] uppercase tracking-wider hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
               </div>
             )}
           </div>

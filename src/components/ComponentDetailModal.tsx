@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FigmaComponentData } from '@/data/figmaComponents';
 import { getComponentReliabilityStats } from '@/data/componentReliabilityStats';
 import { getGeneralGuidesForComponent } from '@/data/componentGenericsGuides';
+import { saveDynamicResolution } from '@/data/dynamicResolutions';
 import { TroubleshootWizard } from './TroubleshootWizard';
 import {
   X,
@@ -87,6 +88,14 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
       ...prev,
       [component.id]: [item, ...(prev[component.id] || [])],
     }));
+
+    saveDynamicResolution({
+      componentId: targetId,
+      brand: component.model,
+      issue: item.issue,
+      fix: item.fix,
+      author: item.author,
+    });
 
     setNewIssue('');
     setNewFix('');
