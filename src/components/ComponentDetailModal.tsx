@@ -315,66 +315,7 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
         {/* ÉTAPE 2 : Barre de retour + navigation rapide entre catégories */}
         {selectedIntent !== null && (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-200">
-              <button
-                onClick={() => setSelectedIntent(null)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:underline cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Toutes les catégories</span>
-              </button>
-
-              <div className="flex flex-wrap gap-1.5">
-                {(
-                  [
-                    { id: 'issues', label: 'Pannes' },
-                    { id: 'specs', label: 'Specs' },
-                    { id: 'reviews', label: 'Avis' },
-                    { id: 'guides', label: 'Guides' },
-                    { id: 'addFix', label: '+ Fix' },
-                  ] as { id: ModalIntent; label: string }[]
-                ).map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setSelectedIntent(tab.id)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-                      selectedIntent === tab.id
-                        ? 'bg-black text-white font-bold'
-                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* CATÉGORIE 1 : Résoudre une Panne (Cheminement Marque -> Gamme -> Référence -> Contexte -> Diagnostic) */}
-            {selectedIntent === 'issues' && (
-              <div className="space-y-4">
-                <TroubleshootWizard component={component} targetId={targetId} />
-
-                {currentCustomFixes.length > 0 && (
-                  <div className="pt-3 border-t border-zinc-200 space-y-2">
-                    <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
-                      Fixes ajoutés dans cette session
-                    </div>
-                    {currentCustomFixes.map((cf, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-2xl bg-[#cbf3d2]/20 border border-emerald-600/40 space-y-1 text-xs"
-                      >
-                        <div className="font-bold text-black flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                          <span>{cf.issue}</span>
-                        </div>
-                        <p className="text-zinc-700">{cf.fix}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            {tabsBar}
 
             {/* CATÉGORIE 2 : Trouver des Specs Techniques */}
             {selectedIntent === 'specs' && (
@@ -572,23 +513,7 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
           </>
         )}
 
-        {/* Pied de pop-up : accès optionnel au forum et fermeture */}
-        <div className="mt-6 pt-4 border-t-[1.5px] border-dashed border-black/30 flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/forum"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-medium text-zinc-700 hover:text-black transition-colors"
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Voir le forum</span>
-          </Link>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-bold text-black transition-colors cursor-pointer"
-          >
-            <span>Fermer</span>
-          </button>
-        </div>
+        {footerBlock}
       </div>
     </div>
   );
