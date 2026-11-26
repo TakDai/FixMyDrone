@@ -256,35 +256,70 @@ function ForumPostDetailContent() {
         setComments(postData.comments);
       } else {
         const seeded = SEEDED_FORUM_COMMENTS[postData.id];
-        setComments(
-          seeded && seeded.length > 0
-            ? seeded
-            : [
-                {
-                  id: 'seed-1',
-                  author: 'KwadTech_FR',
-                  badge: 'Technicien ESC/BLHeli',
-                  text:
-                    postData.recommendedFix.length > 0
-                      ? `Je confirme cette piste : ${postData.recommendedFix[0]} Pensez aussi à vérifier les soudures au multimètre avant de remonter l'hélice.`
-                      : `Solution testée et validée sur banc (${postData.categoryName}), pensez à vérifier le serrage des vis et les connecteurs après le premier vol de test.`,
-                  rating: 5,
-                  createdAt: 'il y a 2 jours',
-                  likes: 9,
-                  isAcceptedSolution: true,
-                },
-                {
-                  id: 'seed-2',
-                  author: 'Bandit_FPV',
-                  badge: 'Pilote Freestyle',
-                  text: 'Merci pour la fiche détaillée ! Ça m’a évité de remplacer un composant pour rien.',
-                  rating: 5,
-                  createdAt: 'il y a 14h',
-                  likes: 4,
-                  replyTo: 'KwadTech_FR',
-                },
-              ]
-        );
+        if (seeded && seeded.length > 0) {
+          setComments(seeded);
+        } else {
+          const opAuthor = postData.authorName || 'Pilote_FPV';
+          const hwLabel = postData.model || postData.brand || postData.categoryName;
+          const fixLine =
+            postData.recommendedFix.length > 0
+              ? postData.recommendedFix[0]
+              : postData.content.split(/[.!?]\s+/).slice(0, 2).join('. ');
+          const catCheckMap: Record<string, string> = {
+            motors: `Tu as vérifié si la cloche tourne librement à la main sans point dur et si les vis de fixation ne touchent pas le bobinage sur ${hwLabel} ? Un test au multimètre entre phases donne quoi ?`,
+            esc: `Tu tournes sous quel firmware ESC (BLHeli_S / Bluejay / AM32) et quel DShot ? Vérifie aussi le condensateur Low-ESR sur l'alim LiPo et l'état de la nappe FC/ESC.`,
+            fc: `Quand tu branches en USB sur Betaflight, la FC est reconnue ou tu as un flag d'armement dans l'onglet Setup ? Vérifie les régulateurs 5V/3.3V au multimètre.`,
+            rx: `Dans l'onglet Récepteur de Betaflight, les barres bougent quand tu allumes la radio ? Vérifie bien que TX/RX sont croisés sur le bon UART et que le Serial RX est activé.`,
+            vtx: `Tu as vérifié l'alimentation du VTX (VBAT vs 9V/BEC) et le câblage MSP DisplayPort (TX->RX, RX->TX) sur le bon UART dans Ports ?`,
+            gps: `Ton GPS clignote bleu/vert en extérieur ? Vérifie l'inversion TX/RX sur l'UART et laisse-le capter 3-4 minutes loin des câbles de puissance.`,
+            radio: `Tu es sur quelle version d'EdgeTX / OpenTX ? Essaie de recalibrer les gimbals et de vérifier le module RF interne/externe dans Model Setup.`,
+          };
+          const diagQuestion =
+            catCheckMap[postData.categoryId] ||
+            `Tu peux préciser ta config complète (FC / ESC / firmware) et ce que tu as déjà testé sur ${hwLabel} ?`;
+
+          setComments([
+            {
+              id: 'thread-1',
+              author: 'KwadTech_FR',
+              badge: 'Technicien FPV',
+              text: diagQuestion,
+              rating: 5,
+              createdAt: 'il y a 3 jours',
+              likes: 4,
+            },
+            {
+              id: 'thread-2',
+              author: opAuthor,
+              badge: postData.authorBadge || 'Auteur du sujet',
+              text: `Alors je viens de tester sur banc sans hélices : le souci apparaît dès que je mets un peu de gaz ou que je branche la LiPo. Les soudures ont l'air propres à l'œil nu mais je n'avais pas encore vérifié ce point.`,
+              createdAt: 'il y a 2 jours',
+              likes: 2,
+              replyTo: 'KwadTech_FR',
+            },
+            {
+              id: 'thread-3',
+              author: 'MecaDrone_Atelier',
+              badge: 'Expert Diagnostic',
+              text: `C'est un classique sur ${hwLabel}. ${fixLine}`,
+              rating: 5,
+              createdAt: 'il y a 2 jours',
+              likes: 11,
+              replyTo: opAuthor,
+              isAcceptedSolution: true,
+            },
+            {
+              id: 'thread-4',
+              author: opAuthor,
+              badge: postData.authorBadge || 'Auteur du sujet',
+              text: `Top, merci @MecaDrone_Atelier et @KwadTech_FR ! J'ai appliqué la manip et fait 2 LiPos de test ce soir : problème complètement résolu, plus aucune coupure.`,
+              rating: 5,
+              createdAt: 'il y a 1 jour',
+              likes: 6,
+              replyTo: 'MecaDrone_Atelier',
+            },
+          ]);
+        }
       }
 
       const savedMeta = window.localStorage.getItem(META_KEY_PREFIX + postData.id);

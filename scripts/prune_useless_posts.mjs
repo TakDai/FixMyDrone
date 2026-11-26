@@ -4,7 +4,7 @@ import path from 'node:path';
 const DATA_FILE = path.resolve(process.cwd(), 'public/data/scanned-forum-posts.json');
 
 const USELESS_TITLE_RE =
-  /\b(dev call|monthly update|eu dev call|about the .* category|bump version|bump api_version|release v?\d|ci:|build_binaries|workflow|github actions|refactor|cleanup|clean up|typo|readme|cmake|docker|clang|gcc|picotool|unit test|add target|new target|board definition|board request|has zero callers|introduce names|deprecate|changelog|retire |update readme|remove unused|fix typo|german translation|french translation|spanish translation|chinese translation|crowdin|q&a|weekly update|survey|poll|welcome to|guidelines|merch|sticker|typescript|eslint|prettier|webpack|npm |tauri|webkit|macos|apple silicon|narrow phone|toolbar label|gui_box|dark mode|time\.c|array bounds|mcp cargo|boat|boogie|rover|submarine|ardurover|ardusub|sailboat|tractor|lawnmower|pr #\d+|pull request)\b/i;
+  /\b(dev call|monthly update|eu dev call|about the .* category|bump version|bump api_version|release v?\d|ci:|build_binaries|workflow|github actions|refactor|cleanup|clean up|typo|readme|cmake|docker|clang|gcc|picotool|unit test|add target|new target|board definition|board request|has zero callers|introduce names|deprecate|changelog|retire |update readme|remove unused|fix typo|german translation|french translation|spanish translation|chinese translation|crowdin|q&a|weekly update|survey|poll|welcome to|guidelines|merch|sticker|typescript|eslint|prettier|webpack|npm |tauri|webkit|macos|apple silicon|narrow phone|toolbar label|gui_box|dark mode|time\.c|array bounds|mcp cargo|cloud build|hydrat|sdk|boat|boogie|rover|submarine|ardurover|ardusub|sailboat|tractor|lawnmower|pr #\d+|pull request)\b/i;
 
 const USELESS_TAG_RE =
   /^(duplicate|invalid|wontfix|won't fix|chore|cleanup|documentation|docs|stale|inactive|closing.*|ci|build|refactoring|enhancement request|target request)$/i;
@@ -57,8 +57,8 @@ function main() {
       continue;
     }
 
-    // 3. Require real discussion comments so no post has an empty/fake thread
-    if (!Array.isArray(post.comments) || post.comments.length === 0) {
+    // 3. Require at least 3 real discussion replies so every thread shows full back-and-forth troubleshooting
+    if (!Array.isArray(post.comments) || post.comments.length < 3) {
       removedNoComments++;
       continue;
     }

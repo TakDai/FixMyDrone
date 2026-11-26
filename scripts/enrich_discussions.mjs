@@ -91,7 +91,7 @@ async function fetchDiscourseThread(post) {
     const first = stream[0];
     const openingText = stripHtmlAndMarkdown(first.cooked || '', 750);
     const repliesRaw = stream
-      .slice(1, 9)
+      .slice(1, 16)
       .filter((p) => p.post_type === 1 && !p.hidden)
       .map((p, idx) => {
         const txt = stripHtmlAndMarkdown(p.cooked || '', 550);
@@ -121,7 +121,7 @@ function fetchGitHubCommentsBatch(repoFull, issues) {
   const fields = issues
     .map(
       (it, idx) =>
-        `i${idx}: issue(number: ${it.number}) { comments(first: 8) { nodes { id author { login } body createdAt } } }`
+        `i${idx}: issue(number: ${it.number}) { comments(first: 15) { nodes { id author { login } body createdAt } } }`
     )
     .join('\n');
   const query = `query { repository(owner: "${owner}", name: "${name}") { ${fields} } }`;
