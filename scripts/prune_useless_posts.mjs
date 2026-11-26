@@ -4,7 +4,7 @@ import path from 'node:path';
 const DATA_FILE = path.resolve(process.cwd(), 'public/data/scanned-forum-posts.json');
 
 const USELESS_TITLE_RE =
-  /\b(dev call|monthly update|eu dev call|about the .* category|bump version|bump api_version|release v?\d|ci:|build_binaries|workflow|github actions|refactor|cleanup|clean up|typo|readme|cmake|docker|clang|unit test|add target|new target|board definition|board request|has zero callers|introduce names|deprecate|changelog|retire |update readme|remove unused|fix typo|german translation|french translation|spanish translation|chinese translation|crowdin|q&a|dev call|weekly update|survey|poll|welcome to|guidelines|merch|sticker)\b/i;
+  /\b(dev call|monthly update|eu dev call|about the .* category|bump version|bump api_version|release v?\d|ci:|build_binaries|workflow|github actions|refactor|cleanup|clean up|typo|readme|cmake|docker|clang|gcc|picotool|unit test|add target|new target|board definition|board request|has zero callers|introduce names|deprecate|changelog|retire |update readme|remove unused|fix typo|german translation|french translation|spanish translation|chinese translation|crowdin|q&a|weekly update|survey|poll|welcome to|guidelines|merch|sticker|typescript|eslint|prettier|webpack|npm |tauri|webkit|macos|apple silicon|narrow phone|toolbar label|gui_box|dark mode|time\.c|array bounds|mcp cargo|boat|boogie|rover|submarine|ardurover|ardusub|sailboat|tractor|lawnmower|pr #\d+|pull request)\b/i;
 
 const USELESS_TAG_RE =
   /^(duplicate|invalid|wontfix|won't fix|chore|cleanup|documentation|docs|stale|inactive|closing.*|ci|build|refactoring|enhancement request|target request)$/i;
@@ -36,6 +36,7 @@ function main() {
   let removedNoise = 0;
   let removedDup = 0;
   let removedLowValue = 0;
+  let removedNoComments = 0;
 
   for (const post of raw) {
     const titleEn = (post.titleOriginal || post.title || '').trim();
@@ -46,7 +47,7 @@ function main() {
       new Set((post.tags || []).map(normalizeTag).filter(Boolean))
     );
 
-    // 2. Remove useless / dev-only / meta titles or tags
+    // 2. Remove useless / dev-only / non-drone titles or tags
     if (USELESS_TITLE_RE.test(titleEn) || USELESS_TITLE_RE.test(titleFr)) {
       removedNoise++;
       continue;
@@ -56,23 +57,27 @@ function main() {
       continue;
     }
 
-    // 3. Remove empty or [code]-only summaries, or 0-reply GitHub issues with no real body
-    const sumFr = (post.solutionSummary || '').trim();
-    const sumEn = (post.solutionSummaryOriginal || '').trim();
-    if (sumFr === '[code]' || sumEn === '[code]' || sumFr.length < 15) {
-      removedLowValue++;
+    // 3. Require real discussion comments so no post has an empty/fake thread
+    if (!Array.isArray(post.comments) || post.comments.length === 0) {
+      removedNoComments++;
       continue;
     }
+
+    // 4. Remove empty, [code]-only, or generic summaries
+    const sumFr = (post.solutionSummary || '').trim();
+    const sumEn = (post.solutionSummaryOriginal || '').trim();
     if (
-      post.id.startsWith('gh-') &&
-      (post.replies || 0) === 0 &&
-      cleanTags.some((t) => /feature request|enhancement/i.test(t))
+      sumFr === '[code]' ||
+      sumEn === '[code]' ||
+      sumFr.length < 20 ||
+      sumFr.startsWith('Discussion communautaire ') ||
+      sumFr.startsWith('Sujet technique ')
     ) {
       removedLowValue++;
       continue;
     }
 
-    // 4. Deduplicate by sourceUrl, normalized full title, and normalized 55-char prefix per brand
+    // 5. Deduplicate by sourceUrl, normalized full title, and normalized 55-char prefix per brand
     if (post.sourceUrl && seenUrls.has(post.sourceUrl)) {
       removedDup++;
       continue;
@@ -94,12 +99,13 @@ function main() {
     kept.push({
       ...post,
       tags: cleanTags,
+      replies: post.comments.length,
     });
   }
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(kept));
   console.log(
-    `Pruned: ${removedNoise} noise/dev, ${removedLowValue} low-value, ${removedDup} duplicates. Kept: ${kept.length} posts.`
+    `Pruned: ${removedNoise} noise/dev, ${removedNoComments} without real comments, ${removedLowValue} low-value, ${removedDup} duplicates. Kept: ${kept.length} natural posts.`
   );
 }
 

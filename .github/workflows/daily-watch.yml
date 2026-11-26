@@ -28,13 +28,13 @@ jobs:
       - name: Clean & Translate Subjects (FR)
         run: node scripts/fix_and_translate_posts.mjs
 
-      - name: Prune Duplicates & Useless Subjects
-        run: node scripts/prune_useless_posts.mjs
-
       - name: Enrich Real Discussion Threads & Replies
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/enrich_discussions.mjs
+
+      - name: Prune Duplicates & Useless Subjects
+        run: node scripts/prune_useless_posts.mjs
 
       - name: Commit & Push Updated Veille Data
         run: |
