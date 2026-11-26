@@ -574,7 +574,7 @@ export function TroubleshootWizard({
     <div
       className={`w-full ${
         showLeftPopup || showRightPopup
-          ? 'max-w-[1380px] grid grid-cols-1 lg:grid-cols-12 gap-4 items-start'
+          ? 'max-w-[1600px] grid grid-cols-1 lg:grid-cols-12 gap-5 items-start'
           : 'max-w-2xl mx-auto'
       }`}
     >

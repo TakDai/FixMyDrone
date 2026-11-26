@@ -479,7 +479,7 @@ function ForumPostDetailContent() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main className="w-full max-w-[1640px] mx-auto px-4 sm:px-6 xl:px-8 py-6 sm:py-8">
       {/* FIL D'ARIANE FORUM */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-2 text-xs text-zinc-600">
@@ -691,7 +691,7 @@ function ForumPostDetailContent() {
         </aside>
 
         {/* COLONNE CENTRALE : STREAM DE POSTS */}
-        <div className="lg:col-span-6 divide-y divide-zinc-200 bg-white border border-zinc-200 rounded-2xl shadow-xs">
+        <div className="lg:col-span-6 xl:col-span-7 divide-y divide-zinc-200 bg-white border border-zinc-200 rounded-2xl shadow-xs">
           {/* POST #1 : SUJET ORIGINAL (OP) */}
           <article id="post-1" className="p-5 sm:p-7">
             <div className="flex items-start gap-4">
@@ -1117,7 +1117,7 @@ function ForumPostDetailContent() {
         </div>
 
         {/* COLONNE DROITE : TIMELINE DISCOURSE + SUJETS LIÉS */}
-        <aside className="lg:col-span-3 space-y-5 lg:sticky lg:top-24">
+        <aside className="lg:col-span-3 xl:col-span-2 space-y-5 lg:sticky lg:top-24">
           {/* Timeline verticale style Discourse */}
           <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-3 shadow-xs">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-500 uppercase">
