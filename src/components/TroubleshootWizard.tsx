@@ -613,30 +613,69 @@ export function TroubleshootWizard({
             </div>
           ) : null}
 
-          {/* Récapitulatif des réponses au questionnaire */}
+          {/* Récapitulatif des réponses au questionnaire (cliquer pour effacer) */}
           {(answerRecords.length > 0 || contextPrompt.trim()) && (
             <div className="space-y-2 pt-2 border-t border-zinc-200">
-              <div className="text-[10px] font-mono uppercase font-bold text-zinc-500">
-                Récap des réponses ({answerRecords.length})
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase font-bold text-zinc-500">
+                  Récap des réponses ({answerRecords.length})
+                </span>
+                <span className="text-[9px] font-mono text-zinc-400">
+                  Cliquer pour effacer
+                </span>
               </div>
               {contextPrompt.trim() && (
-                <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200 text-[11px] text-zinc-700 italic">
-                  « {contextPrompt.trim()} »
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setContextPrompt('');
+                    setNoMatchAction('none');
+                    if (step === 5) setStep(4);
+                  }}
+                  title="Cliquer pour effacer ce prompt"
+                  className="group w-full text-left p-2 rounded-xl bg-zinc-50 hover:bg-red-50 border border-zinc-200 hover:border-red-300 text-[11px] text-zinc-700 italic flex items-start justify-between gap-2 transition-colors cursor-pointer"
+                >
+                  <span className="line-clamp-2">« {contextPrompt.trim()} »</span>
+                  <X className="w-3.5 h-3.5 text-zinc-400 group-hover:text-red-600 shrink-0 mt-0.5" />
+                </button>
               )}
               <div className="space-y-1.5">
                 {answerRecords.map((rec, idx) => (
-                  <div
+                  <button
                     key={rec.questionId}
-                    className="p-2 rounded-xl bg-[#cbf3d2]/25 border border-black/15 text-[11px]"
+                    type="button"
+                    onClick={() => {
+                      setAnswerRecords((prev) =>
+                        prev.filter((r) => r.questionId !== rec.questionId)
+                      );
+                      setChainedAnswers((prev) => {
+                        const copy = { ...prev };
+                        delete copy[rec.questionId];
+                        return copy;
+                      });
+                      if (rec.questionId === 'when') {
+                        setSelectedCircumstanceId('');
+                        setSelectedCircumstance('');
+                      }
+                      if (rec.questionId === 'family') {
+                        setBehaviorFamily('all');
+                      }
+                      setNoMatchAction('none');
+                      if (step === 5) setStep(4);
+                    }}
+                    title="Cliquer pour supprimer cette réponse"
+                    className="group w-full text-left p-2 rounded-xl bg-[#cbf3d2]/25 hover:bg-red-50 border border-black/15 hover:border-red-400 text-[11px] flex items-start justify-between gap-2 transition-colors cursor-pointer"
                   >
-                    <div className="text-[9px] font-mono text-zinc-500 truncate">
-                      Q{idx + 1} · {rec.questionLabel.replace(/^\d+\.\s*/, '')}
+                    <div className="min-w-0">
+                      <div className="text-[9px] font-mono text-zinc-500 group-hover:text-red-600 truncate">
+                        Q{idx + 1} · {rec.questionLabel.replace(/^\d+\.\s*/, '')}
+                      </div>
+                      <div className="font-bold text-black group-hover:text-red-900 mt-0.5 leading-snug">
+                        {rec.optionLabel}
+                      </div>
                     </div>
-                    <div className="font-bold text-black mt-0.5 leading-snug">
-                      {rec.optionLabel}
-                    </div>
-                  </div>
+                    <X className="w-3.5 h-3.5 text-zinc-400 group-hover:text-red-600 shrink-0 mt-0.5" />
+                  </button>
                 ))}
               </div>
             </div>
