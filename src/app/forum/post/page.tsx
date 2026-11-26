@@ -92,7 +92,7 @@ function ForumPostDetailContent() {
         return {
           id: sym.id,
           title: sym.title,
-          categoryName: def.title,
+          categoryName: def.frenchTitle,
           brand: motorParam ? 'Moteur sélectionné' : 'Diagnostic Technique',
           model: motorParam,
           authorName: 'Base_FixMyDrone',
@@ -101,12 +101,14 @@ function ForumPostDetailContent() {
           views: 128,
           isResolved: true,
           rarityLabel: sym.rarityLabel,
-          content: sym.description,
-          tags: sym.keywords.slice(0, 6),
-          probableCauses: sym.aiDiagnostic.probableCauses,
-          diagnosticSteps: sym.aiDiagnostic.diagnosticSteps,
-          recommendedFix: sym.aiDiagnostic.recommendedFix,
-          toolsNeeded: sym.aiDiagnostic.toolsNeeded,
+          content: `${sym.description}\n\n${sym.aiDiagnostic.explanation}`,
+          tags: sym.matchingForumQuery.slice(0, 6) as string[],
+          probableCauses: Array.from(
+            new Set([sym.aiDiagnostic.rootCause, sym.likelyCause].filter(Boolean))
+          ) as string[],
+          diagnosticSteps: sym.aiDiagnostic.testSteps as string[],
+          recommendedFix: sym.aiDiagnostic.recommendedFix as string[],
+          toolsNeeded: sym.aiDiagnostic.toolsNeeded as string[],
         };
       }
     }
