@@ -214,30 +214,6 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
         <ArrowLeft className="w-3.5 h-3.5" />
         <span>Toutes les catégories</span>
       </button>
-
-      <div className="flex flex-wrap gap-1.5">
-        {(
-          [
-            { id: 'issues', label: 'Pannes' },
-            { id: 'specs', label: 'Specs' },
-            { id: 'reviews', label: 'Avis' },
-            { id: 'guides', label: 'Guides' },
-            { id: 'addFix', label: '+ Fix' },
-          ] as { id: ModalIntent; label: string }[]
-        ).map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setSelectedIntent(tab.id)}
-            className={`px-2.5 py-1 rounded-lg text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-              selectedIntent === tab.id
-                ? 'bg-black text-white font-bold'
-                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
     </div>
   );
 
