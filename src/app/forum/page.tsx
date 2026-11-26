@@ -50,6 +50,8 @@ export default function ForumDashboardPage() {
   const [expandedPostIds, setExpandedPostIds] = useState<Record<string, boolean>>({});
   const [helpfulVotes, setHelpfulVotes] = useState<Record<string, number>>({});
   const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
+  const [scannedPosts, setScannedPosts] = useState<CommunityPost[]>([]);
+  const [visibleCount, setVisibleCount] = useState(40);
   
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -65,6 +67,16 @@ export default function ForumDashboardPage() {
     const handleSync = () => refreshPilot();
     window.addEventListener('storage', handleSync);
     window.addEventListener('fpv_ecosystem_account_updated', handleSync);
+
+    // Charger la base massive de posts scannés
+    fetch('/data/scanned-forum-posts.json', { cache: 'no-cache' })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setScannedPosts(data);
+        }
+      })
+      .catch(() => {});
 
     // Initialiser les votes depuis le stockage local
     try {
@@ -150,9 +162,14 @@ export default function ForumDashboardPage() {
     setReportModalOpen(false);
   };
 
+  const allPosts = useMemo(
+    () => [...FORUM_POSTS, ...scannedPosts],
+    [scannedPosts]
+  );
+
   // Filtrage intelligent des posts
   const filteredPosts = useMemo(() => {
-    return FORUM_POSTS.filter((post) => {
+    return allPosts.filter((post) => {
       // 1. Recherche texte
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -195,8 +212,9 @@ export default function ForumDashboardPage() {
       if (selectedTab === 'ai-resolved' && !post.resolvedWithAI) return false;
       if (selectedTab === 'daily-watch') {
         const isWatch = post.title.includes('[VEILLE') || 
+          post.title.includes('[Scan') ||
           post.createdAt?.toLowerCase().includes('veille') ||
-          post.tags?.some((t) => ['RCGroups', 'GitHub', 'IntoFPV', 'Veille', 'Reddit r/fpv', 'WEareFPV', 'Walksnail', 'EdgeTX', 'ExpressLRS'].includes(t));
+          post.tags?.some((t) => ['RCGroups', 'GitHub', 'IntoFPV', 'Veille', 'Reddit r/fpv', 'WEareFPV', 'Walksnail', 'EdgeTX', 'ExpressLRS', 'Betaflight', 'ArduPilot', 'PX4'].includes(t));
         if (!isWatch) return false;
       }
 
@@ -212,7 +230,7 @@ export default function ForumDashboardPage() {
       }
       return 0;
     });
-  }, [searchQuery, selectedCategory, selectedRarity, selectedTab, helpfulVotes]);
+  }, [allPosts, searchQuery, selectedCategory, selectedRarity, selectedTab, helpfulVotes]);
 
   const categoriesList = [
     { id: 'all', label: 'Tous composants' },
@@ -247,7 +265,7 @@ export default function ForumDashboardPage() {
                 Communauté &amp; Veille FPV
               </span>
               <span className="text-[11px] font-mono text-zinc-400">
-                {FORUM_POSTS.length} discussions indexées
+                {allPosts.length} discussions indexées
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900">
@@ -290,7 +308,7 @@ export default function ForumDashboardPage() {
               {/* Onglets */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                 {[
-                  { id: 'all', label: `Tous (${FORUM_POSTS.length})` },
+                  { id: 'all', label: `Tous (${allPosts.length})` },
                   { id: 'new', label: 'Récents' },
                   { id: 'popular', label: 'Populaires' },
                   { id: 'ai-resolved', label: 'Résolus IA' },
@@ -345,8 +363,9 @@ export default function ForumDashboardPage() {
 
             {/* LISTE DES POSTS (STYLE DISCOURSE, OUVERTURE EN 1 CLIC) */}
             {filteredPosts.length > 0 ? (
+              <>
               <div className="bg-white rounded-2xl border border-zinc-200 divide-y divide-zinc-100 shadow-2xs overflow-hidden">
-                {filteredPosts.map((post) => {
+                {filteredPosts.slice(0, visibleCount).map((post) => {
                   const votes = (helpfulVotes[post.id] || 0) + (post.replies || 0);
                   const hasVoted = userVoted[post.id];
                   const rarity = post.rarityIndex || 5;
@@ -443,6 +462,18 @@ export default function ForumDashboardPage() {
                   );
                 })}
               </div>
+              {filteredPosts.length > visibleCount && (
+                <div className="flex justify-center pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((c) => c + 40)}
+                    className="px-5 py-2.5 rounded-xl bg-white border border-zinc-200 hover:border-black text-xs font-mono font-bold text-black transition-colors cursor-pointer"
+                  >
+                    Afficher plus ({filteredPosts.length - visibleCount} restants)
+                  </button>
+                </div>
+              )}
+              </>
             ) : (
               <div className="text-center py-14 bg-white rounded-2xl border border-dashed border-zinc-300">
                 <Search className="w-8 h-8 text-zinc-300 mx-auto mb-2" />

@@ -81,10 +81,24 @@ function ForumPostDetailContent() {
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const solutionRef = useRef<HTMLDivElement | null>(null);
   const composerSectionRef = useRef<HTMLDivElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [scannedPosts, setScannedPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!rawId) return;
+    fetch('/data/scanned-forum-posts.json', { cache: 'no-cache' })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) setScannedPosts(data);
+      })
+      .catch(() => {});
+  }, [rawId]);
 
   const postData = useMemo(() => {
     const cleanForumId = rawId.startsWith('forum-') ? rawId.slice(6) : rawId;
-    const fromForum = FORUM_POSTS.find((p) => p.id === cleanForumId || p.id === rawId);
+    const fromForum =
+      FORUM_POSTS.find((p) => p.id === cleanForumId || p.id === rawId) ||
+      scannedPosts.find((p) => p.id === rawId);
     if (fromForum) {
       return {
         id: fromForum.id,
@@ -93,14 +107,14 @@ function ForumPostDetailContent() {
         categoryName: fromForum.categoryName,
         brand: fromForum.brand,
         model: fromForum.model || motorParam,
-        authorName: fromForum.author.callsign || fromForum.author.name,
-        authorBadge: fromForum.author.badge,
+        authorName: fromForum.author?.callsign || fromForum.author?.name || 'Pilote_FPV',
+        authorBadge: fromForum.author?.badge || 'Membre Forum',
         createdAt: fromForum.createdAt,
         views: fromForum.views,
         isResolved: fromForum.isResolved,
         rarityLabel: fromForum.rarityLabel,
         content: fromForum.solutionSummary || fromForum.title,
-        tags: fromForum.tags,
+        tags: (fromForum.tags || []) as string[],
         probableCauses: [] as string[],
         diagnosticSteps: [] as string[],
         recommendedFix: [] as string[],
@@ -161,7 +175,7 @@ function ForumPostDetailContent() {
     }
 
     return null;
-  }, [rawId, motorParam]);
+  }, [rawId, motorParam, scannedPosts]);
 
   const relatedTopics = useMemo(() => {
     if (!postData) return [];
