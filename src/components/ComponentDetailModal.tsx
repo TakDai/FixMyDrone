@@ -158,7 +158,9 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl bg-white border-[1.5px] border-dashed border-black rounded-3xl p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto"
+        className={`relative w-full ${
+          selectedIntent === 'issues' ? 'max-w-4xl' : 'max-w-2xl'
+        } bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto transition-all`}
       >
         {/* Bouton fermeture */}
         <button

@@ -491,7 +491,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
   return (
     <div className="space-y-4 text-xs">
       {/* Barre de progression des 5 étapes */}
-      <div className="flex items-center justify-between gap-1 pb-3 border-b border-zinc-200">
+      <div className="grid grid-cols-5 gap-1.5 pb-3 border-b border-zinc-200">
         {stepLabels.map((label, idx) => {
           const s = (idx + 1) as WizardStep;
           const isCurrent = step === s;
@@ -502,26 +502,26 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
               type="button"
               disabled={!isDone}
               onClick={() => isDone && setStep(s)}
-              className={`flex-1 flex flex-col items-center gap-1 py-1 rounded-lg transition-colors ${
-                isDone ? 'cursor-pointer hover:bg-zinc-100' : 'cursor-default'
+              className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl border text-center transition-all ${
+                isCurrent
+                  ? 'bg-black text-white border-black shadow-xs'
+                  : isDone
+                  ? 'bg-[#cbf3d2]/45 text-black border-black/25 hover:border-black cursor-pointer'
+                  : 'bg-zinc-50 text-zinc-400 border-zinc-200 cursor-default'
               }`}
             >
               <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono font-bold border ${
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${
                   isCurrent
-                    ? 'bg-black text-white border-black'
+                    ? 'bg-white text-black'
                     : isDone
-                    ? 'bg-[#cbf3d2] text-black border-black'
-                    : 'bg-white text-zinc-400 border-zinc-300'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-zinc-400 border border-zinc-300'
                 }`}
               >
                 {isDone ? '✓' : s}
               </span>
-              <span
-                className={`text-[9px] font-mono uppercase tracking-wider ${
-                  isCurrent ? 'font-bold text-black' : isDone ? 'text-zinc-700' : 'text-zinc-400'
-                }`}
-              >
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold truncate">
                 {label}
               </span>
             </button>
@@ -1308,43 +1308,55 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     )}
                   </div>
                 ) : (
-                  /* QUESTION ACTUELLE + RÉSULTATS EN DIRECT EN DESSOUS */
-                  <>
-                    <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50/70 space-y-2.5 animate-in fade-in duration-150">
-                      <div>
-                        <h3 className="text-sm font-bold text-black">{currentQ.question}</h3>
-                        <p className="text-[11px] text-zinc-500 mt-0.5">{currentQ.hint}</p>
+                  /* QUESTION ACTUELLE (GAUCHE) + RÉSULTATS EN DIRECT (DROITE) */
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                    <div className="lg:col-span-7 p-4 rounded-2xl border-[1.5px] border-black bg-white shadow-xs space-y-3 animate-in fade-in duration-150">
+                      <div className="pb-2 border-b border-zinc-100">
+                        <h3 className="text-sm font-bold text-black leading-snug">{currentQ.question}</h3>
+                        <p className="text-[11px] text-zinc-500 mt-1">{currentQ.hint}</p>
                       </div>
 
-                      <div className="grid grid-cols-1 gap-1.5">
-                        {currentQ.options.map((opt) => {
+                      <div className="grid grid-cols-1 gap-2">
+                        {currentQ.options.map((opt, optIdx) => {
                           const isPicked = answerRecords.some(
                             (r) => r.questionId === currentQ.id && r.optionId === opt.id
                           );
+                          const letter = String.fromCharCode(65 + optIdx);
                           return (
                             <button
                               key={opt.id}
                               type="button"
                               onClick={() => handleAnswerOption(opt)}
-                              className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                              className={`group w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
                                 isPicked
-                                  ? 'border-black bg-black text-white'
-                                  : 'border-black/25 bg-white hover:border-black hover:shadow-xs text-black'
+                                  ? 'border-black bg-black text-white shadow-xs'
+                                  : 'border-zinc-200 bg-zinc-50/70 hover:bg-white hover:border-black hover:shadow-xs text-black'
                               }`}
                             >
-                              <div className="min-w-0">
-                                <div className="font-bold text-xs">{opt.label}</div>
-                                {opt.sub && (
-                                  <div
-                                    className={`text-[10px] mt-0.5 ${
-                                      isPicked ? 'text-zinc-300' : 'text-zinc-500'
-                                    }`}
-                                  >
-                                    {opt.sub}
-                                  </div>
-                                )}
+                              <div className="flex items-start gap-2.5 min-w-0">
+                                <span
+                                  className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono font-bold shrink-0 mt-0.5 ${
+                                    isPicked
+                                      ? 'bg-white text-black'
+                                      : 'bg-white border border-zinc-300 text-zinc-600 group-hover:border-black group-hover:text-black'
+                                  }`}
+                                >
+                                  {letter}
+                                </span>
+                                <div className="min-w-0">
+                                  <div className="font-bold text-xs leading-snug">{opt.label}</div>
+                                  {opt.sub && (
+                                    <div
+                                      className={`text-[10px] mt-0.5 ${
+                                        isPicked ? 'text-zinc-300' : 'text-zinc-500'
+                                      }`}
+                                    >
+                                      {opt.sub}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <ArrowRight className="w-4 h-4 shrink-0 opacity-60" />
+                              <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                             </button>
                           );
                         })}
@@ -1352,20 +1364,24 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     </div>
 
                     {/* RÉSULTATS EN DIRECT AU FIL DES RÉPONSES */}
-                    <div className="pt-2 border-t border-zinc-200 space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div className="lg:col-span-5 p-3.5 rounded-2xl border border-zinc-200 bg-zinc-50/80 space-y-2.5">
+                      <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-200">
                         <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
                           <Sparkles className="w-3.5 h-3.5" />
-                          <span>Résultats en direct ({activeCandidates.length})</span>
+                          <span>Résultats en direct</span>
                         </span>
-                        {rankedResolutions.length > 0 && (
-                          <span className="text-[10px] font-mono text-emerald-700 font-bold">
-                            + {rankedResolutions.length} retours communauté
-                          </span>
-                        )}
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black text-white font-bold">
+                          {activeCandidates.length}
+                        </span>
                       </div>
 
-                      <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                      {rankedResolutions.length > 0 && (
+                        <div className="text-[10px] font-mono text-emerald-700 font-bold">
+                          + {rankedResolutions.length} retours communauté indexés
+                        </div>
+                      )}
+
+                      <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
                         {activeCandidates.map(({ symptom, matchReasons }, idx) => (
                           <button
                             key={symptom.id}
@@ -1376,23 +1392,23 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                             }}
                             className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
                               idx === 0
-                                ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
-                                : 'border-black/20 hover:border-black bg-white'
+                                ? 'border-black bg-white shadow-xs'
+                                : 'border-zinc-200 hover:border-black bg-white/80 hover:bg-white'
                             }`}
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {idx === 0 && (
-                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
+                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#cbf3d2] border border-black/20 text-black font-bold">
                                     #1
                                   </span>
                                 )}
-                                <span className="font-bold text-black text-xs truncate">
+                                <span className="font-bold text-black text-[11px] leading-snug">
                                   {symptom.title}
                                 </span>
                               </div>
                               {matchReasons.length > 0 && (
-                                <div className="text-[10px] font-mono text-emerald-700 mt-0.5 truncate">
+                                <div className="text-[10px] font-mono text-emerald-700 mt-1 truncate">
                                   {matchReasons.join(' • ')}
                                 </div>
                               )}
@@ -1402,7 +1418,7 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                         ))}
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             );
@@ -1540,16 +1556,24 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
               </div>
             )}
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <div className="font-bold text-black flex items-center gap-1.5">
                 <Wrench className="w-3.5 h-3.5" />
                 <span>Étapes de vérification :</span>
               </div>
-              <ul className="list-disc pl-5 space-y-1 text-zinc-700">
+              <ol className="space-y-1.5">
                 {selectedSymptom.aiDiagnostic.testSteps.map((s, i) => (
-                  <li key={i}>{s}</li>
+                  <li
+                    key={i}
+                    className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-800"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-black text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="leading-relaxed">{s}</span>
+                  </li>
                 ))}
-              </ul>
+              </ol>
             </div>
 
             <div className="p-3 rounded-xl bg-[#cbf3d2]/25 border border-emerald-700/30 space-y-1.5">
