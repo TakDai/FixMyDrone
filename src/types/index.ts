@@ -104,6 +104,9 @@ export interface CommunityPost {
   rarityIndex?: number; // 1 à 10 : 1 = panne très très rare / exotique, 10 = panne très fréquente / classique
   rarityLabel?: string;
   solutionSummary?: string;
+  solutionSummaryOriginal?: string;
+  titleOriginal?: string;
+  sourceUrl?: string;
   tags: string[];
 }
 

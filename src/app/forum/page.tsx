@@ -52,6 +52,7 @@ export default function ForumDashboardPage() {
   const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
   const [scannedPosts, setScannedPosts] = useState<CommunityPost[]>([]);
   const [visibleCount, setVisibleCount] = useState(40);
+  const [showOriginalLang, setShowOriginalLang] = useState(false);
   
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -173,8 +174,12 @@ export default function ForumDashboardPage() {
       // 1. Recherche texte
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchTitle = post.title.toLowerCase().includes(q);
-        const matchSummary = post.solutionSummary?.toLowerCase().includes(q);
+        const matchTitle =
+          post.title.toLowerCase().includes(q) ||
+          Boolean(post.titleOriginal?.toLowerCase().includes(q));
+        const matchSummary =
+          post.solutionSummary?.toLowerCase().includes(q) ||
+          Boolean(post.solutionSummaryOriginal?.toLowerCase().includes(q));
         const matchBrand = post.brand?.toLowerCase().includes(q);
         const matchModel = post.model?.toLowerCase().includes(q);
         const matchTags = post.tags?.some((t) => t.toLowerCase().includes(q));
@@ -348,16 +353,32 @@ export default function ForumDashboardPage() {
                   ))}
                 </div>
 
-                <select
-                  value={selectedRarity}
-                  onChange={(e) => setSelectedRarity(e.target.value)}
-                  className="h-7 px-2 rounded-lg bg-zinc-50 border border-zinc-200 font-mono text-[10px] font-semibold text-zinc-700 focus:outline-none cursor-pointer shrink-0"
-                >
-                  <option value="all">Tous indices (1-10)</option>
-                  <option value="rare">1-3 (Rare)</option>
-                  <option value="medium">4-6 (Moyen)</option>
-                  <option value="common">7-10 (Classique)</option>
-                </select>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowOriginalLang((v) => !v)}
+                    className={`h-7 px-2.5 rounded-lg border font-mono text-[10px] font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer ${
+                      showOriginalLang
+                        ? 'bg-amber-50 border-amber-300 text-amber-900'
+                        : 'bg-zinc-50 border-zinc-200 text-zinc-700 hover:border-black'
+                    }`}
+                    title="Basculer entre la traduction française et le texte original"
+                  >
+                    <Globe className="w-3 h-3" />
+                    <span>{showOriginalLang ? 'EN · Original' : 'FR · Traduit'}</span>
+                  </button>
+
+                  <select
+                    value={selectedRarity}
+                    onChange={(e) => setSelectedRarity(e.target.value)}
+                    className="h-7 px-2 rounded-lg bg-zinc-50 border border-zinc-200 font-mono text-[10px] font-semibold text-zinc-700 focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">Tous indices (1-10)</option>
+                    <option value="rare">1-3 (Rare)</option>
+                    <option value="medium">4-6 (Moyen)</option>
+                    <option value="common">7-10 (Classique)</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -370,6 +391,12 @@ export default function ForumDashboardPage() {
                   const hasVoted = userVoted[post.id];
                   const rarity = post.rarityIndex || 5;
                   const postUrl = `/forum/post/?id=${encodeURIComponent(post.id)}`;
+                  const displayTitle =
+                    showOriginalLang && post.titleOriginal ? post.titleOriginal : post.title;
+                  const displaySummary =
+                    showOriginalLang && post.solutionSummaryOriginal
+                      ? post.solutionSummaryOriginal
+                      : post.solutionSummary;
 
                   return (
                     <div
@@ -393,18 +420,23 @@ export default function ForumDashboardPage() {
                               {post.brand} {post.model ? `· ${post.model}` : ''}
                             </span>
                           )}
+                          {post.titleOriginal && (
+                            <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 opacity-70 group-hover:opacity-100 transition-opacity">
+                              {showOriginalLang ? 'EN' : 'Traduit FR'}
+                            </span>
+                          )}
                           <span className="font-mono text-[10px] text-zinc-400 opacity-60 group-hover:opacity-100 transition-opacity">
                             Indice {rarity}/10
                           </span>
                         </div>
 
                         <h2 className="text-base font-bold text-zinc-900 group-hover:text-black leading-snug">
-                          {post.title}
+                          {displayTitle}
                         </h2>
 
-                        {post.solutionSummary && (
+                        {displaySummary && (
                           <p className="text-xs text-zinc-500 line-clamp-1">
-                            {post.solutionSummary}
+                            {displaySummary}
                           </p>
                         )}
 

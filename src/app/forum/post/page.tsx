@@ -28,6 +28,7 @@ import {
   Sparkles,
   ChevronDown,
   X,
+  Globe,
 } from 'lucide-react';
 
 interface PostComment {
@@ -114,6 +115,8 @@ function ForumPostDetailContent() {
         isResolved: fromForum.isResolved,
         rarityLabel: fromForum.rarityLabel,
         content: fromForum.solutionSummary || fromForum.title,
+        titleOriginal: (fromForum.titleOriginal as string | undefined) || '',
+        contentOriginal: (fromForum.solutionSummaryOriginal as string | undefined) || '',
         tags: (fromForum.tags || []) as string[],
         probableCauses: [] as string[],
         diagnosticSteps: [] as string[],
@@ -139,6 +142,8 @@ function ForumPostDetailContent() {
         isResolved: true,
         rarityLabel: 'Retour pilote récent',
         content: stored.fix,
+        titleOriginal: '',
+        contentOriginal: '',
         tags: stored.keywords.slice(0, 6),
         probableCauses: [] as string[],
         diagnosticSteps: [] as string[],
@@ -165,6 +170,8 @@ function ForumPostDetailContent() {
           isResolved: true,
           rarityLabel: sym.rarityLabel,
           content: `${sym.description}\n\n${sym.aiDiagnostic.explanation}`,
+          titleOriginal: '',
+          contentOriginal: '',
           tags: sym.matchingForumQuery.slice(0, 6) as string[],
           probableCauses: Array.from(
             new Set([sym.aiDiagnostic.rootCause, sym.likelyCause].filter(Boolean))
@@ -201,6 +208,39 @@ function ForumPostDetailContent() {
   const [likedCommentIds, setLikedCommentIds] = useState<string[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showOriginalLang, setShowOriginalLang] = useState(false);
+  const [liveTranslation, setLiveTranslation] = useState<{ title: string; content: string } | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleTranslateOnDemand = async () => {
+    if (!postData || isTranslating) return;
+    if (liveTranslation) {
+      setShowOriginalLang((v) => !v);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const translateOne = async (text: string) => {
+        if (!text) return text;
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=fr&dt=t&q=${encodeURIComponent(text)}`;
+        const res = await fetch(url);
+        if (!res.ok) return text;
+        const data = await res.json();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (data?.[0] || []).map((c: any) => c?.[0] || '').join('').trim() || text;
+      };
+      const [trTitle, trContent] = await Promise.all([
+        translateOne(postData.title),
+        translateOne(postData.content),
+      ]);
+      setLiveTranslation({ title: trTitle, content: trContent });
+      setShowOriginalLang(false);
+    } catch {
+      // ignore network errors
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   useEffect(() => {
     if (!postData?.id || typeof window === 'undefined') return;
@@ -559,10 +599,46 @@ function ForumPostDetailContent() {
               Fil d’origine ↗
             </a>
           )}
+          {postData.titleOriginal ? (
+            <button
+              type="button"
+              onClick={() => setShowOriginalLang((v) => !v)}
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-mono font-semibold transition-colors cursor-pointer ${
+                showOriginalLang
+                  ? 'bg-amber-50 border-amber-300 text-amber-900'
+                  : 'bg-sky-50 border-sky-200 text-sky-800 hover:bg-sky-100'
+              }`}
+            >
+              <Globe className="w-3 h-3" />
+              <span>{showOriginalLang ? 'Original (EN) · Voir FR' : 'Traduit FR · Voir original'}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleTranslateOnDemand}
+              disabled={isTranslating}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-zinc-200 text-[11px] font-mono text-zinc-500 hover:text-black hover:border-black transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <Globe className="w-3 h-3" />
+              <span>
+                {isTranslating
+                  ? 'Traduction…'
+                  : liveTranslation
+                  ? showOriginalLang
+                    ? 'Original · Voir FR'
+                    : 'Traduit FR · Voir original'
+                  : 'Traduire en FR'}
+              </span>
+            </button>
+          )}
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight leading-snug">
-          {postData.title}
+          {showOriginalLang && postData.titleOriginal
+            ? postData.titleOriginal
+            : !showOriginalLang && liveTranslation
+            ? liveTranslation.title
+            : postData.title}
         </h1>
 
         {postData.tags.length > 0 && (
@@ -749,7 +825,11 @@ function ForumPostDetailContent() {
 
                 {/* Contenu principal du post */}
                 <div className="text-[15px] text-zinc-700 leading-relaxed whitespace-pre-line">
-                  {postData.content}
+                  {showOriginalLang && postData.contentOriginal
+                    ? postData.contentOriginal
+                    : !showOriginalLang && liveTranslation
+                    ? liveTranslation.content
+                    : postData.content}
                 </div>
 
                 {/* Solution recommandée (bloc focal unique) + détails techniques repliés */}
