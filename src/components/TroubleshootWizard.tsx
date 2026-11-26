@@ -326,6 +326,7 @@ export function TroubleshootWizard({
     MOTOR_STATIC_QUESTIONS[0],
   ]);
   const [noMatchAction, setNoMatchAction] = useState<'none' | 'ai' | 'forum'>('none');
+  const [showResultsListView, setShowResultsListView] = useState(false);
   const [forumPostTitle, setForumPostTitle] = useState('');
   const [forumPostBody, setForumPostBody] = useState('');
   const [forumPostSent, setForumPostSent] = useState(false);
@@ -508,6 +509,7 @@ export function TroubleshootWizard({
     setAnswerRecords([]);
     setQuestionHistory([MOTOR_STATIC_QUESTIONS[0]]);
     setNoMatchAction('none');
+    setShowResultsListView(false);
     setForumPostTitle('');
     setForumPostBody('');
     setForumPostSent(false);
@@ -1328,13 +1330,10 @@ export function TroubleshootWizard({
                     </span>
                     <button
                       type="button"
-                      onClick={() => {
-                        setSelectedSymptom(rankedSymptoms[0].symptom);
-                        setStep(5);
-                      }}
+                      onClick={() => setShowResultsListView(true)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black text-white font-bold text-[11px] hover:bg-zinc-800 cursor-pointer"
                     >
-                      <span>Ouvrir #1 : {rankedSymptoms[0].symptom.title}</span>
+                      <span>Voir la liste des résultats ({rankedSymptoms.length})</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -1463,7 +1462,9 @@ export function TroubleshootWizard({
                         onClick={() => {
                           const prevRecords = answerRecords.slice(0, -1);
                           setAnswerRecords(prevRecords);
+                          setQuestionHistory((prev) => prev.slice(0, Math.max(1, questionIdx)));
                           setNoMatchAction('none');
+                          setShowResultsListView(false);
                           setQuestionIdx((q) => Math.max(0, q - 1));
                         }}
                         className="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-600 hover:text-black cursor-pointer"
@@ -1472,7 +1473,7 @@ export function TroubleshootWizard({
                         <span>Question précédente</span>
                       </button>
                     )}
-                    {activeCandidates.length > 0 && (
+                    {activeCandidates.length > 0 && !showResultsListView && (
                       <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-black text-white">
                         Question {questionIdx + 1}
                         {currentQ.isGenerated ? ' • Simulée' : ''}
@@ -1481,18 +1482,75 @@ export function TroubleshootWizard({
                   </div>
 
                   {activeCandidates.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedSymptom(activeCandidates[0].symptom);
-                        setStep(5);
-                      }}
-                      className="text-[11px] font-bold text-zinc-600 hover:text-black underline cursor-pointer"
-                    >
-                      Ouvrir le meilleur résultat →
-                    </button>
+                    showResultsListView ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowResultsListView(false)}
+                        className="text-[11px] font-bold text-black underline cursor-pointer"
+                      >
+                        ← Revenir aux questions
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowResultsListView(true)}
+                        className="text-[11px] font-bold text-zinc-600 hover:text-black underline cursor-pointer"
+                      >
+                        Voir la liste des résultats ({activeCandidates.length}) →
+                      </button>
+                    )
                   )}
                 </div>
+
+                {showResultsListView && activeCandidates.length > 0 && (
+                  <div className="p-4 rounded-2xl border-[1.5px] border-black bg-white space-y-2.5 animate-in fade-in duration-150">
+                    <div className="flex items-center justify-between pb-2 border-b border-zinc-200">
+                      <span className="text-xs font-bold text-black">
+                        Liste des résultats correspondants ({activeCandidates.length})
+                      </span>
+                      <span className="text-[10px] font-mono text-zinc-500">
+                        Choisissez une piste
+                      </span>
+                    </div>
+                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                      {activeCandidates.map(({ symptom, matchReasons }, idx) => (
+                        <button
+                          key={symptom.id}
+                          type="button"
+                          onClick={() => {
+                            setShowResultsListView(false);
+                            setSelectedSymptom(symptom);
+                            setStep(5);
+                          }}
+                          className="w-full p-3 rounded-xl border border-zinc-200 hover:border-black bg-zinc-50/70 hover:bg-white text-left transition-all cursor-pointer flex items-center justify-between gap-3"
+                        >
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {idx === 0 && (
+                                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#cbf3d2] border border-black/20 text-black font-bold">
+                                  #1
+                                </span>
+                              )}
+                              <span className="font-bold text-black text-xs">{symptom.title}</span>
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
+                                {symptom.rarityLabel}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-zinc-600 mt-1 line-clamp-2">
+                              {symptom.description}
+                            </p>
+                            {matchReasons.length > 0 && (
+                              <div className="text-[10px] font-mono text-emerald-700 mt-1">
+                                {matchReasons.join(' • ')}
+                              </div>
+                            )}
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Récapitulatif cliquable des réponses déjà données */}
                 {answerRecords.length > 0 && (
@@ -1665,7 +1723,7 @@ export function TroubleshootWizard({
                       </div>
                     )}
                   </div>
-                ) : (
+                ) : !showResultsListView ? (
                   /* QUESTION ACTUELLE (DANS LA POP-UP CENTRALE — RÉSULTATS DANS LA POP-UP DROITE) */
                   <div className="p-4 rounded-2xl border-[1.5px] border-black bg-white shadow-xs space-y-3 animate-in fade-in duration-150">
                     <div className="pb-2 border-b border-zinc-100">
@@ -1719,7 +1777,7 @@ export function TroubleshootWizard({
                       })}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             );
           })()}
@@ -1857,11 +1915,12 @@ export function TroubleshootWizard({
                   Mise à jour dynamique
                 </span>
               </div>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                 {rankedResolutions.slice(0, 4).map(({ resolution }) => (
-                  <div
+                  <Link
                     key={resolution.id}
-                    className={`p-3 rounded-xl border text-xs space-y-1 ${
+                    href={`/forum/post/?id=${encodeURIComponent(resolution.id)}`}
+                    className={`block p-3 rounded-xl border text-xs space-y-1 transition-all hover:border-black hover:shadow-xs ${
                       resolution.source === 'community-fix'
                         ? 'bg-[#cbf3d2]/20 border-emerald-600/40'
                         : 'bg-zinc-50 border-zinc-200'
@@ -1874,11 +1933,17 @@ export function TroubleshootWizard({
                       </span>
                     </div>
                     <p className="text-[11px] text-zinc-700 line-clamp-2">{resolution.fix}</p>
-                    <div className="text-[10px] text-zinc-500">
-                      Par @{resolution.author}
-                      {resolution.brand ? ` • ${resolution.brand}` : ''}
+                    <div className="flex items-center justify-between gap-2 pt-0.5">
+                      <span className="text-[10px] text-zinc-500">
+                        Par @{resolution.author}
+                        {resolution.brand ? ` • ${resolution.brand}` : ''}
+                      </span>
+                      <span className="text-[10px] font-bold text-black inline-flex items-center gap-1 shrink-0">
+                        <span>Voir le post, commentaires &amp; notes</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

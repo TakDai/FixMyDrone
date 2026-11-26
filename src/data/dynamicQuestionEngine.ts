@@ -63,8 +63,8 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'family',
-    question: '2. Quel type de symptôme domine ?',
-    hint: 'Choisissez la famille la plus proche de ce que vous constatez.',
+    question: '2. Quelle est la nature principale du problème ?',
+    hint: 'Choisissez la catégorie la plus proche de ce que vous constatez.',
     options: [
       {
         id: 'mecanique',
@@ -93,53 +93,59 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'hand-spin',
-    question: '3. Sans batterie, en tournant la cloche à la main, que sentez-vous ?',
-    hint: 'Hélices démontées : faites tourner doucement le moteur du bout des doigts.',
+    question: '3. Batterie débranchée, en tournant la cloche du moteur à la main :',
+    hint: 'Hélices démontées : faites tourner doucement la cloche du bout des doigts.',
     options: [
       {
         id: 'smooth',
         label: '✅ Tourne librement, fluide et silencieux',
         boostTokens: [],
-        excludeTokens: ['voilee', 'axe tordu', 'aimant frotte'],
+        excludeTokens: ['roulement', 'cloche voilée', 'aimant frotte', 'axe tordu'],
         isHealthy: true,
       },
       {
         id: 'scratch',
         label: '🪨 Frottement, point dur ou bruit de sable / crécelle',
         boostTokens: ['roulement', 'crecelle', 'aimant', 'frotte', 'sable'],
+        preferCategories: ['mecanique'],
       },
       {
         id: 'play',
         label: '↕️ Jeu vertical ou latéral sur la cloche',
         boostTokens: ['jeu', 'roulement', '684zz', 'circlip'],
+        preferCategories: ['mecanique'],
       },
       {
         id: 'blocked',
         label: '🛑 Cloche bloquée ou axe visiblement tordu',
         boostTokens: ['voilee', 'tordu', 'aimant', 'vis', 'bloque'],
+        preferCategories: ['mecanique'],
       },
     ],
   },
   {
     id: 'visual-bell',
-    question: '4. À l’inspection visuelle de la cloche et des aimants :',
+    question: '4. En inspectant la cloche et les aimants du moteur :',
     hint: 'Regardez sous la cloche avec une lampe si besoin.',
     options: [
       {
         id: 'ok',
-        label: '✅ Aimants alignés, cloche intacte',
+        label: '✅ Aimants bien alignés, cloche intacte',
         boostTokens: [],
+        excludeTokens: ['aimant décollé', 'cloche voilée'],
         isHealthy: true,
       },
       {
         id: 'magnet',
         label: '🧲 Un aimant est décollé, décalé ou fendu',
         boostTokens: ['aimant', 'decolle', 'fendu', 'araldite'],
+        excludeTokens: ['cloche voilée', 'roulement'],
       },
       {
         id: 'bent-bell',
         label: '🔨 La cloche est enfoncée ou voilée',
         boostTokens: ['cloche', 'voilee', 'axe', 'tordu'],
+        excludeTokens: ['aimant décollé', 'roulement'],
       },
       {
         id: 'circlip',
@@ -150,8 +156,8 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'visual-winding',
-    question: '5. En observant le bobinage cuivre à travers le stator :',
-    hint: 'Vérifiez la couleur du cuivre et le passage des fils.',
+    question: '5. En observant le bobinage en cuivre à l’intérieur du moteur :',
+    hint: 'Vérifiez la couleur du cuivre et l’état des fils.',
     options: [
       {
         id: 'copper-ok',
@@ -185,6 +191,7 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
         id: 'normal',
         label: '🌡️ Tiède / identique aux autres moteurs',
         boostTokens: [],
+        excludeTokens: ['brulant', 'moteur chaud'],
         isHealthy: true,
       },
       {
@@ -201,29 +208,32 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
         id: 'cold',
         label: '❄️ Reste complètement froid (ne tourne pas)',
         boostTokens: ['pas de bips', 'esc', 'mosfet', 'broute'],
+        excludeTokens: ['brulant', 'desync'],
       },
     ],
   },
   {
     id: 'beeps',
     question: '7. Au branchement de la LiPo, quels bips ESC entendez-vous sur ce moteur ?',
-    hint: 'Les 3 premiers bips = alim ESC, les 2 derniers = signal Betaflight/FC.',
+    hint: 'Les 3 premiers bips = alimentation ESC, les 2 derniers = signal de la FC.',
     options: [
       {
         id: 'all-beeps',
         label: '🔊 Tous les bips normaux (3 bips + 2 bips)',
         boostTokens: [],
+        excludeTokens: ['pas de bips', '3 bips manquants', 'esc mort'],
         isHealthy: true,
       },
       {
         id: 'missing-2',
-        label: '🔉 Il manque les 2 derniers bips (signal FC)',
+        label: '🔉 Il manque les 2 derniers bips (pas de signal FC)',
         boostTokens: ['bips', 'esc', 'signal', 'fc'],
       },
       {
         id: 'no-beeps',
         label: '🔇 Aucun bip sur ce moteur',
         boostTokens: ['pas de bips', '3 bips manquants', 'esc mort', 'mosfet'],
+        excludeTokens: ['desync', 'roulement', 'brulant'],
       },
       {
         id: 'loop-beeps',
@@ -234,8 +244,8 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'betaflight-tab',
-    question: '8. Dans Betaflight (onglet Moteurs, SANS hélices), que fait le curseur ?',
-    hint: 'Testez doucement entre 1020 et 1150.',
+    question: '8. Dans Betaflight (onglet Moteurs, hélices retirées), comment réagit ce moteur ?',
+    hint: 'Montez doucement le curseur de test entre 1020 et 1150.',
     options: [
       {
         id: 'spins-ok',
@@ -272,7 +282,7 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
       },
       {
         id: 'stays-arm',
-        label: '🛑 Le problème reste sur le même bras (donc côté ESC/FC)',
+        label: '🛑 Le problème reste sur le même bras (côté ESC / FC)',
         boostTokens: ['esc', 'mosfet', 'pas de bips', 'soudure'],
       },
       {
@@ -284,8 +294,8 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'flight-behavior',
-    question: '10. Si le drone arrive à décoller, que se passe-t-il en vol ?',
-    hint: 'Observez la stabilité et le retour vidéo.',
+    question: '10. Que se passe-t-il lorsque vous essayez de décoller ou de voler ?',
+    hint: 'Observez la stabilité du quad et le retour vidéo.',
     options: [
       {
         id: 'death-roll',
@@ -311,7 +321,7 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'screws',
-    question: '11. Concernant les vis de fixation sous le moteur :',
+    question: '11. Vérification des vis de fixation sous le moteur :',
     hint: 'Une vis trop longue de 1 mm suffit à toucher le bobinage.',
     options: [
       {
@@ -334,8 +344,8 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: 'recent-config',
-    question: '12. Avez-vous récemment modifié Bluejay/BLHeli ou les PID Betaflight ?',
-    hint: 'Dernière vérification logicielle.',
+    question: '12. Avez-vous modifié des réglages logiciels récemment ?',
+    hint: 'Firmware ESC (Bluejay / BLHeli) ou réglages Betaflight (PID / filtres).',
     options: [
       {
         id: 'yes-esc',
@@ -568,17 +578,17 @@ export function synthesizeQuestionsFromResolutions(
       return {
         id: qId,
         isGenerated: true,
-        question: `Question simulée #${idx + 1} : Observez-vous un indice lié à « ${keyword} » ?`,
-        hint: `Générée par simulation à partir des retours communauté (ex : ${info.sampleIssue.slice(0, 60)}...)`,
+        question: `Question communauté #${idx + 1} : Votre souci concerne-t-il « ${keyword} » ?`,
+        hint: `Générée automatiquement à partir des retours pilotes (ex : ${info.sampleIssue.slice(0, 60)}...)`,
         options: [
           {
             id: `${qId}-yes`,
-            label: `Oui, « ${keyword} » correspond à mon symptôme`,
+            label: `Oui, c’est lié à « ${keyword} »`,
             boostTokens: [keyword],
           },
           {
             id: `${qId}-no`,
-            label: `Non, pas de lien avec « ${keyword} »`,
+            label: `Non, aucun rapport avec « ${keyword} »`,
             boostTokens: [],
             excludeTokens: [keyword],
           },
@@ -599,10 +609,11 @@ export function simulateBestNextQuestion(
   stepNumber: number,
   answers: QuestionAnswerRecord[] = []
 ): DiagnosticQuestion | null {
-  const pool: DiagnosticQuestion[] = [
-    ...MOTOR_STATIC_QUESTIONS.filter((q) => !askedIds.includes(q.id)),
-    ...synthesizeQuestionsFromResolutions(dynamicResolutions, askedIds),
-  ];
+  const staticPool = MOTOR_STATIC_QUESTIONS.filter((q) => !askedIds.includes(q.id));
+  const pool: DiagnosticQuestion[] =
+    staticPool.length > 0
+      ? staticPool
+      : synthesizeQuestionsFromResolutions(dynamicResolutions, askedIds);
 
   // Toujours démarrer par le moment d'apparition si aucune question n'a encore été posée
   if (!askedIds.includes('when') && answers.length === 0) {
@@ -685,7 +696,8 @@ export function simulateBestNextQuestion(
 
   for (const q of pool) {
     // Simuler chaque option diagnostique sur remainingCandidates
-    const branchSizes: number[] = [];
+    let balancedGain = 0;
+    let usefulBranches = 0;
     for (const opt of q.options) {
       if (opt.isHealthy || opt.id === 'unsure' || opt.id === 'not-tested' || opt.id === 'unknown') {
         continue;
@@ -703,17 +715,16 @@ export function simulateBestNextQuestion(
           optTokens.some((t) => corpus.some((c) => c.includes(t) || t.includes(c)));
         if (catOk && tokOk) matches++;
       }
-      branchSizes.push(matches);
+      if (matches > 0 && matches < remainingCandidates.length) {
+        usefulBranches++;
+        balancedGain += Math.min(matches, remainingCandidates.length - matches);
+      }
     }
 
-    const nonZero = branchSizes.filter((s) => s > 0 && s < remainingCandidates.length).length;
-    const spread =
-      branchSizes.length > 0 ? Math.max(...branchSizes) - Math.min(...branchSizes) : 0;
     const splitScore =
-      nonZero * 12 +
-      spread +
-      contextualBias(q.id) +
-      (q.isGenerated ? 4 : 0);
+      usefulBranches * 12 +
+      balancedGain * 6 +
+      contextualBias(q.id);
 
     if (splitScore > bestScore) {
       bestScore = splitScore;
