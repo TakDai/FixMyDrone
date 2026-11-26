@@ -144,7 +144,7 @@ function BrandAvatar({
   if (logoUrl && !imgFailed) {
     return (
       <span
-        className={`${dim} bg-white border border-black/15 flex items-center justify-center shrink-0 overflow-hidden p-1`}
+        className={`${dim} bg-white border border-black/15 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-transform duration-200 group-hover:scale-150 group-hover:z-20 group-hover:shadow-md group-hover:border-black`}
       >
         <img
           src={logoUrl}
@@ -843,10 +843,10 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                         setSelectedMotor(motor);
                         setStep(4);
                       }}
-                      className="w-full p-2.5 rounded-2xl border border-black/25 hover:border-black bg-zinc-50/70 hover:bg-white transition-all cursor-pointer flex items-center gap-3 text-left"
+                      className="group relative hover:z-20 w-full p-2.5 rounded-2xl border border-black/25 hover:border-black bg-zinc-50/70 hover:bg-white transition-all cursor-pointer flex items-center gap-3 text-left"
                     >
-                      {/* Miniature du moteur issue de Multi-Motors */}
-                      <div className="w-14 h-14 rounded-xl border border-zinc-200 bg-white overflow-hidden shrink-0 flex items-center justify-center">
+                      {/* Miniature du moteur issue de Multi-Motors (agrandie au survol) */}
+                      <div className="w-14 h-14 rounded-xl border border-zinc-200 bg-white overflow-hidden shrink-0 flex items-center justify-center transition-transform duration-200 origin-left group-hover:scale-[2] group-hover:z-30 group-hover:shadow-2xl group-hover:border-black">
                         <img
                           src={motor.img || '/images/components/motor.svg?v=6'}
                           alt={motor.fullName}

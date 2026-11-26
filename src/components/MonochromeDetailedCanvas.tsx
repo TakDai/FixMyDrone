@@ -345,7 +345,7 @@ export function MonochromeDetailedCanvas({
             pointerEvents="all"
           />
 
-          {/* VECTEUR AUTHENTIQUE : Surbrillance du contour de l'objet au survol & sélection */}
+          {/* VECTEUR AUTHENTIQUE : Surbrillance + léger agrandissement au survol & sélection */}
           <image
             href={comp.image}
             x={comp.x}
@@ -353,8 +353,10 @@ export function MonochromeDetailedCanvas({
             width={comp.width}
             height={comp.height}
             preserveAspectRatio="xMidYMid meet"
-            className="select-none pointer-events-none transition-all duration-150"
+            className="select-none pointer-events-none transition-all duration-200"
             style={{
+              transform: isHov ? 'scale(1.12)' : isSelected ? 'scale(1.05)' : 'scale(1)',
+              transformOrigin: `${comp.x + comp.width / 2}px ${comp.y + comp.height / 2}px`,
               filter: isSelected
                 ? 'drop-shadow(0 0 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 7px rgba(0, 0, 0, 0.45))'
                 : isHov
