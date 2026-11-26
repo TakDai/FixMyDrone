@@ -1,16 +1,18 @@
-import { DiagnosticSymptomOption } from './diagnosticKnowledgeBase';
-import { DynamicResolution } from './dynamicResolutions';
+import type { DiagnosticSymptomOption } from './diagnosticKnowledgeBase';
+import type { DynamicResolution } from './dynamicResolutions';
 
 export interface QuestionOption {
   id: string;
   label: string;
   sub?: string;
-  /** Mots-clés renforçant les pistes compatibles */
+  /** Mots-clés renforçant les pistes compatibles (surtout résolutions communauté) */
   boostTokens: string[];
-  /** Mots-clés qui excluent les pistes incompatibles si présents */
+  /** Mots-clés d'exclusion (utilisés uniquement si pas de matrice explicite) */
   excludeTokens?: string[];
-  /** Catégories compatibles (si défini, pénalise fortement les autres) */
-  preferCategories?: DiagnosticSymptomOption['category'][];
+  /** IDs de symptômes explicitement compatibles avec cette réponse */
+  compatibleWith?: string[];
+  /** IDs de symptômes explicitement éliminés par cette réponse */
+  incompatibleWith?: string[];
   /** Indique une piste saine / pas de symptôme sur ce critère */
   isHealthy?: boolean;
 }
@@ -20,360 +22,11 @@ export interface DiagnosticQuestion {
   question: string;
   hint: string;
   isGenerated?: boolean;
+  /** Condition d'affichage contextuelle selon les réponses précédentes */
+  showIf?: (answers: QuestionAnswerRecord[], promptText: string) => boolean;
+  /** Si le prompt de l'utilisateur contient déjà cette info, on saute cette question */
+  skipIfPromptMatches?: RegExp;
   options: QuestionOption[];
-}
-
-export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
-  {
-    id: 'when',
-    question: '1. Quand est survenu le problème ?',
-    hint: 'Le moment d’apparition élimine déjà plusieurs causes.',
-    options: [
-      {
-        id: 'after-crash',
-        label: '💥 Immédiatement après un crash / impact',
-        sub: 'Choc sur arbre, béton, herbe ou hélice bloquée',
-        boostTokens: ['crash', 'impact', 'voil', 'tordu', 'aimant', 'roulement', 'cloche'],
-      },
-      {
-        id: 'new-build',
-        label: '🛠️ Lors du premier montage / soudure',
-        sub: 'Drone neuf ou moteur récemment remplacé',
-        boostTokens: ['soudure', 'vis', 'longue', 'montage', 'phase', 'bips', 'esc'],
-      },
-      {
-        id: 'in-flight',
-        label: '💨 Apparu soudainement en vol',
-        sub: 'Fonctionnait bien puis anomalie en l’air',
-        boostTokens: ['vol', 'desync', 'coupure', 'chaud', 'brulant', 'd-term', 'roll'],
-      },
-      {
-        id: 'power-on',
-        label: '🔌 Au branchement de la batterie LiPo',
-        sub: 'Anomalie dès l’alimentation au banc',
-        boostTokens: ['bips', 'esc', 'broute', 'phase', 'soudure', 'mosfet'],
-      },
-      {
-        id: 'gradual',
-        label: '⏳ Dégradation progressive vol après vol',
-        sub: 'Bruit ou vibrations qui augmentent avec le temps',
-        boostTokens: ['roulement', 'jeu', 'crecelle', 'jello', 'usure'],
-      },
-    ],
-  },
-  {
-    id: 'family',
-    question: '2. Quelle est la nature principale du problème ?',
-    hint: 'Choisissez la catégorie la plus proche de ce que vous constatez.',
-    options: [
-      {
-        id: 'mecanique',
-        label: '⚙️ Mécanique (bruit, jeu, frottement, cloche voilée)',
-        boostTokens: ['roulement', 'cloche', 'jeu', 'aimant', 'voilee', 'tordu', 'crecelle'],
-        preferCategories: ['mecanique'],
-      },
-      {
-        id: 'electrique',
-        label: '⚡ Électrique (broute, pas de bips, chauffe anormale)',
-        boostTokens: ['broute', 'soudure', 'bips', 'chaud', 'brulant', 'vis', 'bobinage'],
-        preferCategories: ['electrique'],
-      },
-      {
-        id: 'vol',
-        label: '🚁 Comportement en vol (desync, coupure gaz, death roll)',
-        boostTokens: ['desync', 'roll', 'coupure', 'bluejay', 'demag', 'vibrations'],
-        preferCategories: ['vol'],
-      },
-      {
-        id: 'unsure',
-        label: '❓ Je ne suis pas sûr / Plusieurs symptômes',
-        boostTokens: [],
-      },
-    ],
-  },
-  {
-    id: 'hand-spin',
-    question: '3. Batterie débranchée, en tournant la cloche du moteur à la main :',
-    hint: 'Hélices démontées : faites tourner doucement la cloche du bout des doigts.',
-    options: [
-      {
-        id: 'smooth',
-        label: '✅ Tourne librement, fluide et silencieux',
-        boostTokens: [],
-        excludeTokens: ['roulement', 'cloche voilée', 'aimant frotte', 'axe tordu'],
-        isHealthy: true,
-      },
-      {
-        id: 'scratch',
-        label: '🪨 Frottement, point dur ou bruit de sable / crécelle',
-        boostTokens: ['roulement', 'crecelle', 'aimant', 'frotte', 'sable'],
-        preferCategories: ['mecanique'],
-      },
-      {
-        id: 'play',
-        label: '↕️ Jeu vertical ou latéral sur la cloche',
-        boostTokens: ['jeu', 'roulement', '684zz', 'circlip'],
-        preferCategories: ['mecanique'],
-      },
-      {
-        id: 'blocked',
-        label: '🛑 Cloche bloquée ou axe visiblement tordu',
-        boostTokens: ['voilee', 'tordu', 'aimant', 'vis', 'bloque'],
-        preferCategories: ['mecanique'],
-      },
-    ],
-  },
-  {
-    id: 'visual-bell',
-    question: '4. En inspectant la cloche et les aimants du moteur :',
-    hint: 'Regardez sous la cloche avec une lampe si besoin.',
-    options: [
-      {
-        id: 'ok',
-        label: '✅ Aimants bien alignés, cloche intacte',
-        boostTokens: [],
-        excludeTokens: ['aimant décollé', 'cloche voilée'],
-        isHealthy: true,
-      },
-      {
-        id: 'magnet',
-        label: '🧲 Un aimant est décollé, décalé ou fendu',
-        boostTokens: ['aimant', 'decolle', 'fendu', 'araldite'],
-        excludeTokens: ['cloche voilée', 'roulement'],
-      },
-      {
-        id: 'bent-bell',
-        label: '🔨 La cloche est enfoncée ou voilée',
-        boostTokens: ['cloche', 'voilee', 'axe', 'tordu'],
-        excludeTokens: ['aimant décollé', 'roulement'],
-      },
-      {
-        id: 'circlip',
-        label: '⭕ Circlip / vis sous l’axe manquant ou desserré',
-        boostTokens: ['jeu', 'circlip', 'cloche', 'roulement'],
-      },
-    ],
-  },
-  {
-    id: 'visual-winding',
-    question: '5. En observant le bobinage en cuivre à l’intérieur du moteur :',
-    hint: 'Vérifiez la couleur du cuivre et l’état des fils.',
-    options: [
-      {
-        id: 'copper-ok',
-        label: '✨ Cuivre propre, brillant et uniforme',
-        boostTokens: [],
-        isHealthy: true,
-      },
-      {
-        id: 'burnt',
-        label: '🔥 Bobinage noirci, fondu ou odeur de brûlé',
-        boostTokens: ['brulant', 'chaud', 'bobinage', 'vis', 'court-circuit'],
-      },
-      {
-        id: 'wire-cut',
-        label: '✂️ Un fil de phase est coupé, effiloché ou dessoudé',
-        boostTokens: ['broute', 'phase', 'soudure', 'continuite', 'twitch'],
-      },
-      {
-        id: 'screw-touch',
-        label: '🔩 Trace de frottement de vis sous les enroulements',
-        boostTokens: ['vis', 'longue', 'bobinage', 'chaud', 'brulant'],
-      },
-    ],
-  },
-  {
-    id: 'temp',
-    question: '6. Quelle est la température du moteur après un court essai (15–30 s) ?',
-    hint: 'Comparez avec les 3 autres moteurs du drone.',
-    options: [
-      {
-        id: 'normal',
-        label: '🌡️ Tiède / identique aux autres moteurs',
-        boostTokens: [],
-        excludeTokens: ['brulant', 'moteur chaud'],
-        isHealthy: true,
-      },
-      {
-        id: 'warm',
-        label: '♨️ Plus chaud que les autres mais supportable',
-        boostTokens: ['chaud', 'filtres', 'pid', 'roulement'],
-      },
-      {
-        id: 'burning',
-        label: '🔥 Brûlant (impossible de garder le doigt dessus)',
-        boostTokens: ['brulant', 'chaud', 'd-term', 'vis', 'filtres'],
-      },
-      {
-        id: 'cold',
-        label: '❄️ Reste complètement froid (ne tourne pas)',
-        boostTokens: ['pas de bips', 'esc', 'mosfet', 'broute'],
-        excludeTokens: ['brulant', 'desync'],
-      },
-    ],
-  },
-  {
-    id: 'beeps',
-    question: '7. Au branchement de la LiPo, quels bips ESC entendez-vous sur ce moteur ?',
-    hint: 'Les 3 premiers bips = alimentation ESC, les 2 derniers = signal de la FC.',
-    options: [
-      {
-        id: 'all-beeps',
-        label: '🔊 Tous les bips normaux (3 bips + 2 bips)',
-        boostTokens: [],
-        excludeTokens: ['pas de bips', '3 bips manquants', 'esc mort'],
-        isHealthy: true,
-      },
-      {
-        id: 'missing-2',
-        label: '🔉 Il manque les 2 derniers bips (pas de signal FC)',
-        boostTokens: ['bips', 'esc', 'signal', 'fc'],
-      },
-      {
-        id: 'no-beeps',
-        label: '🔇 Aucun bip sur ce moteur',
-        boostTokens: ['pas de bips', '3 bips manquants', 'esc mort', 'mosfet'],
-        excludeTokens: ['desync', 'roulement', 'brulant'],
-      },
-      {
-        id: 'loop-beeps',
-        label: '🔁 Bips en boucle ou saccades au démarrage',
-        boostTokens: ['broute', 'stuttering', 'phase', 'soudure'],
-      },
-    ],
-  },
-  {
-    id: 'betaflight-tab',
-    question: '8. Dans Betaflight (onglet Moteurs, hélices retirées), comment réagit ce moteur ?',
-    hint: 'Montez doucement le curseur de test entre 1020 et 1150.',
-    options: [
-      {
-        id: 'spins-ok',
-        label: '✅ Tourne régulièrement sans à-coup',
-        boostTokens: [],
-        isHealthy: true,
-      },
-      {
-        id: 'twitch',
-        label: '⚡ Vibre, broute ou oscille sur place sans se lancer',
-        boostTokens: ['broute', 'stuttering', 'soudure', 'phase', 'twitch'],
-      },
-      {
-        id: 'dead',
-        label: '🚫 Ne bouge pas du tout',
-        boostTokens: ['pas de bips', 'esc', 'mosfet'],
-      },
-      {
-        id: 'cuts-high',
-        label: '📉 Tourne puis décroche / coupe en montant les gaz',
-        boostTokens: ['desync', 'coupure', 'bluejay', 'demag'],
-      },
-    ],
-  },
-  {
-    id: 'swap-test',
-    question: '9. Si vous inversez ce moteur avec un autre bras sur l’ESC :',
-    hint: 'Le test croisé permet de savoir si le défaut vient du moteur ou de l’ESC.',
-    options: [
-      {
-        id: 'follows-motor',
-        label: '➡️ Le problème suit le moteur sur le nouveau bras',
-        boostTokens: ['bobinage', 'roulement', 'cloche', 'aimant', 'phase'],
-      },
-      {
-        id: 'stays-arm',
-        label: '🛑 Le problème reste sur le même bras (côté ESC / FC)',
-        boostTokens: ['esc', 'mosfet', 'pas de bips', 'soudure'],
-      },
-      {
-        id: 'not-tested',
-        label: '⏭️ Pas encore testé / Pas de fer à souder sous la main',
-        boostTokens: [],
-      },
-    ],
-  },
-  {
-    id: 'flight-behavior',
-    question: '10. Que se passe-t-il lorsque vous essayez de décoller ou de voler ?',
-    hint: 'Observez la stabilité du quad et le retour vidéo.',
-    options: [
-      {
-        id: 'death-roll',
-        label: '🌀 Death roll / tonneau brutal dès un coup de gaz',
-        boostTokens: ['desync', 'death roll', 'tonneau', 'coupure gaz', 'bluejay'],
-      },
-      {
-        id: 'jello',
-        label: '〰️ Jello vidéo, vibrations ou oscillation haute fréquence',
-        boostTokens: ['jello', 'roulement', 'cloche', 'voilee', 'vibrations'],
-      },
-      {
-        id: 'hot-flight',
-        label: '🔥 Vole mais moteur brûlant / perte d’autonomie',
-        boostTokens: ['chaud', 'brulant', 'd-term', 'filtres'],
-      },
-      {
-        id: 'no-flight',
-        label: '🛑 Impossible de décoller',
-        boostTokens: ['broute', 'pas de bips', 'bloque'],
-      },
-    ],
-  },
-  {
-    id: 'screws',
-    question: '11. Vérification des vis de fixation sous le moteur :',
-    hint: 'Une vis trop longue de 1 mm suffit à toucher le bobinage.',
-    options: [
-      {
-        id: 'short-ok',
-        label: '✅ Dégagement OK (au moins 1–2 mm sous le bobinage)',
-        boostTokens: [],
-        isHealthy: true,
-      },
-      {
-        id: 'long-screws',
-        label: '⚠️ Vis changées ou très proches des fils de cuivre',
-        boostTokens: ['vis', 'longue', 'bobinage', 'brulant', 'chaud'],
-      },
-      {
-        id: 'loose-screws',
-        label: '🔧 Vis desserrées ou manquantes',
-        boostTokens: ['vibrations', 'jello', 'bruit'],
-      },
-    ],
-  },
-  {
-    id: 'recent-config',
-    question: '12. Avez-vous modifié des réglages logiciels récemment ?',
-    hint: 'Firmware ESC (Bluejay / BLHeli) ou réglages Betaflight (PID / filtres).',
-    options: [
-      {
-        id: 'yes-esc',
-        label: '🎛️ Oui, flash ou réglage Bluejay / BLHeli (PWM, Startup, Demag)',
-        boostTokens: ['bluejay', 'demag', 'desync', 'broute'],
-      },
-      {
-        id: 'yes-pid',
-        label: '📊 Oui, tuning PID / D-Term / Filtres Betaflight',
-        boostTokens: ['d-term', 'filtres', 'chaud', 'brulant', 'pid'],
-      },
-      {
-        id: 'no-change',
-        label: '✅ Non, configuration inchangée',
-        boostTokens: [],
-        isHealthy: true,
-      },
-    ],
-  },
-];
-
-function tokenize(text: string): string[] {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .split(/[^a-z0-9]+/)
-    .filter((w) => w.length >= 2);
 }
 
 export interface ScoredCandidate {
@@ -390,14 +43,428 @@ export interface QuestionAnswerRecord {
   optionLabel: string;
   boostTokens: string[];
   excludeTokens?: string[];
-  preferCategories?: DiagnosticSymptomOption['category'][];
+  compatibleWith?: string[];
+  incompatibleWith?: string[];
   isHealthy?: boolean;
 }
 
+const ALL_MOTOR_IDS = [
+  'mot-stuttering',
+  'mot-desync',
+  'mot-overheating',
+  'mot-bearing-noise',
+  'mot-bent-bell',
+  'mot-magnet-shift',
+];
+
+function picked(answers: QuestionAnswerRecord[], qId: string, optId?: string): boolean {
+  return answers.some((a) => a.questionId === qId && (!optId || a.optionId === optId));
+}
+
+export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
+  {
+    id: 'primary-symptom',
+    question: '1. Quel est le symptôme principal que vous constatez ?',
+    hint: 'Cette première réponse oriente immédiatement vers la bonne branche (électrique, mécanique ou vol).',
+    skipIfPromptMatches: /\b(broute|saccade|stuttering|desync|tonneau|death roll|brulant|brûlant|chauffe|roulement|crecelle|crécelle|cloche voil|aimant)\b/i,
+    options: [
+      {
+        id: 'stuttering',
+        label: '⚡ Ne tourne pas, broute ou tremble au démarrage',
+        sub: 'Saccades au ralenti, pas de bips ou refus de se lancer',
+        boostTokens: ['broute', 'stuttering', 'soudure', 'phase', 'bips', 'twitch'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating'],
+      },
+      {
+        id: 'noise-play',
+        label: '⚙️ Bruit mécanique, frottement, jeu ou cloche abîmée',
+        sub: 'Bruit de crécelle/sable, cloche voilée ou axe tordu',
+        boostTokens: ['roulement', 'cloche', 'jeu', 'aimant', 'voilee', 'tordu', 'crecelle'],
+        compatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-magnet-shift'],
+        incompatibleWith: ['mot-desync', 'mot-overheating'],
+      },
+      {
+        id: 'flight-cut',
+        label: '🚁 Coupure brutale, desync ou death roll en vol',
+        sub: 'Le quad décroche lors d’un coup de gaz ou d’une figure',
+        boostTokens: ['desync', 'death roll', 'tonneau', 'coupure', 'bluejay', 'demag'],
+        compatibleWith: ['mot-desync', 'mot-magnet-shift'],
+        incompatibleWith: ['mot-bearing-noise'],
+      },
+      {
+        id: 'overheat',
+        label: '🔥 Moteur anormalement chaud ou brûlant',
+        sub: 'Cloche intouchable après 30s–1min de vol',
+        boostTokens: ['chaud', 'brulant', 'd-term', 'filtres', 'vis', 'bobinage'],
+        compatibleWith: ['mot-overheating', 'mot-bearing-noise'],
+        incompatibleWith: ['mot-stuttering'],
+      },
+      {
+        id: 'unsure',
+        label: '❓ Plusieurs symptômes / Je ne suis pas sûr',
+        sub: 'Poser les contrôles étape par étape',
+        boostTokens: [],
+      },
+    ],
+  },
+  {
+    id: 'when',
+    question: '2. Quand est survenu le problème ?',
+    hint: 'Le moment d’apparition élimine déjà plusieurs causes.',
+    skipIfPromptMatches: /\b(crash|impact|montage|neuf|soudure|branchement|progressiv)\b/i,
+    options: [
+      {
+        id: 'after-crash',
+        label: '💥 Immédiatement après un crash / impact',
+        sub: 'Choc sur arbre, béton, herbe ou hélice bloquée',
+        boostTokens: ['crash', 'impact', 'voilee', 'tordu', 'aimant', 'roulement'],
+        compatibleWith: ['mot-bent-bell', 'mot-bearing-noise', 'mot-magnet-shift', 'mot-stuttering'],
+      },
+      {
+        id: 'new-build',
+        label: '🛠️ Lors du premier montage / soudure',
+        sub: 'Drone neuf ou moteur récemment remplacé',
+        boostTokens: ['soudure', 'vis', 'longue', 'montage', 'phase', 'bips'],
+        compatibleWith: ['mot-stuttering', 'mot-overheating', 'mot-desync'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell'],
+      },
+      {
+        id: 'in-flight',
+        label: '💨 Apparu soudainement en vol',
+        sub: 'Fonctionnait bien puis anomalie en l’air',
+        boostTokens: ['vol', 'desync', 'coupure', 'chaud', 'brulant', 'd-term'],
+        compatibleWith: ['mot-desync', 'mot-overheating', 'mot-magnet-shift'],
+      },
+      {
+        id: 'power-on',
+        label: '🔌 Au branchement de la batterie LiPo',
+        sub: 'Anomalie dès l’alimentation au banc',
+        boostTokens: ['bips', 'esc', 'broute', 'phase', 'soudure'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-overheating', 'mot-desync', 'mot-bearing-noise'],
+      },
+      {
+        id: 'gradual',
+        label: '⏳ Dégradation progressive vol après vol',
+        sub: 'Bruit ou vibrations qui augmentent avec le temps',
+        boostTokens: ['roulement', 'jeu', 'crecelle', 'jello'],
+        compatibleWith: ['mot-bearing-noise', 'mot-overheating'],
+        incompatibleWith: ['mot-bent-bell'],
+      },
+    ],
+  },
+  {
+    id: 'hand-spin',
+    question: '3. Batterie débranchée (hélices retirées), en tournant la cloche à la main :',
+    hint: 'Faites tourner doucement la cloche du bout des doigts et sentez s’il y a une résistance.',
+    showIf: (answers) =>
+      !picked(answers, 'primary-symptom', 'stuttering') && !picked(answers, 'when', 'power-on'),
+    options: [
+      {
+        id: 'smooth',
+        label: '✅ Tourne librement, fluide et silencieux',
+        boostTokens: [],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell'],
+        isHealthy: true,
+      },
+      {
+        id: 'scratch',
+        label: '🪨 Frottement, point dur ou bruit de sable / crécelle',
+        boostTokens: ['roulement', 'crecelle', '684zz', 'jello'],
+        compatibleWith: ['mot-bearing-noise', 'mot-magnet-shift'],
+        incompatibleWith: ['mot-desync', 'mot-overheating', 'mot-stuttering'],
+      },
+      {
+        id: 'play',
+        label: '↕️ Jeu vertical ou latéral sur la cloche',
+        boostTokens: ['jeu', 'roulement', '684zz', 'circlip'],
+        compatibleWith: ['mot-bearing-noise'],
+        incompatibleWith: ['mot-desync', 'mot-overheating', 'mot-stuttering', 'mot-bent-bell'],
+      },
+      {
+        id: 'blocked',
+        label: '🛑 Cloche bloquée, voilée ou axe tordu',
+        boostTokens: ['voilee', 'tordu', 'aimant', 'frotte'],
+        compatibleWith: ['mot-bent-bell', 'mot-magnet-shift'],
+        incompatibleWith: ['mot-desync', 'mot-overheating'],
+      },
+    ],
+  },
+  {
+    id: 'visual-bell',
+    question: '4. En inspectant la cloche et les aimants sous la lumière :',
+    hint: 'Regardez le bord de la cloche et l’alignement des aimants néodyme.',
+    showIf: (answers) =>
+      picked(answers, 'primary-symptom', 'noise-play') ||
+      picked(answers, 'when', 'after-crash') ||
+      picked(answers, 'hand-spin', 'scratch') ||
+      picked(answers, 'hand-spin', 'blocked') ||
+      picked(answers, 'hand-spin', 'play'),
+    options: [
+      {
+        id: 'ok',
+        label: '✅ Aimants bien alignés, cloche parfaitement ronde',
+        boostTokens: [],
+        incompatibleWith: ['mot-bent-bell', 'mot-magnet-shift'],
+        isHealthy: true,
+      },
+      {
+        id: 'magnet',
+        label: '🧲 Un aimant est décollé, décalé ou fendu',
+        boostTokens: ['aimant', 'decolle', 'fendu', 'araldite'],
+        compatibleWith: ['mot-magnet-shift'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating', 'mot-stuttering', 'mot-desync'],
+      },
+      {
+        id: 'bent-bell',
+        label: '🔨 La cloche est enfoncée, voilée ou frotte le stator',
+        boostTokens: ['cloche', 'voilee', 'axe', 'tordu', 'frotte'],
+        compatibleWith: ['mot-bent-bell'],
+        incompatibleWith: ['mot-magnet-shift', 'mot-bearing-noise', 'mot-overheating', 'mot-stuttering', 'mot-desync'],
+      },
+      {
+        id: 'circlip',
+        label: '⭕ Circlip / vis sous l’axe desserré ou roulement marqué',
+        boostTokens: ['jeu', 'roulement', '684zz', 'circlip'],
+        compatibleWith: ['mot-bearing-noise'],
+        incompatibleWith: ['mot-bent-bell', 'mot-desync', 'mot-stuttering'],
+      },
+    ],
+  },
+  {
+    id: 'beeps',
+    question: '5. Au branchement de la LiPo, quels bips ESC entendez-vous sur ce moteur ?',
+    hint: 'Les 3 premiers bips = alimentation ESC, les 2 derniers = signal de la FC.',
+    showIf: (answers) =>
+      !picked(answers, 'hand-spin', 'scratch') &&
+      !picked(answers, 'hand-spin', 'play') &&
+      !picked(answers, 'hand-spin', 'blocked') &&
+      !picked(answers, 'primary-symptom', 'noise-play'),
+    options: [
+      {
+        id: 'all-beeps',
+        label: '🔊 Tous les bips normaux (3 bips + 2 bips)',
+        boostTokens: [],
+        isHealthy: true,
+      },
+      {
+        id: 'missing-2',
+        label: '🔉 Il manque les 2 derniers bips (pas de signal FC)',
+        boostTokens: ['bips', 'esc', 'signal', 'soudure'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating'],
+      },
+      {
+        id: 'no-beeps',
+        label: '🔇 Aucun bip sur ce moteur',
+        boostTokens: ['soudure', 'phase', 'esc', 'bobinage'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating', 'mot-desync'],
+      },
+      {
+        id: 'loop-beeps',
+        label: '🔁 Bips en boucle ou saccades au démarrage',
+        boostTokens: ['broute', 'stuttering', 'phase', 'soudure'],
+        compatibleWith: ['mot-stuttering', 'mot-desync'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell'],
+      },
+    ],
+  },
+  {
+    id: 'visual-winding',
+    question: '6. En observant le bobinage en cuivre et les fils du moteur :',
+    hint: 'Vérifiez la couleur du cuivre et l’état des 3 fils de phase.',
+    showIf: (answers) =>
+      picked(answers, 'primary-symptom', 'stuttering') ||
+      picked(answers, 'primary-symptom', 'overheat') ||
+      picked(answers, 'when', 'new-build') ||
+      picked(answers, 'beeps', 'no-beeps') ||
+      picked(answers, 'beeps', 'loop-beeps'),
+    options: [
+      {
+        id: 'copper-ok',
+        label: '✨ Cuivre propre, brillant et fils intacts',
+        boostTokens: [],
+        isHealthy: true,
+      },
+      {
+        id: 'burnt',
+        label: '🔥 Bobinage noirci, fondu ou odeur de brûlé',
+        boostTokens: ['brulant', 'chaud', 'bobinage'],
+        compatibleWith: ['mot-overheating', 'mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell'],
+      },
+      {
+        id: 'wire-cut',
+        label: '✂️ Un fil de phase est coupé, effiloché ou dessoudé',
+        boostTokens: ['broute', 'phase', 'soudure', 'stuttering'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating', 'mot-desync'],
+      },
+      {
+        id: 'screw-touch',
+        label: '🔩 Trace de frottement de vis sous les enroulements',
+        boostTokens: ['vis', 'longue', 'bobinage', 'chaud', 'brulant'],
+        compatibleWith: ['mot-overheating', 'mot-stuttering'],
+        incompatibleWith: ['mot-desync', 'mot-bearing-noise'],
+      },
+    ],
+  },
+  {
+    id: 'temp',
+    question: '7. Quelle est la température du moteur après un court essai (15–30 s) ?',
+    hint: 'Comparez avec les 3 autres moteurs du drone.',
+    skipIfPromptMatches: /\b(chaud|brulant|brûlant|chauffe|temperature|température)\b/i,
+    showIf: (answers) =>
+      !picked(answers, 'hand-spin', 'blocked') &&
+      !picked(answers, 'beeps', 'no-beeps') &&
+      (picked(answers, 'primary-symptom', 'overheat') ||
+        picked(answers, 'primary-symptom', 'flight-cut') ||
+        picked(answers, 'primary-symptom', 'unsure') ||
+        picked(answers, 'when', 'in-flight') ||
+        picked(answers, 'when', 'gradual')),
+    options: [
+      {
+        id: 'normal',
+        label: '🌡️ Tiède / identique aux autres moteurs',
+        boostTokens: [],
+        incompatibleWith: ['mot-overheating'],
+        isHealthy: true,
+      },
+      {
+        id: 'warm',
+        label: '♨️ Plus chaud que les autres mais supportable',
+        boostTokens: ['chaud', 'filtres', 'pid', 'roulement'],
+        compatibleWith: ['mot-overheating', 'mot-bearing-noise'],
+      },
+      {
+        id: 'burning',
+        label: '🔥 Brûlant (impossible de garder le doigt dessus)',
+        boostTokens: ['brulant', 'chaud', 'd-term', 'vis', 'filtres'],
+        compatibleWith: ['mot-overheating'],
+        incompatibleWith: ['mot-stuttering', 'mot-desync'],
+      },
+      {
+        id: 'cold',
+        label: '❄️ Reste complètement froid (ne tourne pas)',
+        boostTokens: ['broute', 'stuttering', 'soudure'],
+        compatibleWith: ['mot-stuttering'],
+        incompatibleWith: ['mot-overheating', 'mot-desync'],
+      },
+    ],
+  },
+  {
+    id: 'screws',
+    question: '8. Vérification des vis de fixation sous le moteur :',
+    hint: 'Une vis trop longue de 1 mm suffit à toucher le bobinage et faire chauffer le moteur.',
+    showIf: (answers) =>
+      picked(answers, 'primary-symptom', 'overheat') ||
+      picked(answers, 'when', 'new-build') ||
+      picked(answers, 'temp', 'burning') ||
+      picked(answers, 'temp', 'warm'),
+    options: [
+      {
+        id: 'short-ok',
+        label: '✅ Dégagement OK (au moins 1–2 mm sous le bobinage)',
+        boostTokens: [],
+        isHealthy: true,
+      },
+      {
+        id: 'long-screws',
+        label: '⚠️ Vis changées ou très proches des fils de cuivre',
+        boostTokens: ['vis', 'longue', 'bobinage', 'brulant', 'chaud'],
+        compatibleWith: ['mot-overheating', 'mot-stuttering'],
+        incompatibleWith: ['mot-desync', 'mot-bearing-noise'],
+      },
+      {
+        id: 'loose-screws',
+        label: '🔧 Vis desserrées ou manquantes',
+        boostTokens: ['vibrations', 'jello', 'roulement'],
+        compatibleWith: ['mot-bearing-noise', 'mot-overheating'],
+      },
+    ],
+  },
+  {
+    id: 'recent-config',
+    question: '9. Avez-vous modifié des réglages logiciels récemment ?',
+    hint: 'Firmware ESC (Bluejay / BLHeli) ou réglages Betaflight (PID / filtres).',
+    showIf: (answers) =>
+      !picked(answers, 'when', 'after-crash') &&
+      !picked(answers, 'hand-spin', 'blocked') &&
+      !picked(answers, 'hand-spin', 'scratch') &&
+      (picked(answers, 'primary-symptom', 'flight-cut') ||
+        picked(answers, 'primary-symptom', 'overheat') ||
+        picked(answers, 'when', 'in-flight') ||
+        picked(answers, 'temp', 'burning')),
+    options: [
+      {
+        id: 'yes-esc',
+        label: '🎛️ Oui, flash ou réglage Bluejay / BLHeli (PWM, Startup, Demag)',
+        boostTokens: ['bluejay', 'demag', 'desync', 'broute'],
+        compatibleWith: ['mot-desync', 'mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-overheating'],
+      },
+      {
+        id: 'yes-pid',
+        label: '📊 Oui, tuning PID / D-Term / Filtres Betaflight',
+        boostTokens: ['d-term', 'filtres', 'chaud', 'brulant'],
+        compatibleWith: ['mot-overheating'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-stuttering', 'mot-desync'],
+      },
+      {
+        id: 'no-change',
+        label: '✅ Non, configuration inchangée',
+        boostTokens: [],
+        isHealthy: true,
+      },
+    ],
+  },
+  {
+    id: 'flight-behavior',
+    question: '10. Que se passe-t-il en vol ou lors d’un coup de gaz ?',
+    hint: 'Observez la stabilité du quad et le comportement lors des accélérations.',
+    showIf: (answers) =>
+      picked(answers, 'primary-symptom', 'flight-cut') ||
+      picked(answers, 'primary-symptom', 'unsure') ||
+      picked(answers, 'when', 'in-flight'),
+    options: [
+      {
+        id: 'death-roll',
+        label: '🌀 Death roll / tonneau brutal dès un coup de gaz',
+        boostTokens: ['desync', 'death roll', 'tonneau', 'coupure gaz', 'bluejay'],
+        compatibleWith: ['mot-desync'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-overheating'],
+      },
+      {
+        id: 'jello',
+        label: '〰️ Jello vidéo, vibrations ou bruit métallique à haut régime',
+        boostTokens: ['jello', 'roulement', 'cloche', 'voilee', 'aimant'],
+        compatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-magnet-shift'],
+      },
+      {
+        id: 'hot-flight',
+        label: '🔥 Vole normalement mais moteur brûlant / autonomie réduite',
+        boostTokens: ['chaud', 'brulant', 'd-term', 'filtres'],
+        compatibleWith: ['mot-overheating'],
+        incompatibleWith: ['mot-desync', 'mot-stuttering'],
+      },
+    ],
+  },
+];
+
+function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .split(/[^a-z0-9]+/)
+    .filter((w) => w.length >= 2);
+}
+
 /**
- * Filtre et classe les symptômes en temps réel au fil des réponses.
- * Si l'utilisateur accumule des réponses contradictoires ou toutes "saines" alors qu'il y a un problème,
- * ou exclut toutes les pistes connues, la liste des résultats actifs peut tomber à 0 !
+ * Évalue les symptômes en temps réel grâce à la matrice explicite
+ * (`compatibleWith` / `incompatibleWith`) + indices du prompt.
  */
 export function evaluateCandidatesLive(
   symptoms: DiagnosticSymptomOption[],
@@ -408,65 +475,83 @@ export function evaluateCandidatesLive(
   const allBoosts = Array.from(
     new Set([...promptTokens, ...answers.flatMap((a) => a.boostTokens).flatMap(tokenize)])
   );
-  const allExcludes = Array.from(
-    new Set(answers.flatMap((a) => a.excludeTokens || []).flatMap(tokenize))
-  );
-  const preferredCats = answers.flatMap((a) => a.preferCategories || []);
   const healthyCount = answers.filter((a) => a.isHealthy).length;
 
-  return symptoms.map((symptom) => {
-    const corpus = tokenize(
-      `${symptom.title} ${symptom.description} ${symptom.likelyCause} ${symptom.aiDiagnostic.rootCause} ${symptom.matchingForumQuery.join(' ')}`
-    );
+  return symptoms
+    .map((symptom) => {
+      const corpus = tokenize(
+        `${symptom.title} ${symptom.description} ${symptom.likelyCause} ${symptom.aiDiagnostic.rootCause} ${symptom.matchingForumQuery.join(' ')}`
+      );
 
-    let score = 10;
-    let eliminated = false;
-    const matchReasons: string[] = [];
+      let score = 20;
+      let eliminated = false;
+      const matchReasons: string[] = [];
 
-    // Exclusion stricte si un critère contradictoire a été coché
-    const excludedHit = allExcludes.find((ex) => corpus.some((c) => c.includes(ex)));
-    if (excludedHit) {
-      eliminated = true;
-    }
-
-    // Si l'utilisateur a choisi une catégorie précise (et pas "all"), éliminer les catégories incompatibles
-    if (preferredCats.length > 0 && !preferredCats.includes(symptom.category)) {
-      eliminated = true;
-    }
-
-    // Correspondances positives
-    if (allBoosts.length > 0) {
-      const hits = allBoosts.filter((t) => corpus.some((c) => c.includes(t) || t.includes(c)));
-      if (hits.length > 0) {
-        score += hits.length * 15;
-        matchReasons.push(`Indices : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
-      } else if (answers.length >= 3) {
-        // Après plusieurs questions sans aucun indice correspondant, on considère la piste écartée
-        score -= 15;
+      // 1. Matrice explicite par ID de symptôme (aucun faux positif de sous-chaîne)
+      for (const ans of answers) {
+        if (ans.incompatibleWith?.includes(symptom.id)) {
+          eliminated = true;
+        }
+        if (ans.compatibleWith && ans.compatibleWith.length > 0) {
+          if (ans.compatibleWith.includes(symptom.id)) {
+            score += 35;
+          } else {
+            score -= 10;
+          }
+        }
       }
-    }
 
-    // Si l'utilisateur répond "tout est normal/sain" sur >= 5 contrôles, aucune panne standard ne correspond
-    if (healthyCount >= 5 && allBoosts.length === 0) {
-      eliminated = true;
-    }
+      // 2. Correspondances sémantiques (prompt libre + mots-clés)
+      if (allBoosts.length > 0) {
+        const hits = allBoosts.filter((t) => corpus.some((c) => c === t || (t.length >= 4 && c.includes(t))));
+        if (hits.length > 0) {
+          score += hits.length * 10;
+          matchReasons.push(`Indices : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
+        }
+      }
 
-    if (score <= 0) {
-      eliminated = true;
-    }
+      // 3. Fallback excludeTokens uniquement pour les questions générées dynamiquement
+      const dynamicExcludes = answers
+        .filter((a) => a.questionId.startsWith('dyn-') || a.questionId.startsWith('sim-'))
+        .flatMap((a) => a.excludeTokens || [])
+        .flatMap(tokenize);
+      if (dynamicExcludes.some((ex) => corpus.includes(ex))) {
+        eliminated = true;
+      }
 
-    return {
-      symptom,
-      score,
-      matchReasons,
-      eliminated,
-    };
-  }).sort((a, b) => b.score - a.score);
+      // 4. Si l'utilisateur répond "tout est sain" sur >= 4 contrôles sans aucun indice positif
+      if (healthyCount >= 4 && !answers.some((a) => a.compatibleWith?.includes(symptom.id))) {
+        eliminated = true;
+      }
+
+      if (score <= 0) {
+        eliminated = true;
+      }
+
+      return {
+        symptom,
+        score,
+        matchReasons,
+        eliminated,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
 }
 
 /**
- * Génère dynamiquement une question discriminante si toutes les questions statiques ont été posées
- * et qu'il reste encore >= 2 résultats candidats (ou de nouvelles résolutions futures).
+ * Vérifie si le diagnostic a déjà convergé clairement (évite de poser des questions inutiles).
+ */
+export function hasConverged(remainingCandidates: ScoredCandidate[], answersCount: number): boolean {
+  if (remainingCandidates.length <= 1) return true;
+  if (answersCount >= 2) {
+    const gap = remainingCandidates[0].score - remainingCandidates[1].score;
+    if (gap >= 40) return true;
+  }
+  return false;
+}
+
+/**
+ * Génère une question ciblée pour départager les 2 dernières pistes si nécessaire.
  */
 export function generateDynamicFollowUpQuestion(
   remainingCandidates: ScoredCandidate[],
@@ -479,50 +564,42 @@ export function generateDynamicFollowUpQuestion(
   const topA = remainingCandidates[0].symptom;
   const topB = remainingCandidates[1].symptom;
 
-  const tokensA = new Set(
-    tokenize(`${topA.title} ${topA.likelyCause} ${topA.matchingForumQuery.join(' ')}`)
-  );
-  const tokensB = new Set(
-    tokenize(`${topB.title} ${topB.likelyCause} ${topB.matchingForumQuery.join(' ')}`)
-  );
-
-  const uniqueA = Array.from(tokensA).filter((t) => !tokensB.has(t) && t.length >= 4).slice(0, 3);
-  const uniqueB = Array.from(tokensB).filter((t) => !tokensA.has(t) && t.length >= 4).slice(0, 3);
-
   const qId = `dyn-q-${stepNumber}-${topA.id}-${topB.id}`;
   if (askedIds.includes(qId)) return null;
 
   const extraCommunityHint =
     dynamicResolutions.length > 0
-      ? ` (Inclut ${dynamicResolutions.length} retours communauté)`
+      ? ` (${dynamicResolutions.length} retours communauté indexés)`
       : '';
 
   return {
     id: qId,
     isGenerated: true,
-    question: `${stepNumber}. Pour départager les 2 pistes restantes${extraCommunityHint} :`,
-    hint: 'Question générée automatiquement par simulation pour affiner les derniers résultats.',
+    question: `${stepNumber}. Pour départager les 2 dernières pistes${extraCommunityHint} :`,
+    hint: 'Choisissez la description qui correspond le mieux à votre situation.',
     options: [
       {
         id: `${qId}-a`,
-        label: `Cela correspond plutôt à : ${topA.title}`,
+        label: topA.title,
         sub: topA.description,
-        boostTokens: uniqueA.length > 0 ? uniqueA : tokenize(topA.title),
-        excludeTokens: uniqueB.slice(0, 1),
+        boostTokens: tokenize(topA.title),
+        compatibleWith: [topA.id],
+        incompatibleWith: [topB.id],
       },
       {
         id: `${qId}-b`,
-        label: `Cela correspond plutôt à : ${topB.title}`,
+        label: topB.title,
         sub: topB.description,
-        boostTokens: uniqueB.length > 0 ? uniqueB : tokenize(topB.title),
-        excludeTokens: uniqueA.slice(0, 1),
+        boostTokens: tokenize(topB.title),
+        compatibleWith: [topB.id],
+        incompatibleWith: [topA.id],
       },
       {
         id: `${qId}-neither`,
         label: 'Aucune de ces deux pistes ne correspond à mon cas',
-        sub: 'Arrêter et demander à l’IA ou poster sur le forum',
+        sub: 'Voir l’aide IA ou créer un post sur le forum',
         boostTokens: [],
-        excludeTokens: [...uniqueA.slice(0, 2), ...uniqueB.slice(0, 2)],
+        incompatibleWith: [topA.id, topB.id],
       },
     ],
   };
@@ -543,17 +620,12 @@ const STOP_WORDS = new Set([
   'moteur', 'moteurs', 'drone', 'quad', 'fpv', 'veille', 'rcgroups', 'wearefpv',
 ]);
 
-/**
- * Synthétise des questions candidates à partir des posts/résolutions dynamiques
- * et mesure le pouvoir discriminant (simulation d'arbre de décision).
- */
 export function synthesizeQuestionsFromResolutions(
   dynamicResolutions: DynamicResolution[],
   alreadyAskedIds: string[]
 ): DiagnosticQuestion[] {
   if (dynamicResolutions.length === 0) return [];
 
-  // Compter la fréquence des mots-clés dans les résolutions dynamiques (surtout les nouveaux posts)
   const docFreq = new Map<string, { count: number; sampleIssue: string }>();
   for (const res of dynamicResolutions) {
     const uniq = new Set(tokenize(`${res.issue} ${res.fix} ${res.keywords.join(' ')}`));
@@ -565,11 +637,10 @@ export function synthesizeQuestionsFromResolutions(
     }
   }
 
-  // Garder les termes qui divisent bien les cas (présents dans 1 à N-1 résolutions)
   const candidates = Array.from(docFreq.entries())
     .filter(([, info]) => info.count >= 1 && info.count <= Math.max(1, dynamicResolutions.length - 1))
     .sort((a, b) => b[1].count - a[1].count)
-    .slice(0, 5);
+    .slice(0, 4);
 
   return candidates
     .map(([keyword, info], idx) => {
@@ -579,7 +650,7 @@ export function synthesizeQuestionsFromResolutions(
         id: qId,
         isGenerated: true,
         question: `Question communauté #${idx + 1} : Votre souci concerne-t-il « ${keyword} » ?`,
-        hint: `Générée automatiquement à partir des retours pilotes (ex : ${info.sampleIssue.slice(0, 60)}...)`,
+        hint: `Issu des retours pilotes (ex : ${info.sampleIssue.slice(0, 60)}...)`,
         options: [
           {
             id: `${qId}-yes`,
@@ -599,135 +670,73 @@ export function synthesizeQuestionsFromResolutions(
 }
 
 /**
- * Simule quelle question (statique ou générée depuis les posts) sépare le mieux
- * les candidats restants ET s'adapte dynamiquement aux réponses déjà données.
+ * Sélectionne la prochaine question la plus discriminante selon le contexte,
+ * en respectant `showIf` et `skipIfPromptMatches`, et en arrêtant dès convergence.
  */
 export function simulateBestNextQuestion(
   remainingCandidates: ScoredCandidate[],
   dynamicResolutions: DynamicResolution[],
   askedIds: string[],
   stepNumber: number,
-  answers: QuestionAnswerRecord[] = []
+  answers: QuestionAnswerRecord[] = [],
+  promptText: string = ''
 ): DiagnosticQuestion | null {
-  const staticPool = MOTOR_STATIC_QUESTIONS.filter((q) => !askedIds.includes(q.id));
-  const pool: DiagnosticQuestion[] =
-    staticPool.length > 0
-      ? staticPool
-      : synthesizeQuestionsFromResolutions(dynamicResolutions, askedIds);
+  if (remainingCandidates.length <= 1) return null;
 
-  // Toujours démarrer par le moment d'apparition si aucune question n'a encore été posée
-  if (!askedIds.includes('when') && answers.length === 0) {
-    const whenQ = MOTOR_STATIC_QUESTIONS.find((q) => q.id === 'when');
-    if (whenQ) return whenQ;
+  const eligibleStatic = MOTOR_STATIC_QUESTIONS.filter((q) => {
+    if (askedIds.includes(q.id)) return false;
+    if (q.skipIfPromptMatches && promptText.trim() && q.skipIfPromptMatches.test(promptText)) {
+      return false;
+    }
+    if (q.showIf && !q.showIf(answers, promptText)) {
+      return false;
+    }
+    return true;
+  });
+
+  // Toujours poser primary-symptom en premier si éligible et aucune réponse encore donnée
+  if (answers.length === 0) {
+    const firstQ = eligibleStatic.find((q) => q.id === 'primary-symptom') || eligibleStatic[0];
+    if (firstQ) {
+      return {
+        ...firstQ,
+        question: firstQ.question.replace(/^\d+\.\s*/, `${stepNumber}. `),
+      };
+    }
   }
 
-  // Calcul des affinités contextuelles selon les réponses déjà données par l'utilisateur
-  const pickedOptionIds = new Set(answers.map((a) => `${a.questionId}:${a.optionId}`));
-  const contextualBias = (qId: string): number => {
-    let bias = 0;
-
-    if (pickedOptionIds.has('when:after-crash')) {
-      if (qId === 'hand-spin') bias += 45;
-      if (qId === 'visual-bell') bias += 40;
-      if (qId === 'flight-behavior') bias += 20;
-      if (qId === 'recent-config') bias -= 25;
-    }
-    if (pickedOptionIds.has('when:new-build')) {
-      if (qId === 'screws') bias += 45;
-      if (qId === 'beeps') bias += 40;
-      if (qId === 'visual-winding') bias += 30;
-    }
-    if (pickedOptionIds.has('when:in-flight')) {
-      if (qId === 'flight-behavior') bias += 45;
-      if (qId === 'temp') bias += 35;
-      if (qId === 'recent-config') bias += 25;
-    }
-    if (pickedOptionIds.has('when:power-on')) {
-      if (qId === 'beeps') bias += 50;
-      if (qId === 'betaflight-tab') bias += 40;
-      if (qId === 'visual-winding') bias += 30;
-    }
-    if (pickedOptionIds.has('when:gradual')) {
-      if (qId === 'hand-spin') bias += 45;
-      if (qId === 'temp') bias += 35;
-      if (qId === 'visual-bell') bias += 25;
-    }
-
-    if (pickedOptionIds.has('family:mecanique')) {
-      if (['hand-spin', 'visual-bell', 'screws'].includes(qId)) bias += 45;
-      if (['beeps', 'recent-config', 'betaflight-tab'].includes(qId)) bias -= 40;
-    }
-    if (pickedOptionIds.has('family:electrique')) {
-      if (['beeps', 'betaflight-tab', 'visual-winding', 'temp', 'swap-test'].includes(qId)) bias += 45;
-      if (qId === 'visual-bell') bias -= 35;
-    }
-    if (pickedOptionIds.has('family:vol')) {
-      if (['flight-behavior', 'recent-config', 'temp', 'swap-test'].includes(qId)) bias += 45;
-      if (qId === 'beeps') bias -= 30;
-    }
-
-    if (
-      pickedOptionIds.has('hand-spin:scratch') ||
-      pickedOptionIds.has('hand-spin:play') ||
-      pickedOptionIds.has('hand-spin:blocked')
-    ) {
-      if (qId === 'visual-bell') bias += 55;
-      if (qId === 'screws') bias += 35;
-    }
-    if (pickedOptionIds.has('temp:burning') || pickedOptionIds.has('temp:warm')) {
-      if (qId === 'screws') bias += 55;
-      if (qId === 'visual-winding') bias += 45;
-      if (qId === 'recent-config') bias += 35;
-    }
-    if (pickedOptionIds.has('beeps:no-beeps') || pickedOptionIds.has('beeps:missing-2')) {
-      if (qId === 'swap-test') bias += 60;
-      if (qId === 'betaflight-tab') bias += 40;
-    }
-    if (pickedOptionIds.has('beeps:loop-beeps')) {
-      if (qId === 'visual-winding') bias += 55;
-      if (qId === 'swap-test') bias += 45;
-    }
-
-    return bias;
-  };
-
+  const remainingIds = new Set(remainingCandidates.map((c) => c.symptom.id));
   let bestQ: DiagnosticQuestion | null = null;
   let bestScore = -Infinity;
 
-  for (const q of pool) {
-    // Simuler chaque option diagnostique sur remainingCandidates
-    let balancedGain = 0;
+  for (const q of eligibleStatic) {
     let usefulBranches = 0;
+    let balancedGain = 0;
+
     for (const opt of q.options) {
-      if (opt.isHealthy || opt.id === 'unsure' || opt.id === 'not-tested' || opt.id === 'unknown') {
-        continue;
-      }
-      const optTokens = tokenize(opt.boostTokens.join(' '));
+      if (opt.isHealthy || opt.id === 'unsure' || opt.id === 'not-tested') continue;
+
       let matches = 0;
-      for (const cand of remainingCandidates) {
-        const corpus = tokenize(
-          `${cand.symptom.title} ${cand.symptom.description} ${cand.symptom.likelyCause} ${cand.symptom.matchingForumQuery.join(' ')}`
-        );
-        const catOk =
-          !opt.preferCategories || opt.preferCategories.includes(cand.symptom.category);
-        const tokOk =
-          optTokens.length === 0 ||
-          optTokens.some((t) => corpus.some((c) => c.includes(t) || t.includes(c)));
-        if (catOk && tokOk) matches++;
+      for (const id of remainingIds) {
+        if (opt.incompatibleWith?.includes(id)) continue;
+        if (opt.compatibleWith && opt.compatibleWith.length > 0) {
+          if (opt.compatibleWith.includes(id)) matches++;
+        } else {
+          matches++;
+        }
       }
+
       if (matches > 0 && matches < remainingCandidates.length) {
         usefulBranches++;
         balancedGain += Math.min(matches, remainingCandidates.length - matches);
       }
     }
 
-    const splitScore =
-      usefulBranches * 12 +
-      balancedGain * 6 +
-      contextualBias(q.id);
+    if (usefulBranches === 0) continue;
 
-    if (splitScore > bestScore) {
-      bestScore = splitScore;
+    const score = usefulBranches * 15 + balancedGain * 8;
+    if (score > bestScore) {
+      bestScore = score;
       bestQ = q;
     }
   }
@@ -747,10 +756,6 @@ export function simulateBestNextQuestion(
   );
 }
 
-/**
- * Exécute une simulation complète sur tous les symptômes + tous les posts/résolutions
- * (relancée automatiquement à chaque nouveau post).
- */
 export function runFullTreeSimulation(
   symptoms: DiagnosticSymptomOption[],
   dynamicResolutions: DynamicResolution[]
@@ -758,59 +763,45 @@ export function runFullTreeSimulation(
   const synthesized = synthesizeQuestionsFromResolutions(dynamicResolutions, []);
   const totalScenarios = symptoms.length + dynamicResolutions.length;
 
-  // Simuler un chemin moyen par symptôme
   let totalDepth = 0;
   for (const sym of symptoms) {
     let remaining: ScoredCandidate[] = symptoms.map((s) => ({
       symptom: s,
-      score: 10,
+      score: 20,
       matchReasons: [],
       eliminated: false,
     }));
     const asked: string[] = [];
+    const answers: QuestionAnswerRecord[] = [];
     let depth = 0;
 
-    while (remaining.length > 1 && depth < 8) {
-      const nextQ = simulateBestNextQuestion(remaining, dynamicResolutions, asked, depth + 1);
+    while (remaining.length > 1 && depth < 6) {
+      const nextQ = simulateBestNextQuestion(remaining, dynamicResolutions, asked, depth + 1, answers);
       if (!nextQ) break;
       asked.push(nextQ.id);
       depth++;
 
-      // Choisir l'option simulée la plus proche du symptôme cible `sym`
-      const symCorpus = tokenize(
-        `${sym.title} ${sym.description} ${sym.likelyCause} ${sym.matchingForumQuery.join(' ')}`
-      );
-      let chosenOpt = nextQ.options[0];
-      let bestHits = -1;
-      for (const opt of nextQ.options) {
-        const hits = tokenize(opt.boostTokens.join(' ')).filter((t) =>
-          symCorpus.some((c) => c.includes(t) || t.includes(c))
-        ).length;
-        if (hits > bestHits) {
-          bestHits = hits;
-          chosenOpt = opt;
-        }
-      }
+      const chosenOpt =
+        nextQ.options.find((o) => o.compatibleWith?.includes(sym.id)) ||
+        nextQ.options.find((o) => !o.incompatibleWith?.includes(sym.id) && o.isHealthy) ||
+        nextQ.options[0];
 
-      const simEval = evaluateCandidatesLive(
-        remaining.map((r) => r.symptom),
-        [
-          {
-            questionId: nextQ.id,
-            questionLabel: nextQ.question,
-            optionId: chosenOpt.id,
-            optionLabel: chosenOpt.label,
-            boostTokens: chosenOpt.boostTokens,
-            excludeTokens: chosenOpt.excludeTokens,
-            preferCategories: chosenOpt.preferCategories,
-            isHealthy: chosenOpt.isHealthy,
-          },
-        ],
-        ''
-      ).filter((c) => !c.eliminated);
+      answers.push({
+        questionId: nextQ.id,
+        questionLabel: nextQ.question,
+        optionId: chosenOpt.id,
+        optionLabel: chosenOpt.label,
+        boostTokens: chosenOpt.boostTokens,
+        excludeTokens: chosenOpt.excludeTokens,
+        compatibleWith: chosenOpt.compatibleWith,
+        incompatibleWith: chosenOpt.incompatibleWith,
+        isHealthy: chosenOpt.isHealthy,
+      });
 
-      if (simEval.length === 0 || simEval.length === remaining.length) break;
+      const simEval = evaluateCandidatesLive(symptoms, answers, '').filter((c) => !c.eliminated);
+      if (simEval.length === 0) break;
       remaining = simEval;
+      if (hasConverged(remaining, answers.length)) break;
     }
 
     totalDepth += Math.max(1, depth);
@@ -821,7 +812,10 @@ export function runFullTreeSimulation(
     resolutionPostsCount: dynamicResolutions.length,
     synthesizedQuestionsCount: synthesized.length,
     averageDepth: symptoms.length > 0 ? Number((totalDepth / symptoms.length).toFixed(1)) : 0,
-    simulatedAt: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    simulatedAt: new Date().toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }),
   };
 }
-

@@ -18,6 +18,7 @@ import {
   evaluateCandidatesLive,
   simulateBestNextQuestion,
   runFullTreeSimulation,
+  hasConverged,
 } from '@/data/dynamicQuestionEngine';
 import {
   Search,
@@ -1386,7 +1387,8 @@ export function TroubleshootWizard({
                 optionLabel: opt.label,
                 boostTokens: opt.boostTokens,
                 excludeTokens: opt.excludeTokens,
-                preferCategories: opt.preferCategories,
+                compatibleWith: opt.compatibleWith,
+                incompatibleWith: opt.incompatibleWith,
                 isHealthy: opt.isHealthy,
               };
 
@@ -1403,7 +1405,7 @@ export function TroubleshootWizard({
                 setSelectedCircumstanceId(opt.id);
                 setSelectedCircumstance(opt.label);
               }
-              if (currentQ.id === 'family') {
+              if (currentQ.id === 'primary-symptom') {
                 setBehaviorFamily(opt.id);
               }
 
@@ -1420,16 +1422,17 @@ export function TroubleshootWizard({
                 return;
               }
 
-              // Toujours re-simuler la meilleure question suivante en fonction des réponses actuelles !
+              // Toujours re-simuler la meilleure question suivante en fonction des réponses actuelles et du prompt !
               const historyUpToHere = questionHistory.slice(0, questionIdx + 1);
               const askedIds = historyUpToHere.map((q) => q.id);
-              if (nextActive.length >= 2) {
+              if (!hasConverged(nextActive, updatedRecords.length)) {
                 const nextBestQ = simulateBestNextQuestion(
                   nextActive,
                   dynamicResolutions,
                   askedIds,
                   historyUpToHere.length + 1,
-                  updatedRecords
+                  updatedRecords,
+                  contextPrompt
                 );
                 if (nextBestQ) {
                   setQuestionHistory([...historyUpToHere, nextBestQ]);
@@ -1438,9 +1441,8 @@ export function TroubleshootWizard({
                 }
               }
 
-              // Plus qu'un résultat ou plus de question discriminante -> résultat final
-              setSelectedSymptom(nextActive[0].symptom);
-              setStep(5);
+              // Convergence atteinte -> afficher la liste des résultats correspondants
+              setShowResultsListView(true);
             };
 
             return (
