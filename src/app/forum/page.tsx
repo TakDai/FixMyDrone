@@ -238,398 +238,327 @@ export default function ForumDashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-        
-        {/* En-tête Dashboard & Veille */}
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-zinc-200">
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="px-2 py-0.5 rounded-[6px] bg-red-600 text-white font-mono text-[10px] font-black uppercase tracking-wider">
-                  Base Communautaire
-                </span>
-                <span className="text-xs font-mono text-zinc-500 font-semibold uppercase">
-                  Alimentée par l IA & la Veille Quotidienne
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-mono font-black uppercase tracking-tight text-black">
-                Dashboard Forum & Résolutions FPV
-              </h1>
-              <p className="text-sm text-zinc-600 mt-1 max-w-2xl font-normal">
-                Chaque panne est identifiée avec son indice de rareté (1 à 10) et sa solution validée. Posez votre question ou utilisez notre guide IA pour cibler directement la cause racine.
-              </p>
+      <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 xl:px-8 py-6 sm:py-8">
+        {/* En-tête épuré */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-zinc-200">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-[10px] font-bold uppercase">
+                Communauté &amp; Veille FPV
+              </span>
+              <span className="text-[11px] font-mono text-zinc-400">
+                {FORUM_POSTS.length} discussions indexées
+              </span>
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setReportModalOpen(true)}
-                className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-black text-white hover:bg-zinc-800 font-mono text-xs font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
-              >
-                <PlusCircle className="w-4 h-4 text-amber-400" />
-                <span>Signaler une Panne (+150 XP)</span>
-              </button>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900">
+              Forum FixMyDrone &amp; Actualités Drone
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-500 mt-1 max-w-2xl">
+              Cliquez sur n’importe quel sujet pour ouvrir la discussion complète, la check-list atelier et les avis pilotes.
+            </p>
           </div>
 
-          {/* 4 Compteurs Clés du Dashboard */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-            <div className="p-3.5 rounded-xl bg-white border-2 border-zinc-200 shadow-2xs">
-              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">
-                Résolutions IA Validées
-              </span>
-              <div className="text-xl font-mono font-black text-black mt-0.5 flex items-center gap-1.5">
-                <span>{FORUM_POSTS.filter((p) => p.resolvedWithAI).length}</span>
-                <Sparkles className="w-4 h-4 text-amber-500" />
-              </div>
-              <span className="text-[9px] font-mono text-zinc-400">Évaluation communautaire active</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-white border-2 border-zinc-200 shadow-2xs">
-              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">
-                Veille Multi-Sources
-              </span>
-              <div className="text-xl font-mono font-black text-black mt-0.5 flex items-center gap-1.5">
-                <span>Quotidienne</span>
-                <Globe className="w-4 h-4 text-purple-600" />
-              </div>
-              <span className="text-[9px] font-mono text-zinc-400">GitHub, RCGroups, IntoFPV</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-white border-2 border-zinc-200 shadow-2xs">
-              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">
-                Indices de Rareté
-              </span>
-              <div className="text-xl font-mono font-black text-black mt-0.5">
-                1 à 10
-              </div>
-              <span className="text-[9px] font-mono text-zinc-400">1 = Rarissime • 10 = Classique</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-white border-2 border-zinc-200 shadow-2xs">
-              <span className="text-[10px] font-mono font-bold text-zinc-500 uppercase">
-                Écosystème Partenaire
-              </span>
-              <div className="text-xl font-mono font-black text-black mt-0.5">
-                7 Sites
-              </div>
-              <span className="text-[9px] font-mono text-zinc-400">Comptes mutualisés (SSO)</span>
-            </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setReportModalOpen(true)}
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-black text-white hover:bg-zinc-800 font-mono text-xs font-bold uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4 text-amber-400" />
+              <span>Nouveau post (+150 XP)</span>
+            </button>
           </div>
         </div>
 
-        {/* Barre de Recherche et Filtres */}
-        <div className="bg-white rounded-2xl border-2 border-black p-4 sm:p-5 mb-6 shadow-sm">
-          {/* Barre de recherche */}
-          <div className="relative w-full mb-4">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher une panne, un composant, une marque (ex: EMAX ECO II, ELRS bind, DSHOT desync)..."
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-2 border-zinc-200 focus:border-black focus:outline-none font-mono text-xs text-black placeholder:text-zinc-400 transition-colors"
-            />
-          </div>
+        {/* GRILLE PRINCIPALE : LISTE DES POSTS (GAUCHE) + ACTUALITÉS DRONE (DROITE) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* COLONNE GAUCHE : RECHERCHE + FIL DE SUJETS (1 CLIC) */}
+          <div className="lg:col-span-8 xl:col-span-9 space-y-4">
+            {/* Barre de Recherche et Filtres */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-4 space-y-3 shadow-2xs">
+              <div className="relative w-full">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Rechercher une panne, un moteur, un ESC (ex: ECO II, ELRS bind, desync)..."
+                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-zinc-200 focus:border-black focus:outline-none text-xs sm:text-sm text-black placeholder:text-zinc-400 transition-colors"
+                />
+              </div>
 
-          {/* Onglets Dashboard Style Multi-Motors */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-zinc-200">
-            <button
-              onClick={() => setSelectedTab('all')}
-              className={`h-8 px-3 rounded-[10px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedTab === 'all'
-                  ? 'bg-black text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-              }`}
-            >
-              Tous les sujets ({FORUM_POSTS.length})
-            </button>
-            <button
-              onClick={() => setSelectedTab('new')}
-              className={`h-8 px-3 rounded-[10px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedTab === 'new'
-                  ? 'bg-black text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-              }`}
-            >
-              Nouveaux posts
-            </button>
-            <button
-              onClick={() => setSelectedTab('popular')}
-              className={`h-8 px-3 rounded-[10px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedTab === 'popular'
-                  ? 'bg-black text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-              }`}
-            >
-              Populaires & Recommandés
-            </button>
-            <button
-              onClick={() => setSelectedTab('ai-resolved')}
-              className={`h-8 px-3 rounded-[10px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedTab === 'ai-resolved'
-                  ? 'bg-black text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-              }`}
-            >
-              Résolus avec IA (1-10)
-            </button>
-            <button
-              onClick={() => setSelectedTab('daily-watch')}
-              className={`h-8 px-3 rounded-[10px] font-mono text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedTab === 'daily-watch'
-                  ? 'bg-black text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-              }`}
-            >
-              Veille Quotidienne Web
-            </button>
-          </div>
+              {/* Onglets */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                {[
+                  { id: 'all', label: `Tous (${FORUM_POSTS.length})` },
+                  { id: 'new', label: 'Récents' },
+                  { id: 'popular', label: 'Populaires' },
+                  { id: 'ai-resolved', label: 'Résolus IA' },
+                  { id: 'daily-watch', label: 'Veille Web' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setSelectedTab(tab.id as typeof selectedTab)}
+                    className={`h-7 px-3 rounded-lg font-mono text-[11px] font-bold transition-colors whitespace-nowrap cursor-pointer ${
+                      selectedTab === tab.id
+                        ? 'bg-black text-white'
+                        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-          {/* Filtres par Composant & Rareté */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 pt-1">
-            {/* Pilules Composants */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1">
-              {categoriesList.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`h-7 px-2.5 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? 'bg-red-600 text-white'
-                      : 'bg-zinc-100 text-zinc-600 hover:text-black hover:bg-zinc-200'
-                  }`}
+              {/* Filtres par Composant & Rareté */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-zinc-100">
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+                  {categoriesList.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`h-6 px-2.5 rounded-md font-mono text-[10px] font-semibold transition-colors whitespace-nowrap cursor-pointer ${
+                        selectedCategory === cat.id
+                          ? 'bg-zinc-900 text-white'
+                          : 'bg-zinc-50 text-zinc-500 hover:text-black hover:bg-zinc-100'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                <select
+                  value={selectedRarity}
+                  onChange={(e) => setSelectedRarity(e.target.value)}
+                  className="h-7 px-2 rounded-lg bg-zinc-50 border border-zinc-200 font-mono text-[10px] font-semibold text-zinc-700 focus:outline-none cursor-pointer shrink-0"
                 >
-                  {cat.label}
-                </button>
-              ))}
+                  <option value="all">Tous indices (1-10)</option>
+                  <option value="rare">1-3 (Rare)</option>
+                  <option value="medium">4-6 (Moyen)</option>
+                  <option value="common">7-10 (Classique)</option>
+                </select>
+              </div>
             </div>
 
-            {/* Sélecteur Rareté */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase">
-                Rareté :
-              </span>
-              <select
-                value={selectedRarity}
-                onChange={(e) => setSelectedRarity(e.target.value)}
-                className="h-7 px-2 rounded-lg bg-zinc-100 border border-zinc-200 font-mono text-[10px] font-bold text-black focus:outline-none cursor-pointer"
-              >
-                <option value="all">Tous indices (1-10)</option>
-                <option value="rare">1-3 (Panne très rare)</option>
-                <option value="medium">4-6 (Panne intermédiaire)</option>
-                <option value="common">7-10 (Panne classique)</option>
-              </select>
-            </div>
-          </div>
-        </div>
+            {/* LISTE DES POSTS (STYLE DISCOURSE, OUVERTURE EN 1 CLIC) */}
+            {filteredPosts.length > 0 ? (
+              <div className="bg-white rounded-2xl border border-zinc-200 divide-y divide-zinc-100 shadow-2xs overflow-hidden">
+                {filteredPosts.map((post) => {
+                  const votes = (helpfulVotes[post.id] || 0) + (post.replies || 0);
+                  const hasVoted = userVoted[post.id];
+                  const rarity = post.rarityIndex || 5;
+                  const postUrl = `/forum/post/?id=${encodeURIComponent(post.id)}`;
 
-        {/* LISTE DES POSTS DU FORUM */}
-        <div className="space-y-4">
-          {filteredPosts.length > 0 ? (
-            filteredPosts.map((post) => {
-              const isExpanded = expandedPostIds[post.id];
-              const votes = (helpfulVotes[post.id] || 0) + (post.replies || 0);
-              const hasVoted = userVoted[post.id];
-              const rarity = post.rarityIndex || 5;
-
-              // Style visuel selon la rareté
-              const isVeryRare = rarity <= 3;
-              const isClassic = rarity >= 7;
-
-              return (
-                <div
-                  key={post.id}
-                  className="bg-white rounded-2xl border-2 border-black p-5 shadow-sm hover:shadow-md transition-all"
-                >
-                  {/* Bandeau d'en-tête du post */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-zinc-200">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {/* Indice de Rareté */}
-                      <span
-                        className={`px-2 py-0.5 rounded-[6px] font-mono text-[10px] font-black uppercase tracking-wider ${
-                          isVeryRare
-                            ? 'bg-amber-500 text-black'
-                            : isClassic
-                            ? 'bg-zinc-800 text-white'
-                            : 'bg-zinc-200 text-zinc-800'
-                        }`}
-                      >
-                        Indice {rarity}/10 • {post.rarityLabel || (isVeryRare ? 'Panne Rare' : 'Panne Courante')}
-                      </span>
-
-                      {/* Tag Résolu avec IA */}
-                      {post.resolvedWithAI && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[6px] bg-emerald-100 text-emerald-800 border border-emerald-300 font-mono text-[10px] font-black uppercase">
-                          <Sparkles className="w-3 h-3 text-emerald-600" /> Résolu avec IA
-                        </span>
-                      )}
-
-                      {/* Tag Composant & Redirection Diagnostic */}
-                      <Link
-                        href={`/diagnostic/${post.category === 'motor' ? 'motors' : post.category}`}
-                        className="px-2 py-0.5 rounded-[6px] bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-mono text-[10px] font-bold uppercase transition-colors"
-                      >
-                        {post.categoryName || post.category}
-                      </Link>
-                    </div>
-
-                    {/* Date et Source */}
-                    <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
-                      <span>{post.createdAt}</span>
-                    </div>
-                  </div>
-
-                  {/* Titre & Modèle Exact */}
-                  <div className="mt-3">
-                    <div className="flex items-baseline gap-2 mb-1">
-                      {post.brand && post.model && (
-                        <span className="text-xs font-mono font-black text-red-600 uppercase">
-                          [{post.brand} {post.model}]
-                        </span>
-                      )}
-                      <h2 className="text-base sm:text-lg font-mono font-black text-black leading-snug">
-                        {post.title}
-                      </h2>
-                    </div>
-
-                    {/* Tags */}
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {post.tags.map((t, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 font-mono text-[9.5px]"
-                          >
-                            #{t}
+                  return (
+                    <div
+                      key={post.id}
+                      className="group p-4 sm:p-5 hover:bg-zinc-50/70 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      {/* Zone cliquable principale (1 clic vers la page complète du post) */}
+                      <Link href={postUrl} className="min-w-0 flex-1 space-y-1.5 block">
+                        <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                          {post.isResolved && (
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-[10px]">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Résolu
+                            </span>
+                          )}
+                          <span className="font-mono text-[10px] font-semibold text-zinc-500">
+                            {post.categoryName || post.category}
                           </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                          {post.brand && (
+                            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-semibold">
+                              {post.brand} {post.model ? `· ${post.model}` : ''}
+                            </span>
+                          )}
+                          <span className="font-mono text-[10px] text-zinc-400 opacity-60 group-hover:opacity-100 transition-opacity">
+                            Indice {rarity}/10
+                          </span>
+                        </div>
 
-                  {/* Solution Validée avec l'IA */}
-                  {post.solutionSummary && (
-                    <div className="mt-4 p-4 rounded-xl bg-zinc-50 border-2 border-dashed border-zinc-300">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] font-mono font-black uppercase text-black flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          Diagnostic & Solution d Atelier Recommandée
-                        </span>
+                        <h2 className="text-base font-bold text-zinc-900 group-hover:text-black leading-snug">
+                          {post.title}
+                        </h2>
+
+                        {post.solutionSummary && (
+                          <p className="text-xs text-zinc-500 line-clamp-1">
+                            {post.solutionSummary}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap items-center gap-3 pt-0.5 text-[11px] text-zinc-400">
+                          <span className="font-semibold text-zinc-600">
+                            @{post.author?.callsign || post.author?.name || 'Pilote_FPV'}
+                          </span>
+                          <span>•</span>
+                          <span>{post.createdAt}</span>
+                          {post.tags && post.tags.length > 0 && (
+                            <span className="hidden md:inline font-mono text-[10px] text-zinc-400 opacity-70 group-hover:opacity-100 transition-opacity">
+                              {post.tags.slice(0, 3).map((t) => `#${t}`).join('  ')}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+
+                      {/* Stats & actions rapides à droite */}
+                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                        <div className="flex items-center gap-3 text-xs font-mono text-zinc-400">
+                          <span className="inline-flex items-center gap-1" title="Réponses">
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            {post.replies || 0}
+                          </span>
+                          <span className="inline-flex items-center gap-1" title="Vues">
+                            <Eye className="w-3.5 h-3.5" />
+                            {post.views}
+                          </span>
+                        </div>
+
                         <button
                           type="button"
-                          onClick={() => toggleExpand(post.id)}
-                          className="text-[10px] font-mono text-zinc-500 hover:text-black font-bold uppercase flex items-center gap-1 cursor-pointer"
+                          onClick={() => handleHelpfulClick(post.id)}
+                          disabled={hasVoted}
+                          className={`inline-flex items-center gap-1 h-7 px-2.5 rounded-lg font-mono text-[11px] font-semibold transition-all cursor-pointer ${
+                            hasVoted
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'text-zinc-500 hover:bg-zinc-100 hover:text-black opacity-60 group-hover:opacity-100'
+                          }`}
+                          title="Marquer utile (+10 XP)"
                         >
-                          {isExpanded ? (
-                            <>
-                              Masquer <ChevronUp className="w-3 h-3" />
-                            </>
-                          ) : (
-                            <>
-                              Détails complets <ChevronDown className="w-3 h-3" />
-                            </>
-                          )}
+                          <ThumbsUp className="w-3 h-3" />
+                          <span>{votes}</span>
                         </button>
+
+                        <Link
+                          href={postUrl}
+                          className="inline-flex items-center gap-1 h-8 px-3 rounded-lg bg-zinc-900 text-white text-xs font-semibold opacity-80 group-hover:opacity-100 transition-opacity"
+                        >
+                          <span>Ouvrir</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
                       </div>
-
-                      <p className={`text-xs font-mono text-zinc-800 leading-relaxed ${
-                        isExpanded ? '' : 'line-clamp-2'
-                      }`}>
-                        {post.solutionSummary}
-                      </p>
-
-                      {/* Si déplié : actions d'atelier suggérées */}
-                      {isExpanded && (
-                        <div className="mt-3 pt-3 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-2">
-                          <div className="text-[10px] font-mono text-zinc-500">
-                            Source : {post.tags?.find((t) => ['RCGroups', 'GitHub', 'IntoFPV'].includes(t)) || 'Atelier FixMyDrone'}
-                          </div>
-                          <Link
-                            href={`/diagnostic/${post.category === 'motor' ? 'motors' : post.category}`}
-                            className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-red-600 hover:underline"
-                          >
-                            Lancer le diagnostic guidé pour ce composant <ArrowRight className="w-3 h-3" />
-                          </Link>
-                        </div>
-                      )}
                     </div>
-                  )}
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-14 bg-white rounded-2xl border border-dashed border-zinc-300">
+                <Search className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
+                <h3 className="font-bold text-sm text-black">
+                  Aucun sujet ne correspond à vos filtres
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategory('all');
+                    setSelectedRarity('all');
+                    setSelectedTab('all');
+                  }}
+                  className="mt-3 inline-flex items-center gap-1.5 h-8 px-4 rounded-xl bg-black text-white font-mono text-xs font-bold cursor-pointer"
+                >
+                  Réinitialiser les filtres
+                </button>
+              </div>
+            )}
+          </div>
 
-                  {/* Pied de Carte : Auteur, Votes & Interaction */}
-                  <div className="mt-4 pt-3 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-3">
-                    {/* Auteur */}
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center font-mono font-black text-[10px]">
-                        {post.author?.callsign ? post.author.callsign.charAt(0) : 'P'}
-                      </div>
-                      <span className="font-mono text-xs font-bold text-black">
-                        {post.author?.callsign || post.author?.name || 'Pilote FPV'}
+          {/* COLONNE DROITE : ACTUALITÉ DRONE & FPV + INFOS ÉCOSYSTÈME */}
+          <aside className="lg:col-span-4 xl:col-span-3 space-y-5 lg:sticky lg:top-24">
+            {/* Actualités Drone & FPV */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-4 sm:p-5 space-y-3.5 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-zinc-900 flex items-center gap-1.5">
+                  <Flame className="w-4 h-4 text-amber-500" />
+                  <span>Actualités Drone &amp; FPV</span>
+                </h2>
+                <span className="text-[10px] font-mono text-zinc-400">Veille</span>
+              </div>
+
+              <div className="divide-y divide-zinc-100">
+                {[
+                  {
+                    tag: 'Firmware',
+                    title: 'Betaflight 4.5 / 4.6 : réglage EZ Tune & filtres RPM pour éviter la chauffe moteur',
+                    desc: 'Pensez à activer le DShot bidirectionnel et limiter le D-Term si vos moteurs dépassent 65°C.',
+                    href: '/forum/post/?id=mot-overheating',
+                  },
+                  {
+                    tag: 'ESC',
+                    title: 'Bluejay 0.21 (BLHeli_S) : 48kHz vs 24kHz et Demag Compensation',
+                    desc: 'Sur les 5 pouces freestyle 2207/2306, passer le Demag sur High réduit fortement les desyncs.',
+                    href: '/forum/post/?id=mot-desync',
+                  },
+                  {
+                    tag: 'Radio / RX',
+                    title: 'ExpressLRS 3.5 : bonnes pratiques de bind phrase & télémétrie',
+                    desc: 'Vérifiez la correspondance de version majeure TX/RX avant toute mise à jour terrain.',
+                    href: '/diagnostic/rx',
+                  },
+                  {
+                    tag: 'Matériel',
+                    title: 'Multi-Motors.fr : plus de 4 000 moteurs brushless FPV comparés',
+                    desc: 'Consultez les fiches KV, poids, shaft et dimensions depuis l’onglet Specs ou le catalogue.',
+                    href: '/specs/',
+                  },
+                  {
+                    tag: 'Sécurité',
+                    title: 'Réglementation AlphaTango & sécurité LiPo à l’atelier',
+                    desc: 'Utilisez toujours un Smoke Stopper après soudure et retirez les hélices pour tout test Betaflight.',
+                    href: '/catalogue',
+                  },
+                ].map((news, idx) => (
+                  <Link
+                    key={idx}
+                    href={news.href}
+                    className="group block py-3 first:pt-1 last:pb-1 space-y-1"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[9px] font-mono uppercase font-bold px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 group-hover:bg-black group-hover:text-white transition-colors">
+                        {news.tag}
                       </span>
-                      {post.author?.badge && (
-                        <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-mono text-[9px] font-bold">
-                          {post.author.badge}
-                        </span>
-                      )}
+                      <ArrowRight className="w-3 h-3 text-zinc-300 group-hover:text-black transition-colors" />
                     </div>
-
-                    {/* Boutons d'interaction */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleHelpfulClick(post.id)}
-                        disabled={hasVoted}
-                        className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-lg font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
-                          hasVoted
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 hover:text-black border border-zinc-300'
-                        }`}
-                        title="Voter pour cette solution (+10 XP pour vous)"
-                      >
-                        <ThumbsUp className="w-3.5 h-3.5" />
-                        <span>{votes}</span>
-                        <span className="hidden sm:inline">
-                          {hasVoted ? 'Solution validée !' : 'Utile (+10 XP)'}
-                        </span>
-                      </button>
-
-                      <Link
-                        href={`/diagnostic/${post.category === 'motor' ? 'motors' : post.category}`}
-                        className="inline-flex items-center gap-1 h-8 px-3 rounded-lg bg-black text-white hover:bg-zinc-800 font-mono text-xs font-bold uppercase transition-colors"
-                      >
-                        <Wrench className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Diagnostiquer</span>
-                      </Link>
+                    <div className="text-xs font-bold text-zinc-900 group-hover:text-black leading-snug">
+                      {news.title}
                     </div>
+                    <p className="text-[11px] text-zinc-500 line-clamp-2 leading-relaxed">
+                      {news.desc}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Raccourcis rapides */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-4 space-y-2.5 shadow-2xs">
+              <div className="text-[10px] font-mono uppercase tracking-wider font-bold text-zinc-400">
+                Repères communauté
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 rounded-xl bg-zinc-50">
+                  <div className="text-[10px] font-mono text-zinc-400">Résolus IA</div>
+                  <div className="text-base font-black text-black">
+                    {FORUM_POSTS.filter((p) => p.resolvedWithAI).length}
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-zinc-300">
-              <Search className="w-10 h-10 text-zinc-400 mx-auto mb-2" />
-              <h3 className="font-mono font-black text-base text-black uppercase">
-                Aucun sujet ne correspond à vos filtres
-              </h3>
-              <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto font-mono">
-                Essayez d élargir vos critères de recherche ou réinitialisez les filtres par composant.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('all');
-                  setSelectedRarity('all');
-                  setSelectedTab('all');
-                }}
-                className="mt-4 inline-flex items-center gap-1.5 h-9 px-4 rounded-xl bg-black text-white font-mono text-xs font-bold uppercase cursor-pointer"
+                <div className="p-2.5 rounded-xl bg-zinc-50">
+                  <div className="text-[10px] font-mono text-zinc-400">Écosystème</div>
+                  <div className="text-base font-black text-black">7 sites</div>
+                </div>
+              </div>
+              <Link
+                href="/"
+                className="w-full py-2.5 px-3 rounded-xl border border-zinc-200 hover:border-black text-xs font-bold text-black flex items-center justify-between transition-colors"
               >
-                Réinitialiser les filtres
-              </button>
+                <span>Lancer un diagnostic interactif</span>
+                <Wrench className="w-3.5 h-3.5" />
+              </Link>
             </div>
-          )}
+          </aside>
         </div>
-
       </main>
 
       {/* Modale d'authentification */}
