@@ -451,6 +451,91 @@ export const MOTOR_STATIC_QUESTIONS: DiagnosticQuestion[] = [
       },
     ],
   },
+  {
+    id: 'esc-model',
+    question: '11. Quel ESC ou firmware utilisez-vous ? (la cause peut être en amont)',
+    hint: 'Chaque famille d’ESC a ses faiblesses connues (MOSFETs, Demag Bluejay, condensateur).',
+    showIf: (answers) =>
+      !picked(answers, 'hand-spin', 'blocked') &&
+      !picked(answers, 'hand-spin', 'scratch') &&
+      (picked(answers, 'primary-symptom', 'stuttering') ||
+        picked(answers, 'primary-symptom', 'flight-cut') ||
+        picked(answers, 'beeps', 'no-beeps') ||
+        picked(answers, 'beeps', 'missing-2') ||
+        picked(answers, 'beeps', 'loop-beeps') ||
+        picked(answers, 'temp', 'burning')),
+    options: [
+      {
+        id: 'speedybee-bluejay',
+        label: '🐝 SpeedyBee / BLHeli_S flashé Bluejay (48kHz / 96kHz)',
+        sub: 'Sensible au Startup Power et Demag Compensation sur gros stators',
+        boostTokens: ['bluejay', 'demag', 'desync', 'esc', 'speedybee'],
+        compatibleWith: ['mot-desync', 'mot-stuttering', 'esc-no-3-beeps'],
+      },
+      {
+        id: 'tmotor-blheli32',
+        label: '⚡ T-Motor / Holybro / Foxeer (BLHeli_32 ou AM32)',
+        sub: 'Vérifier condensateur Low-ESR, timing 22° et MOSFETs',
+        boostTokens: ['esc', 'mosfet', 'desync', 'condensateur'],
+        compatibleWith: ['mot-desync', 'esc-no-3-beeps', 'mot-stuttering'],
+      },
+      {
+        id: 'aio-whoop',
+        label: '🪶 Carte AIO Whoop / Toothpick (1S–2S)',
+        sub: 'MOSFETs fins sensibles aux blocages d’hélice et prises PH2.0/BT2.0',
+        boostTokens: ['esc', 'mosfet', 'broute', 'soudure'],
+        compatibleWith: ['mot-stuttering', 'esc-no-3-beeps'],
+      },
+      {
+        id: 'esc-unknown',
+        label: '❓ Autre ESC / Je ne connais pas le modèle exact',
+        boostTokens: ['esc'],
+      },
+    ],
+  },
+  {
+    id: 'trace-source',
+    question: '12. Remonter à la source : avez-vous isolé le moteur de son bras sur l’ESC ?',
+    hint: 'En inversant 2 moteurs (ou en testant la continuité des 3 phases), on sait tout de suite où ça bloque.',
+    showIf: (answers) =>
+      !picked(answers, 'hand-spin', 'blocked') &&
+      !picked(answers, 'hand-spin', 'scratch') &&
+      (picked(answers, 'primary-symptom', 'stuttering') ||
+        picked(answers, 'beeps', 'no-beeps') ||
+        picked(answers, 'beeps', 'missing-2') ||
+        picked(answers, 'beeps', 'loop-beeps') ||
+        picked(answers, 'esc-model')),
+    options: [
+      {
+        id: 'follows-motor',
+        label: '➡️ Le problème suit le moteur sur un autre bras (Source = Moteur)',
+        sub: 'Le canal de l’ESC fonctionne bien avec un autre moteur',
+        boostTokens: ['bobinage', 'phase', 'soudure', 'stuttering'],
+        compatibleWith: ['mot-stuttering', 'mot-magnet-shift'],
+        incompatibleWith: ['esc-no-3-beeps'],
+      },
+      {
+        id: 'stays-arm',
+        label: '🔌 Le problème reste sur le même bras (Source = ESC / FC)',
+        sub: 'Un autre moteur ne tourne pas non plus sur ce bras',
+        boostTokens: ['esc', 'mosfet', 'bips', 'nappe', 'fc'],
+        compatibleWith: ['esc-no-3-beeps', 'mot-stuttering'],
+        incompatibleWith: ['mot-bearing-noise', 'mot-bent-bell', 'mot-magnet-shift', 'mot-overheating'],
+      },
+      {
+        id: 'continuity-ok',
+        label: '📟 Continuité OK entre les 3 fils du moteur au multimètre',
+        sub: 'Bobinage sain → la coupure vient de la soudure, de l’ESC ou du signal FC',
+        boostTokens: ['esc', 'soudure', 'signal', 'bips'],
+        compatibleWith: ['esc-no-3-beeps', 'mot-stuttering'],
+      },
+      {
+        id: 'not-tested',
+        label: '⏭️ Pas encore testé / Pas de fer à souder sous la main',
+        boostTokens: [],
+      },
+    ],
+  },
 ];
 
 function tokenize(text: string): string[] {
@@ -476,6 +561,14 @@ export function evaluateCandidatesLive(
     new Set([...promptTokens, ...answers.flatMap((a) => a.boostTokens).flatMap(tokenize)])
   );
   const healthyCount = answers.filter((a) => a.isHealthy).length;
+  const hasUpstreamEscClue =
+    picked(answers, 'beeps', 'no-beeps') ||
+    picked(answers, 'beeps', 'missing-2') ||
+    picked(answers, 'beeps', 'loop-beeps') ||
+    picked(answers, 'trace-source', 'stays-arm') ||
+    picked(answers, 'trace-source', 'continuity-ok') ||
+    picked(answers, 'esc-model') ||
+    promptTokens.some((t) => ['esc', 'mosfet', 'bips', 'bluejay', 'blheli'].includes(t));
 
   return symptoms
     .map((symptom) => {
@@ -486,6 +579,10 @@ export function evaluateCandidatesLive(
       let score = 20;
       let eliminated = false;
       const matchReasons: string[] = [];
+
+      if (symptom.id.startsWith('esc-') && !hasUpstreamEscClue) {
+        eliminated = true;
+      }
 
       // 1. Matrice explicite par ID de symptôme (aucun faux positif de sous-chaîne)
       for (const ans of answers) {
@@ -536,6 +633,77 @@ export function evaluateCandidatesLive(
       };
     })
     .sort((a, b) => b.score - a.score);
+}
+
+export interface RootCauseChainAnalysis {
+  blockedStage: 'lipo' | 'esc' | 'soudure' | 'moteur' | 'fc';
+  blockedLabel: string;
+  summary: string;
+  confidence: number;
+}
+
+/**
+ * Analyse la chaîne complète LiPo -> ESC -> Soudures -> Moteur <- FC
+ * pour indiquer où le signal ou la puissance bloque ("remonter à la source").
+ */
+export function analyzeRootCauseChain(
+  answers: QuestionAnswerRecord[],
+  promptText: string,
+  escLabel?: string
+): RootCauseChainAnalysis {
+  const txt = promptText.toLowerCase();
+
+  if (
+    picked(answers, 'trace-source', 'stays-arm') ||
+    picked(answers, 'beeps', 'no-beeps') ||
+    /\b(mosfet|3 bips manquants|esc mort)\b/i.test(txt)
+  ) {
+    return {
+      blockedStage: 'esc',
+      blockedLabel: escLabel ? `ESC (${escLabel})` : 'ESC 4-en-1 / Étage MOSFET',
+      summary:
+        'En remontant à la source, le défaut ne dépend pas uniquement du moteur : l’alimentation triphasée ou un MOSFET de l’ESC est bloqué.',
+      confidence: 88,
+    };
+  }
+
+  if (
+    picked(answers, 'beeps', 'missing-2') ||
+    picked(answers, 'recent-config', 'yes-pid') ||
+    picked(answers, 'temp', 'burning') ||
+    /\b(d-term|pid|signal fc|2 derniers bips)\b/i.test(txt)
+  ) {
+    return {
+      blockedStage: 'fc',
+      blockedLabel: 'FC / Signal DShot & Tuning PID',
+      summary:
+        'La source probable provient du signal de commande ou du filtrage PID/D-Term envoyé par la Flight Controller vers l’ESC.',
+      confidence: 84,
+    };
+  }
+
+  if (
+    picked(answers, 'visual-winding', 'wire-cut') ||
+    picked(answers, 'beeps', 'loop-beeps') ||
+    picked(answers, 'trace-source', 'continuity-ok') ||
+    /\b(soudure|phase|fil coupe|broute)\b/i.test(txt)
+  ) {
+    return {
+      blockedStage: 'soudure',
+      blockedLabel: 'Liaison ESC ↔ Moteur (Soudures / 3 Phases)',
+      summary:
+        'Le courant sort de l’ESC mais une des 3 phases est interrompue entre le pad ESC et l’entrée du stator.',
+      confidence: 86,
+    };
+  }
+
+  return {
+    blockedStage: 'moteur',
+    blockedLabel: 'Moteur Brushless (Cloche, Roulements ou Bobinage)',
+    summary:
+      'L’alimentation et le signal arrivent correctement en amont : le blocage est localisé dans le moteur lui-même.',
+    confidence: 90,
+  };
 }
 
 /**

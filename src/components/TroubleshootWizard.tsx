@@ -19,6 +19,7 @@ import {
   simulateBestNextQuestion,
   runFullTreeSimulation,
   hasConverged,
+  analyzeRootCauseChain,
 } from '@/data/dynamicQuestionEngine';
 import {
   Search,
@@ -379,14 +380,32 @@ export function TroubleshootWizard({
     ]
   );
 
+  const candidateSymptomsPool = useMemo(() => {
+    if (def.id === 'motors') {
+      const escSyms = getDiagnosticDefinition('esc').symptoms.slice(0, 2);
+      return [...def.symptoms, ...escSyms];
+    }
+    return def.symptoms;
+  }, [def]);
+
+  const selectedEscLabel = useMemo(() => {
+    const rec = answerRecords.find((r) => r.questionId === 'esc-model');
+    return rec ? rec.optionLabel.replace(/^[^\wÀ-ÿ]+/, '').trim() : '';
+  }, [answerRecords]);
+
+  const rootCauseChain = useMemo(
+    () => analyzeRootCauseChain(answerRecords, contextPrompt, selectedEscLabel),
+    [answerRecords, contextPrompt, selectedEscLabel]
+  );
+
   const rankedSymptoms = useMemo(
     () => rankSymptomsDynamically(def.symptoms, queryContext),
     [def.symptoms, queryContext]
   );
 
   const liveCandidates = useMemo(
-    () => evaluateCandidatesLive(def.symptoms, answerRecords, contextPrompt),
-    [def.symptoms, answerRecords, contextPrompt]
+    () => evaluateCandidatesLive(candidateSymptomsPool, answerRecords, contextPrompt),
+    [candidateSymptomsPool, answerRecords, contextPrompt]
   );
 
   const activeCandidates = useMemo(
@@ -1410,7 +1429,7 @@ export function TroubleshootWizard({
               }
 
               const nextEvaluated = evaluateCandidatesLive(
-                def.symptoms,
+                candidateSymptomsPool,
                 updatedRecords,
                 contextPrompt
               );
@@ -1518,7 +1537,7 @@ export function TroubleshootWizard({
                       {activeCandidates.map(({ symptom, matchReasons }, idx) => (
                         <Link
                           key={symptom.id}
-                          href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
+                          href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}${selectedEscLabel ? `&esc=${encodeURIComponent(selectedEscLabel)}` : ''}&source=${encodeURIComponent(rootCauseChain.blockedStage)}`}
                           className="w-full p-3 rounded-xl border border-zinc-200 hover:border-black bg-zinc-50/70 hover:bg-white text-left transition-all cursor-pointer flex items-center justify-between gap-3"
                         >
                           <div className="min-w-0">
@@ -1831,7 +1850,7 @@ export function TroubleshootWizard({
           </div>
 
           <Link
-            href={`/forum/post/?id=${encodeURIComponent(selectedSymptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
+            href={`/forum/post/?id=${encodeURIComponent(selectedSymptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}${selectedEscLabel ? `&esc=${encodeURIComponent(selectedEscLabel)}` : ''}&source=${encodeURIComponent(rootCauseChain.blockedStage)}`}
             className="w-full py-3 px-4 rounded-2xl bg-black hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-between gap-2 transition-colors shadow-sm"
           >
             <span>Ouvrir la page complète du post (commentaires, notation &amp; fiche complète)</span>
@@ -2047,7 +2066,7 @@ export function TroubleshootWizard({
               {liveResultsList.map(({ symptom, matchReasons }, idx) => (
                 <Link
                   key={symptom.id}
-                  href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
+                  href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}${selectedEscLabel ? `&esc=${encodeURIComponent(selectedEscLabel)}` : ''}&source=${encodeURIComponent(rootCauseChain.blockedStage)}`}
                   className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
                     idx === 0
                       ? 'border-black bg-zinc-50 hover:bg-white shadow-xs'

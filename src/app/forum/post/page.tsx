@@ -76,6 +76,8 @@ function ForumPostDetailContent() {
   const searchParams = useSearchParams();
   const rawId = searchParams.get('id') || '';
   const motorParam = searchParams.get('motor') || '';
+  const escParam = searchParams.get('esc') || '';
+  const sourceParam = searchParams.get('source') || '';
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const solutionRef = useRef<HTMLDivElement | null>(null);
   const composerSectionRef = useRef<HTMLDivElement | null>(null);
@@ -378,6 +380,79 @@ function ForumPostDetailContent() {
 
   const acceptedComment = comments.find((c) => c.isAcceptedSolution);
 
+  const [checkedSteps, setCheckedSteps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!postData?.id || typeof window === 'undefined') return;
+    try {
+      const saved = window.localStorage.getItem(`fixmydrone_post_checks_v1_${postData.id}`);
+      setCheckedSteps(saved ? JSON.parse(saved) : []);
+    } catch {
+      setCheckedSteps([]);
+    }
+  }, [postData?.id]);
+
+  const toggleChecklistStep = (idx: number) => {
+    if (!postData?.id) return;
+    const next = checkedSteps.includes(idx)
+      ? checkedSteps.filter((i) => i !== idx)
+      : [...checkedSteps, idx];
+    setCheckedSteps(next);
+    try {
+      window.localStorage.setItem(`fixmydrone_post_checks_v1_${postData.id}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const checklistItems = useMemo(() => {
+    if (postData?.diagnosticSteps && postData.diagnosticSteps.length > 0) {
+      return postData.diagnosticSteps;
+    }
+    return [
+      'Retirer les hélices et inspecter visuellement le moteur (aimants, fils, vis).',
+      'Vérifier la continuité des 3 phases au multimètre (0.05–0.15 Ω).',
+      'Écouter les bips au branchement LiPo (3 bips ESC + 2 bips FC).',
+      'Effectuer un test croisé sur un autre bras de l’ESC pour remonter à la source.',
+    ];
+  }, [postData?.diagnosticSteps]);
+
+  const effectiveSource = useMemo(() => {
+    if (sourceParam) return sourceParam;
+    if (postData?.id?.startsWith('esc-') || postData?.categoryId === 'esc') return 'esc';
+    if (postData?.id === 'mot-stuttering') return 'soudure';
+    return 'moteur';
+  }, [sourceParam, postData?.id, postData?.categoryId]);
+
+  const probableMotorAndEscIssues = useMemo(() => {
+    const motorTop = (DIAGNOSTIC_DEFINITIONS.motors?.symptoms || [])
+      .slice()
+      .sort((a, b) => b.rarityIndex - a.rarityIndex)
+      .slice(0, 3)
+      .map((s) => ({ id: s.id, title: s.title, kind: 'Moteur' as const, rarity: s.rarityIndex }));
+    const escTop = (DIAGNOSTIC_DEFINITIONS.esc?.symptoms || [])
+      .slice()
+      .sort((a, b) => b.rarityIndex - a.rarityIndex)
+      .slice(0, 2)
+      .map((s) => ({ id: s.id, title: s.title, kind: 'ESC' as const, rarity: s.rarityIndex }));
+    return [...motorTop, ...escTop].filter((x) => x.id !== postData?.id);
+  }, [postData?.id]);
+
+  const encounteredHardwarePosts = useMemo(() => {
+    const qTokens = `${motorParam} ${escParam} ${postData?.brand || ''}`
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((t) => t.length >= 3);
+    return FORUM_POSTS.filter((p) => {
+      if (p.id === postData?.id) return false;
+      if (qTokens.length > 0) {
+        const hay = `${p.title} ${p.brand} ${p.model} ${p.tags.join(' ')}`.toLowerCase();
+        if (qTokens.some((t) => hay.includes(t))) return true;
+      }
+      return p.category === 'motors' || p.category === 'esc';
+    }).slice(0, 4);
+  }, [motorParam, escParam, postData?.brand, postData?.id]);
+
   if (!postData) {
     return (
       <div className="max-w-3xl mx-auto p-6 sm:p-10 text-center space-y-4">
@@ -404,7 +479,7 @@ function ForumPostDetailContent() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* FIL D'ARIANE FORUM */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-2 text-xs text-zinc-600">
@@ -449,6 +524,11 @@ function ForumPostDetailContent() {
               {postData.model ? ` · ${postData.model}` : ''}
             </span>
           )}
+          {escParam && (
+            <span className="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-300 text-[11px] font-mono font-semibold text-amber-900">
+              ESC : {escParam}
+            </span>
+          )}
           {postData.tags.map((tag) => (
             <span
               key={tag}
@@ -465,10 +545,153 @@ function ForumPostDetailContent() {
         </h1>
       </header>
 
-      {/* CORPS DU FORUM : FIL DE DISCUSSION (GAUCHE) + TIMELINE DISCOURSE (DROITE) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* COLONNE PRINCIPALE : STREAM DE POSTS */}
-        <div className="lg:col-span-9 divide-y divide-zinc-200 bg-white border border-zinc-200 rounded-2xl shadow-xs">
+      {/* CORPS DU FORUM : FICHE CHECK (GAUCHE) + FIL DE DISCUSSION (CENTRE) + TIMELINE (DROITE) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* COLONNE GAUCHE : FICHE CHECK & REMONTÉE À LA SOURCE */}
+        <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-24">
+          {/* Chaîne Remonter à la source */}
+          <div className="bg-white border-[1.5px] border-dashed border-black rounded-2xl p-4 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase font-bold text-black">
+                Fiche Check · Chaîne
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-bold">
+                Source : {effectiveSource.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-[11px] font-mono">
+              {[
+                { id: 'lipo', label: '1. LiPo / Alimentation XT60' },
+                { id: 'esc', label: escParam ? `2. ESC (${escParam.slice(0, 18)})` : '2. ESC 4-en-1 / MOSFETs' },
+                { id: 'soudure', label: '3. Soudures & 3 Phases' },
+                { id: 'moteur', label: motorParam ? `4. Moteur (${motorParam})` : '4. Moteur Brushless' },
+                { id: 'fc', label: '5. FC (Signal DShot / PID)' },
+              ].map((stage) => {
+                const isBlocked = effectiveSource === stage.id;
+                return (
+                  <div
+                    key={stage.id}
+                    className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between gap-2 ${
+                      isBlocked
+                        ? 'bg-amber-50 border-amber-400 text-amber-950 font-bold'
+                        : 'bg-zinc-50 border-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    <span className="truncate">{stage.label}</span>
+                    {isBlocked && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500 text-white shrink-0">
+                        SUSPECT
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Checklist interactive */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase font-bold text-black">
+                Check-list atelier
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500 font-bold">
+                {checkedSteps.length}/{checklistItems.length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {checklistItems.map((stepText, idx) => {
+                const done = checkedSteps.includes(idx);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => toggleChecklistStep(idx)}
+                    className={`w-full text-left p-2.5 rounded-xl border text-[11px] flex items-start gap-2 transition-colors cursor-pointer ${
+                      done
+                        ? 'bg-[#cbf3d2]/30 border-emerald-500/50 text-zinc-600 line-through'
+                        : 'bg-zinc-50/70 border-zinc-200 hover:border-black text-zinc-800'
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5 border text-[10px] font-bold ${
+                        done
+                          ? 'bg-emerald-600 border-emerald-600 text-white'
+                          : 'bg-white border-zinc-400 text-transparent'
+                      }`}
+                    >
+                      ✓
+                    </span>
+                    <span className="leading-snug">{stepText}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Problèmes les plus probables (Moteur & ESC) */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-2.5 shadow-xs">
+            <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
+              Pannes probables (Moteur &amp; ESC)
+            </div>
+            <div className="space-y-1.5">
+              {probableMotorAndEscIssues.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/forum/post/?id=${encodeURIComponent(item.id)}${motorParam ? `&motor=${encodeURIComponent(motorParam)}` : ''}${escParam ? `&esc=${encodeURIComponent(escParam)}` : ''}`}
+                  className="block p-2 rounded-xl border border-zinc-100 hover:border-black bg-zinc-50/60 hover:bg-white transition-all space-y-0.5"
+                >
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span
+                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold ${
+                        item.kind === 'ESC'
+                          ? 'bg-amber-100 text-amber-900'
+                          : 'bg-zinc-200 text-black'
+                      }`}
+                    >
+                      {item.kind}
+                    </span>
+                    <span className="text-[9px] font-mono text-zinc-500">
+                      {item.rarity}/10
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-bold text-black line-clamp-2 leading-snug">
+                    {item.title}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Problèmes rencontrés sur ce moteur / ESC */}
+          {encounteredHardwarePosts.length > 0 && (
+            <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-2.5 shadow-xs">
+              <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
+                Cas rencontrés (Moteur / ESC)
+              </div>
+              <div className="space-y-1.5">
+                {encounteredHardwarePosts.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/forum/post/?id=${encodeURIComponent(p.id)}`}
+                    className="block p-2 rounded-xl border border-zinc-100 hover:border-black bg-zinc-50/60 hover:bg-white transition-all space-y-0.5"
+                  >
+                    <div className="text-[11px] font-bold text-black line-clamp-2 leading-snug">
+                      {p.title}
+                    </div>
+                    <div className="text-[10px] font-mono text-zinc-500 truncate">
+                      {p.brand} {p.model ? `· ${p.model}` : ''}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+
+        {/* COLONNE CENTRALE : STREAM DE POSTS */}
+        <div className="lg:col-span-6 divide-y divide-zinc-200 bg-white border border-zinc-200 rounded-2xl shadow-xs">
           {/* POST #1 : SUJET ORIGINAL (OP) */}
           <article id="post-1" className="p-5 sm:p-7">
             <div className="flex items-start gap-4">
