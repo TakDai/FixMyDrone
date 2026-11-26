@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { EcosystemTopNav } from '@/components/EcosystemTopNav';
 import { FORUM_POSTS } from '@/data/forumPosts';
 import { loadStoredCommunityFixes } from '@/data/dynamicResolutions';
+import { DIAGNOSTIC_DEFINITIONS } from '@/data/diagnosticKnowledgeBase';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -17,6 +18,8 @@ import {
   User,
   Eye,
   Clock,
+  AlertTriangle,
+  Wrench,
 } from 'lucide-react';
 
 interface PostComment {
@@ -33,6 +36,7 @@ const RATINGS_KEY_PREFIX = 'fixmydrone_post_ratings_v1_';
 function ForumPostDetailContent() {
   const searchParams = useSearchParams();
   const rawId = searchParams.get('id') || '';
+  const motorParam = searchParams.get('motor') || '';
 
   const postData = useMemo(() => {
     const cleanForumId = rawId.startsWith('forum-') ? rawId.slice(6) : rawId;
@@ -43,7 +47,7 @@ function ForumPostDetailContent() {
         title: fromForum.title,
         categoryName: fromForum.categoryName,
         brand: fromForum.brand,
-        model: fromForum.model,
+        model: fromForum.model || motorParam,
         authorName: fromForum.author.callsign || fromForum.author.name,
         authorBadge: fromForum.author.badge,
         createdAt: fromForum.createdAt,
@@ -52,6 +56,10 @@ function ForumPostDetailContent() {
         rarityLabel: fromForum.rarityLabel,
         content: fromForum.solutionSummary || fromForum.title,
         tags: fromForum.tags,
+        probableCauses: [] as string[],
+        diagnosticSteps: [] as string[],
+        recommendedFix: [] as string[],
+        toolsNeeded: [] as string[],
       };
     }
 
@@ -62,7 +70,7 @@ function ForumPostDetailContent() {
         title: stored.issue,
         categoryName: stored.componentId === 'motors' ? 'Moteurs Brushless' : stored.componentId,
         brand: stored.brand || 'Communauté',
-        model: stored.model || '',
+        model: stored.model || motorParam,
         authorName: stored.author,
         authorBadge: 'Pilote Atelier',
         createdAt: new Date(stored.createdAt).toLocaleDateString('fr-FR'),
@@ -71,11 +79,40 @@ function ForumPostDetailContent() {
         rarityLabel: 'Retour pilote récent',
         content: stored.fix,
         tags: stored.keywords.slice(0, 6),
+        probableCauses: [] as string[],
+        diagnosticSteps: [] as string[],
+        recommendedFix: [] as string[],
+        toolsNeeded: [] as string[],
       };
     }
 
+    for (const def of Object.values(DIAGNOSTIC_DEFINITIONS)) {
+      const sym = def.symptoms.find((s) => s.id === rawId);
+      if (sym) {
+        return {
+          id: sym.id,
+          title: sym.title,
+          categoryName: def.title,
+          brand: motorParam ? 'Moteur sélectionné' : 'Diagnostic Technique',
+          model: motorParam,
+          authorName: 'Base_FixMyDrone',
+          authorBadge: sym.rarityLabel || 'Fiche Diagnostique',
+          createdAt: 'Guide vérifié',
+          views: 128,
+          isResolved: true,
+          rarityLabel: sym.rarityLabel,
+          content: sym.description,
+          tags: sym.keywords.slice(0, 6),
+          probableCauses: sym.aiDiagnostic.probableCauses,
+          diagnosticSteps: sym.aiDiagnostic.diagnosticSteps,
+          recommendedFix: sym.aiDiagnostic.recommendedFix,
+          toolsNeeded: sym.aiDiagnostic.toolsNeeded,
+        };
+      }
+    }
+
     return null;
-  }, [rawId]);
+  }, [rawId, motorParam]);
 
   const [comments, setComments] = useState<PostComment[]>([]);
   const [commentAuthor, setCommentAuthor] = useState('');
@@ -257,6 +294,73 @@ function ForumPostDetailContent() {
             {postData.content}
           </p>
         </div>
+
+        {(postData.probableCauses.length > 0 ||
+          postData.diagnosticSteps.length > 0 ||
+          postData.recommendedFix.length > 0) && (
+          <div className="space-y-4">
+            {postData.probableCauses.length > 0 && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+                <div className="text-xs font-mono uppercase font-bold text-amber-900 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  <span>Causes probables</span>
+                </div>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-800">
+                  {postData.probableCauses.map((cause, idx) => (
+                    <li key={idx}>{cause}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {postData.diagnosticSteps.length > 0 && (
+              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2.5">
+                <div className="text-xs font-mono uppercase font-bold text-black flex items-center gap-1.5">
+                  <Wrench className="w-4 h-4" />
+                  <span>Étapes de contrôle & diagnostic</span>
+                </div>
+                <ol className="space-y-2 text-sm text-zinc-800">
+                  {postData.diagnosticSteps.map((stepText, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <span className="w-5 h-5 rounded-full bg-black text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <span className="leading-relaxed">{stepText}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {postData.recommendedFix.length > 0 && (
+              <div className="p-4 rounded-2xl bg-[#cbf3d2]/25 border border-emerald-700/30 space-y-2">
+                <div className="text-xs font-mono uppercase font-bold text-emerald-900 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                  <span>Solutions recommandées</span>
+                </div>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-800">
+                  {postData.recommendedFix.map((fixText, idx) => (
+                    <li key={idx}>{fixText}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {postData.toolsNeeded.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-mono uppercase text-zinc-500">Outils :</span>
+                {postData.toolsNeeded.map((tool) => (
+                  <span
+                    key={tool}
+                    className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-800"
+                  >
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {postData.tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">

@@ -1514,14 +1514,9 @@ export function TroubleshootWizard({
                     </div>
                     <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                       {activeCandidates.map(({ symptom, matchReasons }, idx) => (
-                        <button
+                        <Link
                           key={symptom.id}
-                          type="button"
-                          onClick={() => {
-                            setShowResultsListView(false);
-                            setSelectedSymptom(symptom);
-                            setStep(5);
-                          }}
+                          href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
                           className="w-full p-3 rounded-xl border border-zinc-200 hover:border-black bg-zinc-50/70 hover:bg-white text-left transition-all cursor-pointer flex items-center justify-between gap-3"
                         >
                           <div className="min-w-0">
@@ -1546,7 +1541,7 @@ export function TroubleshootWizard({
                             )}
                           </div>
                           <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
-                        </button>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -1833,6 +1828,14 @@ export function TroubleshootWizard({
             </div>
           </div>
 
+          <Link
+            href={`/forum/post/?id=${encodeURIComponent(selectedSymptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
+            className="w-full py-3 px-4 rounded-2xl bg-black hover:bg-zinc-800 text-white font-bold text-xs flex items-center justify-between gap-2 transition-colors shadow-sm"
+          >
+            <span>Ouvrir la page complète du post (commentaires, notation &amp; fiche complète)</span>
+            <ArrowRight className="w-4 h-4 shrink-0" />
+          </Link>
+
           {/* Diagnostic principal */}
           <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-white space-y-3">
             <div className="flex items-start justify-between gap-2">
@@ -2040,13 +2043,9 @@ export function TroubleshootWizard({
           ) : (
             <div className="space-y-2">
               {liveResultsList.map(({ symptom, matchReasons }, idx) => (
-                <button
+                <Link
                   key={symptom.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedSymptom(symptom);
-                    setStep(5);
-                  }}
+                  href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}`}
                   className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
                     idx === 0
                       ? 'border-black bg-zinc-50 hover:bg-white shadow-xs'
@@ -2074,7 +2073,7 @@ export function TroubleshootWizard({
                     )}
                   </div>
                   <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
-                </button>
+                </Link>
               ))}
             </div>
           )}
