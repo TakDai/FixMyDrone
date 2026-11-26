@@ -216,10 +216,17 @@ export default function ForumDashboardPage() {
       // 4. Filtre Onglet Dashboard
       if (selectedTab === 'ai-resolved' && !post.resolvedWithAI) return false;
       if (selectedTab === 'daily-watch') {
-        const isWatch = post.title.includes('[VEILLE') || 
+        const isWatch =
+          Boolean(post.sourceUrl) ||
+          post.id.startsWith('gh-') ||
+          post.id.startsWith('disc-') ||
+          post.id.startsWith('post-watch-') ||
+          post.title.includes('[VEILLE') ||
           post.title.includes('[Scan') ||
           post.createdAt?.toLowerCase().includes('veille') ||
-          post.tags?.some((t) => ['RCGroups', 'GitHub', 'IntoFPV', 'Veille', 'Reddit r/fpv', 'WEareFPV', 'Walksnail', 'EdgeTX', 'ExpressLRS', 'Betaflight', 'ArduPilot', 'PX4'].includes(t));
+          post.tags?.some((t) =>
+            ['RCGroups', 'GitHub', 'IntoFPV', 'Veille', 'Reddit r/fpv', 'WEareFPV', 'Walksnail', 'EdgeTX', 'ExpressLRS', 'Betaflight', 'ArduPilot', 'PX4', 'Bluejay', 'AM32', 'iNav', 'HDZero'].includes(t)
+          );
         if (!isWatch) return false;
       }
 
@@ -231,7 +238,13 @@ export default function ForumDashboardPage() {
         return votesB - votesA;
       }
       if (selectedTab === 'new' || selectedTab === 'daily-watch') {
-        return (b.id || '').localeCompare(a.id || '');
+        const extractDate = (val?: string) => {
+          const m = (val || '').match(/\d{4}-\d{2}-\d{2}/);
+          return m ? m[0] : '0000-00-00';
+        };
+        const dateCmp = extractDate(b.createdAt).localeCompare(extractDate(a.createdAt));
+        if (dateCmp !== 0) return dateCmp;
+        return (b.replies || 0) - (a.replies || 0);
       }
       return 0;
     });
@@ -530,49 +543,69 @@ export default function ForumDashboardPage() {
 
           {/* COLONNE DROITE : ACTUALITÉ DRONE & FPV + INFOS ÉCOSYSTÈME */}
           <aside className="lg:col-span-4 xl:col-span-3 space-y-5 lg:sticky lg:top-24">
-            {/* Actualités Drone & FPV */}
+            {/* Actualités Drone & FPV (Veille filtrée & traduite) */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-4 sm:p-5 space-y-3.5 shadow-2xs">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-mono uppercase tracking-wider font-bold text-zinc-900 flex items-center gap-1.5">
                   <Flame className="w-4 h-4 text-amber-500" />
-                  <span>Actualités Drone &amp; FPV</span>
+                  <span>Veille &amp; Actualités FPV</span>
                 </h2>
-                <span className="text-[10px] font-mono text-zinc-400">Veille</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTab('daily-watch')}
+                  className="text-[10px] font-mono text-zinc-400 hover:text-black cursor-pointer"
+                >
+                  Voir tout →
+                </button>
               </div>
 
               <div className="divide-y divide-zinc-100">
-                {[
-                  {
-                    tag: 'Firmware',
-                    title: 'Betaflight 4.5 / 4.6 : réglage EZ Tune & filtres RPM pour éviter la chauffe moteur',
-                    desc: 'Pensez à activer le DShot bidirectionnel et limiter le D-Term si vos moteurs dépassent 65°C.',
-                    href: '/forum/post/?id=mot-overheating',
-                  },
-                  {
-                    tag: 'ESC',
-                    title: 'Bluejay 0.21 (BLHeli_S) : 48kHz vs 24kHz et Demag Compensation',
-                    desc: 'Sur les 5 pouces freestyle 2207/2306, passer le Demag sur High réduit fortement les desyncs.',
-                    href: '/forum/post/?id=mot-desync',
-                  },
-                  {
-                    tag: 'Radio / RX',
-                    title: 'ExpressLRS 3.5 : bonnes pratiques de bind phrase & télémétrie',
-                    desc: 'Vérifiez la correspondance de version majeure TX/RX avant toute mise à jour terrain.',
-                    href: '/diagnostic/rx',
-                  },
-                  {
-                    tag: 'Matériel',
-                    title: 'Multi-Motors.fr : plus de 4 000 moteurs brushless FPV comparés',
-                    desc: 'Consultez les fiches KV, poids, shaft et dimensions depuis l’onglet Specs ou le catalogue.',
-                    href: '/specs/',
-                  },
-                  {
-                    tag: 'Sécurité',
-                    title: 'Réglementation AlphaTango & sécurité LiPo à l’atelier',
-                    desc: 'Utilisez toujours un Smoke Stopper après soudure et retirez les hélices pour tout test Betaflight.',
-                    href: '/catalogue',
-                  },
-                ].map((news, idx) => (
+                {(scannedPosts.length > 0
+                  ? [...scannedPosts]
+                      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+                      .slice(0, 5)
+                      .map((p) => ({
+                        tag: p.brand || p.categoryName || 'FPV',
+                        title: showOriginalLang && p.titleOriginal ? p.titleOriginal : p.title,
+                        desc:
+                          (showOriginalLang && p.solutionSummaryOriginal
+                            ? p.solutionSummaryOriginal
+                            : p.solutionSummary) || '',
+                        href: `/forum/post/?id=${encodeURIComponent(p.id)}`,
+                      }))
+                  : [
+                      {
+                        tag: 'Firmware',
+                        title: 'Betaflight 4.5 / 4.6 : réglage EZ Tune & filtres RPM pour éviter la chauffe moteur',
+                        desc: 'Pensez à activer le DShot bidirectionnel et limiter le D-Term si vos moteurs dépassent 65°C.',
+                        href: '/forum/post/?id=mot-overheating',
+                      },
+                      {
+                        tag: 'ESC',
+                        title: 'Bluejay 0.21 (BLHeli_S) : 48kHz vs 24kHz et Demag Compensation',
+                        desc: 'Sur les 5 pouces freestyle 2207/2306, passer le Demag sur High réduit fortement les desyncs.',
+                        href: '/forum/post/?id=mot-desync',
+                      },
+                      {
+                        tag: 'Radio / RX',
+                        title: 'ExpressLRS 3.5 : bonnes pratiques de bind phrase & télémétrie',
+                        desc: 'Vérifiez la correspondance de version majeure TX/RX avant toute mise à jour terrain.',
+                        href: '/diagnostic/rx',
+                      },
+                      {
+                        tag: 'Matériel',
+                        title: 'Multi-Motors.fr : plus de 4 000 moteurs brushless FPV comparés',
+                        desc: 'Consultez les fiches KV, poids, shaft et dimensions depuis l’onglet Specs ou le catalogue.',
+                        href: '/specs/',
+                      },
+                      {
+                        tag: 'Sécurité',
+                        title: 'Réglementation AlphaTango & sécurité LiPo à l’atelier',
+                        desc: 'Utilisez toujours un Smoke Stopper après soudure et retirez les hélices pour tout test Betaflight.',
+                        href: '/catalogue',
+                      },
+                    ]
+                ).map((news, idx) => (
                   <Link
                     key={idx}
                     href={news.href}
@@ -584,7 +617,7 @@ export default function ForumDashboardPage() {
                       </span>
                       <ArrowRight className="w-3 h-3 text-zinc-300 group-hover:text-black transition-colors" />
                     </div>
-                    <div className="text-xs font-bold text-zinc-900 group-hover:text-black leading-snug">
+                    <div className="text-xs font-bold text-zinc-900 group-hover:text-black leading-snug line-clamp-2">
                       {news.title}
                     </div>
                     <p className="text-[11px] text-zinc-500 line-clamp-2 leading-relaxed">
