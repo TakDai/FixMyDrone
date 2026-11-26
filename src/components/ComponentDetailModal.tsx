@@ -151,6 +151,108 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
     },
   ];
 
+  const headerBlock = (
+    <div className="relative">
+      <button
+        onClick={onClose}
+        className="absolute top-0 right-0 p-2 rounded-xl text-black hover:bg-zinc-100 transition-colors cursor-pointer"
+        aria-label="Fermer"
+      >
+        <X className="w-5 h-5" />
+      </button>
+
+      <div className="border-b-[1.5px] border-dashed border-black pb-4 mb-5 pr-8">
+        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-zinc-500 mb-1">
+          <span>{component.category}</span>
+          <span>•</span>
+          <span className="font-bold text-black">{component.model}</span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-black">
+          {component.name}
+        </h2>
+        <p className="text-xs text-zinc-600 mt-1 italic">
+          {component.role}
+        </p>
+      </div>
+    </div>
+  );
+
+  const tabsBar = (
+    <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-200">
+      <button
+        onClick={() => setSelectedIntent(null)}
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-black hover:underline cursor-pointer"
+      >
+        <ArrowLeft className="w-3.5 h-3.5" />
+        <span>Toutes les catégories</span>
+      </button>
+
+      <div className="flex flex-wrap gap-1.5">
+        {(
+          [
+            { id: 'issues', label: 'Pannes' },
+            { id: 'specs', label: 'Specs' },
+            { id: 'reviews', label: 'Avis' },
+            { id: 'guides', label: 'Guides' },
+            { id: 'addFix', label: '+ Fix' },
+          ] as { id: ModalIntent; label: string }[]
+        ).map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSelectedIntent(tab.id)}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+              selectedIntent === tab.id
+                ? 'bg-black text-white font-bold'
+                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const footerBlock = (
+    <div className="mt-6 pt-4 border-t-[1.5px] border-dashed border-black/30 flex flex-wrap items-center justify-between gap-3">
+      <Link
+        href="/forum"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-medium text-zinc-700 hover:text-black transition-colors"
+      >
+        <MessageSquare className="w-3.5 h-3.5" />
+        <span>Voir le forum</span>
+      </Link>
+      <button
+        type="button"
+        onClick={onClose}
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-bold text-black transition-colors cursor-pointer"
+      >
+        <span>Fermer</span>
+      </button>
+    </div>
+  );
+
+  if (selectedIntent === 'issues') {
+    return (
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-start lg:items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none overflow-y-auto"
+      >
+        <TroubleshootWizard
+          component={component}
+          targetId={targetId}
+          centerHeader={
+            <>
+              {headerBlock}
+              {tabsBar}
+            </>
+          }
+          centerFooter={footerBlock}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       onClick={onClose}
@@ -158,33 +260,9 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${
-          selectedIntent === 'issues' ? 'max-w-4xl' : 'max-w-2xl'
-        } bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto transition-all`}
+        className="relative w-full max-w-2xl bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto transition-all"
       >
-        {/* Bouton fermeture */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl text-black hover:bg-zinc-100 transition-colors cursor-pointer"
-          aria-label="Fermer"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Header du composant */}
-        <div className="border-b-[1.5px] border-dashed border-black pb-4 mb-5 pr-8">
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-zinc-500 mb-1">
-            <span>{component.category}</span>
-            <span>•</span>
-            <span className="font-bold text-black">{component.model}</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-black">
-            {component.name}
-          </h2>
-          <p className="text-xs text-zinc-600 mt-1 italic">
-            {component.role}
-          </p>
-        </div>
+        {headerBlock}
 
         {/* ÉTAPE 1 : Choix de la catégorie / intention utilisateur */}
         {selectedIntent === null && (

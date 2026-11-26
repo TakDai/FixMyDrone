@@ -43,6 +43,8 @@ import {
 interface TroubleshootWizardProps {
   component: FigmaComponentData;
   targetId: string;
+  centerHeader?: React.ReactNode;
+  centerFooter?: React.ReactNode;
 }
 
 type WizardStep = 1 | 2 | 3 | 4 | 5;
@@ -166,7 +168,12 @@ function BrandAvatar({
   );
 }
 
-export function TroubleshootWizard({ component, targetId }: TroubleshootWizardProps) {
+export function TroubleshootWizard({
+  component,
+  targetId,
+  centerHeader,
+  centerFooter,
+}: TroubleshootWizardProps) {
   const isMotor = targetId === 'motors' || component.id === 'motor';
   const def = useMemo(() => getDiagnosticDefinition(targetId), [targetId]);
 
@@ -488,8 +495,162 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
     setStep(2);
   };
 
+  const showLeftPopup = Boolean(
+    selectedBrand || customBrand || selectedGamme || selectedMotor || customRef || answerRecords.length > 0
+  );
+  const showRightPopup = step === 4;
+
+  const centerColSpan =
+    showLeftPopup && showRightPopup
+      ? 'lg:col-span-5'
+      : showLeftPopup
+      ? 'lg:col-span-9'
+      : showRightPopup
+      ? 'lg:col-span-8'
+      : 'lg:col-span-12';
+
+  const liveResultsList = contextMode === 'prompt' ? rankedSymptoms : activeCandidates;
+
   return (
-    <div className="space-y-4 text-xs">
+    <div
+      className={`w-full ${
+        showLeftPopup || showRightPopup
+          ? 'max-w-[1380px] grid grid-cols-1 lg:grid-cols-12 gap-4 items-start'
+          : 'max-w-2xl mx-auto'
+      }`}
+    >
+      {/* POP-UP GAUCHE : RÉCAP DES CHOIX + FICHE MOTEUR PROPRE */}
+      {showLeftPopup && (
+        <aside
+          onClick={(e) => e.stopPropagation()}
+          className="lg:col-span-3 bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in slide-in-from-left-3 duration-200 max-h-[88vh] overflow-y-auto"
+        >
+          <div className="flex items-center justify-between pb-2.5 border-b-[1.5px] border-dashed border-black/30">
+            <span className="text-[11px] font-mono uppercase font-bold tracking-wider text-black">
+              Fiche & Récap
+            </span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 border border-zinc-300 text-zinc-700">
+              {component.name}
+            </span>
+          </div>
+
+          {/* Marque & Gamme */}
+          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+            <BrandAvatar
+              brandName={activeBrandLabel}
+              logoUrl={brandLogos[activeBrandLabel.toUpperCase()]}
+              size="sm"
+            />
+            <div className="min-w-0">
+              <div className="text-[10px] font-mono uppercase text-zinc-500">Marque & Gamme</div>
+              <div className="font-bold text-xs text-black truncate">{activeBrandLabel}</div>
+              {(selectedGamme || customGamme) && (
+                <div className="text-[11px] text-zinc-600 truncate">{activeGammeLabel}</div>
+              )}
+            </div>
+          </div>
+
+          {/* Fiche Moteur propre */}
+          {selectedMotor ? (
+            <div className="p-3.5 rounded-2xl border border-black/25 bg-white space-y-3">
+              <div className="w-full h-28 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center overflow-hidden p-2">
+                <img
+                  src={selectedMotor.img || '/images/components/motor.svg?v=6'}
+                  alt={selectedMotor.fullName}
+                  onError={(e) => {
+                    e.currentTarget.src = '/images/components/motor.svg?v=6';
+                  }}
+                  className="w-full h-full object-contain hover:scale-125 transition-transform duration-200"
+                />
+              </div>
+              <div>
+                <div className="font-bold text-xs text-black leading-snug">
+                  {selectedMotor.fullName}
+                </div>
+                {selectedMotor.ref && (
+                  <div className="text-[10px] font-mono text-zinc-500 mt-0.5">
+                    Réf : {selectedMotor.ref}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+                {selectedMotor.kv && (
+                  <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-200">
+                    <span className="text-zinc-500 block">KV</span>
+                    <span className="font-bold text-black">{selectedMotor.kv} KV</span>
+                  </div>
+                )}
+                {selectedMotor.classe && (
+                  <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-200">
+                    <span className="text-zinc-500 block">Stator</span>
+                    <span className="font-bold text-black">{selectedMotor.classe}</span>
+                  </div>
+                )}
+                {selectedMotor.lipo && (
+                  <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-200">
+                    <span className="text-zinc-500 block">LiPo</span>
+                    <span className="font-bold text-black">{selectedMotor.lipo}</span>
+                  </div>
+                )}
+                {selectedMotor.poids && (
+                  <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-200">
+                    <span className="text-zinc-500 block">Poids</span>
+                    <span className="font-bold text-black">{selectedMotor.poids}</span>
+                  </div>
+                )}
+                {selectedMotor.shaft && (
+                  <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-200 col-span-2">
+                    <span className="text-zinc-500 block">Axe (Shaft)</span>
+                    <span className="font-bold text-black">{selectedMotor.shaft}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : customRef ? (
+            <div className="p-3 rounded-2xl border border-zinc-200 bg-zinc-50 text-xs">
+              <div className="text-[10px] font-mono uppercase text-zinc-500">Référence saisie</div>
+              <div className="font-bold text-black mt-0.5">{customRef}</div>
+            </div>
+          ) : null}
+
+          {/* Récapitulatif des réponses au questionnaire */}
+          {(answerRecords.length > 0 || contextPrompt.trim()) && (
+            <div className="space-y-2 pt-2 border-t border-zinc-200">
+              <div className="text-[10px] font-mono uppercase font-bold text-zinc-500">
+                Récap des réponses ({answerRecords.length})
+              </div>
+              {contextPrompt.trim() && (
+                <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-200 text-[11px] text-zinc-700 italic">
+                  « {contextPrompt.trim()} »
+                </div>
+              )}
+              <div className="space-y-1.5">
+                {answerRecords.map((rec, idx) => (
+                  <div
+                    key={rec.questionId}
+                    className="p-2 rounded-xl bg-[#cbf3d2]/25 border border-black/15 text-[11px]"
+                  >
+                    <div className="text-[9px] font-mono text-zinc-500 truncate">
+                      Q{idx + 1} · {rec.questionLabel.replace(/^\d+\.\s*/, '')}
+                    </div>
+                    <div className="font-bold text-black mt-0.5 leading-snug">
+                      {rec.optionLabel}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      )}
+
+      {/* POP-UP CENTRALE : DIAGNOSTIC GUIDÉ */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`${centerColSpan} bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 sm:p-7 shadow-2xl max-h-[88vh] overflow-y-auto`}
+      >
+        {centerHeader}
+        <div className="space-y-4 text-xs">
       {/* Barre de progression des 5 étapes */}
       <div className="grid grid-cols-5 gap-1.5 pb-3 border-b border-zinc-200">
         {stepLabels.map((label, idx) => {
@@ -1308,179 +1469,63 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
                     )}
                   </div>
                 ) : (
-                  /* QUESTION ACTUELLE (GAUCHE) + RÉSULTATS EN DIRECT (DROITE) */
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-                    <div className="lg:col-span-7 p-4 rounded-2xl border-[1.5px] border-black bg-white shadow-xs space-y-3 animate-in fade-in duration-150">
-                      <div className="pb-2 border-b border-zinc-100">
-                        <h3 className="text-sm font-bold text-black leading-snug">{currentQ.question}</h3>
-                        <p className="text-[11px] text-zinc-500 mt-1">{currentQ.hint}</p>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-2">
-                        {currentQ.options.map((opt, optIdx) => {
-                          const isPicked = answerRecords.some(
-                            (r) => r.questionId === currentQ.id && r.optionId === opt.id
-                          );
-                          const letter = String.fromCharCode(65 + optIdx);
-                          return (
-                            <button
-                              key={opt.id}
-                              type="button"
-                              onClick={() => handleAnswerOption(opt)}
-                              className={`group w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                                isPicked
-                                  ? 'border-black bg-black text-white shadow-xs'
-                                  : 'border-zinc-200 bg-zinc-50/70 hover:bg-white hover:border-black hover:shadow-xs text-black'
-                              }`}
-                            >
-                              <div className="flex items-start gap-2.5 min-w-0">
-                                <span
-                                  className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono font-bold shrink-0 mt-0.5 ${
-                                    isPicked
-                                      ? 'bg-white text-black'
-                                      : 'bg-white border border-zinc-300 text-zinc-600 group-hover:border-black group-hover:text-black'
-                                  }`}
-                                >
-                                  {letter}
-                                </span>
-                                <div className="min-w-0">
-                                  <div className="font-bold text-xs leading-snug">{opt.label}</div>
-                                  {opt.sub && (
-                                    <div
-                                      className={`text-[10px] mt-0.5 ${
-                                        isPicked ? 'text-zinc-300' : 'text-zinc-500'
-                                      }`}
-                                    >
-                                      {opt.sub}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                            </button>
-                          );
-                        })}
-                      </div>
+                  /* QUESTION ACTUELLE (DANS LA POP-UP CENTRALE — RÉSULTATS DANS LA POP-UP DROITE) */
+                  <div className="p-4 rounded-2xl border-[1.5px] border-black bg-white shadow-xs space-y-3 animate-in fade-in duration-150">
+                    <div className="pb-2 border-b border-zinc-100">
+                      <h3 className="text-sm font-bold text-black leading-snug">{currentQ.question}</h3>
+                      <p className="text-[11px] text-zinc-500 mt-1">{currentQ.hint}</p>
                     </div>
 
-                    {/* RÉSULTATS EN DIRECT AU FIL DES RÉPONSES */}
-                    <div className="lg:col-span-5 p-3.5 rounded-2xl border border-zinc-200 bg-zinc-50/80 space-y-2.5">
-                      <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-200">
-                        <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>Résultats en direct</span>
-                        </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black text-white font-bold">
-                          {activeCandidates.length}
-                        </span>
-                      </div>
-
-                      {rankedResolutions.length > 0 && (
-                        <div className="text-[10px] font-mono text-emerald-700 font-bold">
-                          + {rankedResolutions.length} retours communauté indexés
-                        </div>
-                      )}
-
-                      <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
-                        {activeCandidates.map(({ symptom, matchReasons }, idx) => (
+                    <div className="grid grid-cols-1 gap-2">
+                      {currentQ.options.map((opt, optIdx) => {
+                        const isPicked = answerRecords.some(
+                          (r) => r.questionId === currentQ.id && r.optionId === opt.id
+                        );
+                        const letter = String.fromCharCode(65 + optIdx);
+                        return (
                           <button
-                            key={symptom.id}
+                            key={opt.id}
                             type="button"
-                            onClick={() => {
-                              setSelectedSymptom(symptom);
-                              setStep(5);
-                            }}
-                            className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                              idx === 0
-                                ? 'border-black bg-white shadow-xs'
-                                : 'border-zinc-200 hover:border-black bg-white/80 hover:bg-white'
+                            onClick={() => handleAnswerOption(opt)}
+                            className={`group w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                              isPicked
+                                ? 'border-black bg-black text-white shadow-xs'
+                                : 'border-zinc-200 bg-zinc-50/70 hover:bg-white hover:border-black hover:shadow-xs text-black'
                             }`}
                           >
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                {idx === 0 && (
-                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#cbf3d2] border border-black/20 text-black font-bold">
-                                    #1
-                                  </span>
+                            <div className="flex items-start gap-2.5 min-w-0">
+                              <span
+                                className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono font-bold shrink-0 mt-0.5 ${
+                                  isPicked
+                                    ? 'bg-white text-black'
+                                    : 'bg-white border border-zinc-300 text-zinc-600 group-hover:border-black group-hover:text-black'
+                                }`}
+                              >
+                                {letter}
+                              </span>
+                              <div className="min-w-0">
+                                <div className="font-bold text-xs leading-snug">{opt.label}</div>
+                                {opt.sub && (
+                                  <div
+                                    className={`text-[10px] mt-0.5 ${
+                                      isPicked ? 'text-zinc-300' : 'text-zinc-500'
+                                    }`}
+                                  >
+                                    {opt.sub}
+                                  </div>
                                 )}
-                                <span className="font-bold text-black text-[11px] leading-snug">
-                                  {symptom.title}
-                                </span>
                               </div>
-                              {matchReasons.length > 0 && (
-                                <div className="text-[10px] font-mono text-emerald-700 mt-1 truncate">
-                                  {matchReasons.join(' • ')}
-                                </div>
-                              )}
                             </div>
-                            <ArrowRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                            <ArrowRight className="w-3.5 h-3.5 shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                           </button>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
             );
           })()}
-
-          {/* RÉSULTATS AFFINÉS EN DIRECT (AFFICHÉS EN MODE PROMPT LIBRE) */}
-          {contextMode === 'prompt' && (
-            <div className="pt-3 border-t border-zinc-200 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono uppercase font-bold text-black flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Pistes affinées dynamiquement ({rankedSymptoms.length})</span>
-                </span>
-                {rankedResolutions.length > 0 && (
-                  <span className="text-[10px] font-mono text-emerald-700 font-bold">
-                    + {rankedResolutions.length} résolutions communauté
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {rankedSymptoms.map(({ symptom, matchReasons }, idx) => (
-                  <button
-                    key={symptom.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedSymptom(symptom);
-                      setStep(5);
-                    }}
-                    className={`w-full p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                      idx === 0
-                        ? 'border-black bg-zinc-50 hover:bg-white shadow-2xs'
-                        : 'border-black/20 hover:border-black bg-white'
-                    }`}
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {idx === 0 && (
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black text-white font-bold">
-                            Meilleure piste
-                          </span>
-                        )}
-                        <span className="font-bold text-black text-xs">{symptom.title}</span>
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-700">
-                          {symptom.rarityLabel}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-zinc-600 mt-0.5 line-clamp-1">
-                        {symptom.description}
-                      </p>
-                      {matchReasons.length > 0 && (
-                        <div className="text-[10px] font-mono text-emerald-700 mt-0.5">
-                          {matchReasons.join(' • ')}
-                        </div>
-                      )}
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -1696,6 +1741,82 @@ export function TroubleshootWizard({ component, targetId }: TroubleshootWizardPr
             )}
           </div>
         </div>
+      )}
+        </div>
+        {centerFooter}
+      </div>
+
+      {/* POP-UP DROITE : RÉSULTATS DE RECHERCHE EN DIRECT */}
+      {showRightPopup && (
+        <aside
+          onClick={(e) => e.stopPropagation()}
+          className="lg:col-span-4 bg-white border-[1.5px] border-dashed border-black rounded-3xl p-5 shadow-2xl space-y-3 animate-in fade-in slide-in-from-right-3 duration-200 max-h-[88vh] overflow-y-auto"
+        >
+          <div className="flex items-center justify-between gap-2 pb-2.5 border-b-[1.5px] border-dashed border-black/30">
+            <span className="text-[11px] font-mono uppercase font-bold tracking-wider text-black flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Résultats en direct</span>
+            </span>
+            <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-black text-white font-bold">
+              {liveResultsList.length}
+            </span>
+          </div>
+
+          {rankedResolutions.length > 0 && (
+            <div className="text-[10px] font-mono text-emerald-700 font-bold">
+              + {rankedResolutions.length} retours communauté indexés
+            </div>
+          )}
+
+          {liveResultsList.length === 0 ? (
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-600 space-y-1.5">
+              <div className="font-bold text-black">0 résultat correspondant</div>
+              <p className="text-[11px] leading-relaxed">
+                Utilisez les options <strong>Résoudre avec l’IA</strong> ou <strong>Envoyer un post sur le forum</strong> dans la fenêtre centrale.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {liveResultsList.map(({ symptom, matchReasons }, idx) => (
+                <button
+                  key={symptom.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSymptom(symptom);
+                    setStep(5);
+                  }}
+                  className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
+                    idx === 0
+                      ? 'border-black bg-zinc-50 hover:bg-white shadow-xs'
+                      : 'border-zinc-200 hover:border-black bg-white'
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {idx === 0 && (
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#cbf3d2] border border-black/20 text-black font-bold">
+                          #1
+                        </span>
+                      )}
+                      <span className="font-bold text-black text-xs leading-snug">
+                        {symptom.title}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-600 mt-1 line-clamp-2">
+                      {symptom.description}
+                    </p>
+                    {matchReasons.length > 0 && (
+                      <div className="text-[10px] font-mono text-emerald-700 mt-1">
+                        {matchReasons.join(' • ')}
+                      </div>
+                    )}
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
+        </aside>
       )}
     </div>
   );
