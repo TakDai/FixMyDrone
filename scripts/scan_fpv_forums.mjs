@@ -7,11 +7,15 @@ const OUT_FILE = path.resolve(process.cwd(), 'public/data/scanned-forum-posts.js
 const GITHUB_REPOS = [
   { repo: 'betaflight/betaflight', category: 'fc', categoryName: 'Contrôleur de Vol (FC)', brand: 'Betaflight', pages: 12 },
   { repo: 'betaflight/betaflight-configurator', category: 'configurator', categoryName: 'Configurateur (BF/EdgeTX)', brand: 'Betaflight', pages: 8 },
+  { repo: 'betaflight/blackbox-log-viewer', category: 'configurator', categoryName: 'Configurateur (BF/EdgeTX)', brand: 'Blackbox', pages: 4 },
   { repo: 'ExpressLRS/ExpressLRS', category: 'rx', categoryName: 'Récepteur Radio (RX)', brand: 'ExpressLRS', pages: 10 },
   { repo: 'EdgeTX/edgetx', category: 'radio', categoryName: 'Radiocommande & Émetteur TX', brand: 'EdgeTX', pages: 8 },
   { repo: 'bird-sanctuary/bluejay', category: 'esc', categoryName: 'ESC & Stack', brand: 'Bluejay', pages: 5 },
   { repo: 'am32-firmware/AM32', category: 'esc', categoryName: 'ESC & Stack', brand: 'AM32', pages: 5 },
   { repo: 'iNavFlight/inav', category: 'gps', categoryName: 'GPS & Compas', brand: 'iNav', pages: 8 },
+  { repo: 'emuflight/EmuFlight', category: 'fc', categoryName: 'Contrôleur de Vol (FC)', brand: 'EmuFlight', pages: 4 },
+  { repo: 'hd-zero/hdzero-vtx', category: 'vtx', categoryName: 'Émetteur Vidéo (VTX)', brand: 'HDZero', pages: 4 },
+  { repo: 'ArduPilot/ardupilot', category: 'gps', categoryName: 'GPS & Compas', brand: 'ArduPilot', pages: 8 },
 ];
 
 function inferCategory(text, fallbackCat, fallbackName) {

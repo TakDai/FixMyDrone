@@ -119,6 +119,7 @@ function ForumPostDetailContent() {
         diagnosticSteps: [] as string[],
         recommendedFix: [] as string[],
         toolsNeeded: [] as string[],
+        sourceUrl: (fromForum.sourceUrl as string | undefined) || '',
       };
     }
 
@@ -143,6 +144,7 @@ function ForumPostDetailContent() {
         diagnosticSteps: [] as string[],
         recommendedFix: [] as string[],
         toolsNeeded: [] as string[],
+        sourceUrl: '',
       };
     }
 
@@ -170,6 +172,7 @@ function ForumPostDetailContent() {
           diagnosticSteps: sym.aiDiagnostic.testSteps as string[],
           recommendedFix: sym.aiDiagnostic.recommendedFix as string[],
           toolsNeeded: sym.aiDiagnostic.toolsNeeded as string[],
+          sourceUrl: '',
         };
       }
     }
@@ -545,6 +548,16 @@ function ForumPostDetailContent() {
             <span className="px-2 py-0.5 rounded-md bg-amber-50/80 border border-amber-200/80 text-[11px] font-mono font-medium text-amber-900">
               ESC : {escParam}
             </span>
+          )}
+          {postData.sourceUrl && (
+            <a
+              href={postData.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-2 py-0.5 rounded-md text-[11px] font-mono text-zinc-400 hover:text-black hover:bg-zinc-100 transition-colors"
+            >
+              Fil d’origine ↗
+            </a>
           )}
         </div>
 
