@@ -505,57 +505,54 @@ function ForumPostDetailContent() {
         </Link>
       </div>
 
-      {/* EN-TÊTE DU TOPIC (STYLE DISCOURSE) */}
-      <header className="pb-5 border-b-2 border-zinc-200 mb-6 space-y-3">
+      {/* EN-TÊTE DU TOPIC (ÉPURÉ) */}
+      <header className="pb-4 border-b border-zinc-200 mb-6 space-y-2.5">
         <div className="flex flex-wrap items-center gap-2">
           {postData.isResolved && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-600 text-white text-[11px] font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
+              <CheckCircle2 className="w-3 h-3" />
               <span>Résolu</span>
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-200/80 text-black text-[11px] font-mono font-bold">
-            <span className="w-2 h-2 rounded-xs bg-black" />
+          <span className="text-[11px] font-mono font-semibold text-zinc-500">
             {postData.categoryName}
           </span>
-          {postData.brand && (
-            <span className="px-2.5 py-0.5 rounded-md bg-white border border-zinc-300 text-[11px] font-mono font-semibold text-zinc-800">
-              {postData.brand}
-              {postData.model ? ` · ${postData.model}` : ''}
+          {(postData.model || postData.brand) && (
+            <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-[11px] font-mono font-semibold text-zinc-800">
+              {postData.model || postData.brand}
             </span>
           )}
           {escParam && (
-            <span className="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-300 text-[11px] font-mono font-semibold text-amber-900">
+            <span className="px-2 py-0.5 rounded-md bg-amber-50/80 border border-amber-200/80 text-[11px] font-mono font-medium text-amber-900">
               ESC : {escParam}
             </span>
           )}
-          {postData.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-600 text-[11px] font-mono"
-            >
-              <Tag className="w-3 h-3" />
-              {tag}
-            </span>
-          ))}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight leading-snug">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight leading-snug">
           {postData.title}
         </h1>
+
+        {postData.tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-zinc-400">
+            {postData.tags.map((tag) => (
+              <span key={tag}>#{tag}</span>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* CORPS DU FORUM : FICHE CHECK (GAUCHE) + FIL DE DISCUSSION (CENTRE) + TIMELINE (DROITE) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* COLONNE GAUCHE : FICHE CHECK & REMONTÉE À LA SOURCE */}
-        <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-24">
+        {/* COLONNE GAUCHE : FICHE CHECK UNIFIÉE */}
+        <aside className="lg:col-span-3 lg:sticky lg:top-24 bg-white border border-zinc-200/80 rounded-2xl divide-y divide-zinc-100">
           {/* Chaîne Remonter à la source */}
-          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2.5">
+          <div className="p-4 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-zinc-800">
-                Fiche Check · Chaîne
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-zinc-400">
+                Chaîne · Source
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-semibold">
+              <span className="text-[10px] font-mono text-amber-700 font-bold">
                 {effectiveSource.toUpperCase()}
               </span>
             </div>
@@ -563,19 +560,19 @@ function ForumPostDetailContent() {
             <div className="space-y-1 text-[11px] font-mono">
               {[
                 { id: 'lipo', label: '1. LiPo / XT60' },
-                { id: 'esc', label: escParam ? `2. ESC (${escParam.slice(0, 18)})` : '2. ESC / MOSFETs' },
+                { id: 'esc', label: escParam ? `2. ESC (${escParam.slice(0, 16)})` : '2. ESC / MOSFETs' },
                 { id: 'soudure', label: '3. Soudures / Phases' },
-                { id: 'moteur', label: motorParam ? `4. Moteur (${motorParam})` : '4. Moteur Brushless' },
-                { id: 'fc', label: '5. FC / Signal DShot' },
+                { id: 'moteur', label: motorParam ? `4. Moteur (${motorParam})` : '4. Moteur' },
+                { id: 'fc', label: '5. FC / Signal' },
               ].map((stage) => {
                 const isBlocked = effectiveSource === stage.id;
                 return (
                   <div
                     key={stage.id}
-                    className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between gap-2 transition-opacity ${
+                    className={`px-2.5 py-1 rounded-lg flex items-center justify-between gap-2 transition-opacity ${
                       isBlocked
-                        ? 'bg-amber-50/90 border-amber-300 text-amber-950 font-bold'
-                        : 'bg-zinc-50/50 border-transparent text-zinc-500 opacity-55 hover:opacity-100'
+                        ? 'bg-amber-50 border border-amber-300/80 text-amber-950 font-bold'
+                        : 'text-zinc-400 opacity-60 hover:opacity-100'
                     }`}
                   >
                     <span className="truncate">{stage.label}</span>
@@ -591,16 +588,16 @@ function ForumPostDetailContent() {
           </div>
 
           {/* Checklist interactive */}
-          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2.5">
+          <div className="p-4 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-zinc-800">
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-zinc-400">
                 Check-list atelier
               </span>
-              <span className="text-[10px] font-mono text-zinc-400 font-semibold">
+              <span className="text-[10px] font-mono text-zinc-400">
                 {checkedSteps.length}/{checklistItems.length}
               </span>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {checklistItems.map((stepText, idx) => {
                 const done = checkedSteps.includes(idx);
                 return (
@@ -608,10 +605,10 @@ function ForumPostDetailContent() {
                     key={idx}
                     type="button"
                     onClick={() => toggleChecklistStep(idx)}
-                    className={`w-full text-left p-2 rounded-xl border text-[11px] flex items-start gap-2 transition-all cursor-pointer ${
+                    className={`w-full text-left p-2 rounded-xl text-[11px] flex items-start gap-2 transition-colors cursor-pointer ${
                       done
-                        ? 'bg-[#cbf3d2]/25 border-emerald-400/40 text-zinc-400 line-through'
-                        : 'bg-transparent border-zinc-100 hover:border-zinc-300 hover:bg-zinc-50/60 text-zinc-700'
+                        ? 'text-zinc-400 line-through bg-emerald-50/30'
+                        : 'text-zinc-700 hover:bg-zinc-50'
                     }`}
                   >
                     <span
@@ -630,63 +627,57 @@ function ForumPostDetailContent() {
             </div>
           </div>
 
-          {/* Problèmes les plus probables (Moteur & ESC) */}
-          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2">
-            <div className="text-[11px] font-mono uppercase font-bold text-zinc-400">
-              Pannes probables (Moteur &amp; ESC)
-            </div>
-            <div className="space-y-1">
+          {/* Accordéon discret : Pannes probables (Moteur & ESC) */}
+          <details className="p-4 group/det">
+            <summary className="text-[10px] font-mono uppercase tracking-wider font-bold text-zinc-400 hover:text-zinc-800 cursor-pointer list-none flex items-center justify-between">
+              <span>Pannes probables (Moteur / ESC)</span>
+              <span className="text-zinc-400">+</span>
+            </summary>
+            <div className="space-y-1 pt-2.5">
               {probableMotorAndEscIssues.map((item) => (
                 <Link
                   key={item.id}
                   href={`/forum/post/?id=${encodeURIComponent(item.id)}${motorParam ? `&motor=${encodeURIComponent(motorParam)}` : ''}${escParam ? `&esc=${encodeURIComponent(escParam)}` : ''}`}
-                  className="group block p-2 rounded-xl border border-transparent hover:border-zinc-200 hover:bg-zinc-50/80 transition-all space-y-0.5"
+                  className="group block p-2 rounded-lg hover:bg-zinc-50 transition-colors space-y-0.5"
                 >
-                  <div className="flex items-center justify-between gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
-                    <span
-                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold ${
-                        item.kind === 'ESC'
-                          ? 'bg-amber-100 text-amber-900'
-                          : 'bg-zinc-200/80 text-zinc-800'
-                      }`}
-                    >
+                  <div className="flex items-center justify-between gap-1.5 text-[9px] font-mono text-zinc-400">
+                    <span className={item.kind === 'ESC' ? 'text-amber-700 font-bold' : 'text-zinc-500 font-bold'}>
                       {item.kind}
                     </span>
-                    <span className="text-[9px] font-mono text-zinc-400">
-                      {item.rarity}/10
-                    </span>
+                    <span>{item.rarity}/10</span>
                   </div>
-                  <div className="text-[11px] font-semibold text-zinc-800 group-hover:text-black line-clamp-2 leading-snug">
+                  <div className="text-[11px] font-medium text-zinc-700 group-hover:text-black line-clamp-2 leading-snug">
                     {item.title}
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
+          </details>
 
-          {/* Problèmes rencontrés sur ce moteur / ESC */}
+          {/* Accordéon discret : Cas rencontrés */}
           {encounteredHardwarePosts.length > 0 && (
-            <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2">
-              <div className="text-[11px] font-mono uppercase font-bold text-zinc-400">
-                Cas rencontrés (Moteur / ESC)
-              </div>
-              <div className="space-y-1">
+            <details className="p-4 group/det">
+              <summary className="text-[10px] font-mono uppercase tracking-wider font-bold text-zinc-400 hover:text-zinc-800 cursor-pointer list-none flex items-center justify-between">
+                <span>Cas rencontrés ({encounteredHardwarePosts.length})</span>
+                <span className="text-zinc-400">+</span>
+              </summary>
+              <div className="space-y-1 pt-2.5">
                 {encounteredHardwarePosts.map((p) => (
                   <Link
                     key={p.id}
                     href={`/forum/post/?id=${encodeURIComponent(p.id)}`}
-                    className="group block p-2 rounded-xl border border-transparent hover:border-zinc-200 hover:bg-zinc-50/80 transition-all space-y-0.5"
+                    className="group block p-2 rounded-lg hover:bg-zinc-50 transition-colors space-y-0.5"
                   >
-                    <div className="text-[11px] font-semibold text-zinc-800 group-hover:text-black line-clamp-2 leading-snug">
+                    <div className="text-[11px] font-medium text-zinc-700 group-hover:text-black line-clamp-2 leading-snug">
                       {p.title}
                     </div>
-                    <div className="text-[10px] font-mono text-zinc-400 group-hover:text-zinc-600 truncate transition-colors">
+                    <div className="text-[10px] font-mono text-zinc-400 truncate">
                       {p.brand} {p.model ? `· ${p.model}` : ''}
                     </div>
                   </Link>
                 ))}
               </div>
-            </div>
+            </details>
           )}
         </aside>
 
@@ -725,55 +716,21 @@ function ForumPostDetailContent() {
                 </div>
 
                 {/* Contenu principal du post */}
-                <div className="text-[15px] text-zinc-800 leading-relaxed whitespace-pre-line">
+                <div className="text-[15px] text-zinc-700 leading-relaxed whitespace-pre-line">
                   {postData.content}
                 </div>
 
-                {/* Détails techniques du diagnostic (si fiche diagnostic) */}
+                {/* Solution recommandée (bloc focal unique) + détails techniques repliés */}
                 {(postData.probableCauses.length > 0 ||
-                  postData.diagnosticSteps.length > 0 ||
                   postData.recommendedFix.length > 0) && (
                   <div className="space-y-3 pt-1">
-                    {postData.probableCauses.length > 0 && (
-                      <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 space-y-1.5">
-                        <div className="text-xs font-mono uppercase font-bold text-amber-900 flex items-center gap-1.5">
-                          <AlertTriangle className="w-4 h-4 text-amber-600" />
-                          <span>Causes probables identifiées</span>
-                        </div>
-                        <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-800">
-                          {postData.probableCauses.map((cause, idx) => (
-                            <li key={idx}>{cause}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {postData.diagnosticSteps.length > 0 && (
-                      <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 space-y-2">
-                        <div className="text-xs font-mono uppercase font-bold text-black flex items-center gap-1.5">
-                          <Wrench className="w-4 h-4" />
-                          <span>Protocole de contrôle atelier</span>
-                        </div>
-                        <ol className="space-y-2 text-sm text-zinc-800">
-                          {postData.diagnosticSteps.map((stepText, idx) => (
-                            <li key={idx} className="flex items-start gap-2.5">
-                              <span className="w-5 h-5 rounded-full bg-black text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                                {idx + 1}
-                              </span>
-                              <span className="leading-relaxed">{stepText}</span>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-
                     {postData.recommendedFix.length > 0 && (
-                      <div className="p-4 rounded-xl bg-[#cbf3d2]/25 border border-emerald-700/30 space-y-1.5">
-                        <div className="text-xs font-mono uppercase font-bold text-emerald-900 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                      <div className="border-l-4 border-emerald-500 bg-emerald-50/35 rounded-r-xl p-4 space-y-2">
+                        <div className="text-[11px] font-mono uppercase tracking-wider font-bold text-emerald-800 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           <span>Solutions recommandées</span>
                         </div>
-                        <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-800">
+                        <ul className="list-disc pl-5 space-y-1.5 text-[14px] text-zinc-900 leading-relaxed">
                           {postData.recommendedFix.map((fixText, idx) => (
                             <li key={idx}>{fixText}</li>
                           ))}
@@ -781,31 +738,53 @@ function ForumPostDetailContent() {
                       </div>
                     )}
 
-                    {postData.toolsNeeded.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <span className="text-[11px] font-mono uppercase text-zinc-500">
-                          Outils requis :
-                        </span>
-                        {postData.toolsNeeded.map((tool) => (
-                          <span
-                            key={tool}
-                            className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-zinc-100 border border-zinc-300 text-zinc-800"
-                          >
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
+                    {(postData.probableCauses.length > 0 || postData.toolsNeeded.length > 0) && (
+                      <details className="rounded-xl border border-zinc-200/80 bg-zinc-50/50 px-4 py-2.5 text-xs">
+                        <summary className="font-mono text-[11px] font-semibold text-zinc-500 hover:text-zinc-900 cursor-pointer list-none flex items-center justify-between">
+                          <span>+ Causes probables &amp; outils requis</span>
+                          <span className="text-zinc-400">Voir</span>
+                        </summary>
+                        <div className="pt-3 space-y-3 border-t border-zinc-200/60 mt-2.5">
+                          {postData.probableCauses.length > 0 && (
+                            <div className="space-y-1">
+                              <div className="text-[10px] font-mono uppercase font-bold text-zinc-500">
+                                Causes probables
+                              </div>
+                              <ul className="list-disc pl-5 space-y-1 text-xs text-zinc-700">
+                                {postData.probableCauses.map((cause, idx) => (
+                                  <li key={idx}>{cause}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {postData.toolsNeeded.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="text-[10px] font-mono uppercase text-zinc-400">
+                                Outils :
+                              </span>
+                              {postData.toolsNeeded.map((tool) => (
+                                <span
+                                  key={tool}
+                                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-white border border-zinc-200 text-zinc-700"
+                                >
+                                  {tool}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </details>
                     )}
                   </div>
                 )}
 
                 {/* Encart résumé solution si une réponse est marquée comme solution */}
                 {acceptedComment && (
-                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-3">
-                    <div className="text-xs text-emerald-950 flex items-center gap-2 min-w-0">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <div className="px-3.5 py-2 rounded-xl bg-emerald-50/40 border border-emerald-200/70 flex items-center justify-between gap-3">
+                    <div className="text-xs text-emerald-900 flex items-center gap-2 min-w-0">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span className="truncate">
-                        Résolu par <strong>@{acceptedComment.author}</strong> :{' '}
+                        Validé par <strong>@{acceptedComment.author}</strong> :{' '}
                         {acceptedComment.text}
                       </span>
                     </div>
@@ -814,9 +793,9 @@ function ForumPostDetailContent() {
                       onClick={() =>
                         solutionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                       }
-                      className="text-[11px] font-bold text-emerald-900 underline shrink-0 cursor-pointer"
+                      className="text-[11px] font-semibold text-emerald-800 hover:underline shrink-0 cursor-pointer"
                     >
-                      Voir la solution ↓
+                      Aller à la réponse ↓
                     </button>
                   </div>
                 )}
