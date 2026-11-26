@@ -550,32 +550,32 @@ function ForumPostDetailContent() {
         {/* COLONNE GAUCHE : FICHE CHECK & REMONTÉE À LA SOURCE */}
         <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-24">
           {/* Chaîne Remonter à la source */}
-          <div className="bg-white border-[1.5px] border-dashed border-black rounded-2xl p-4 space-y-3 shadow-xs">
+          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-black">
+              <span className="text-[11px] font-mono uppercase font-bold text-zinc-800">
                 Fiche Check · Chaîne
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-bold">
-                Source : {effectiveSource.toUpperCase()}
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-semibold">
+                {effectiveSource.toUpperCase()}
               </span>
             </div>
 
-            <div className="space-y-1.5 text-[11px] font-mono">
+            <div className="space-y-1 text-[11px] font-mono">
               {[
-                { id: 'lipo', label: '1. LiPo / Alimentation XT60' },
-                { id: 'esc', label: escParam ? `2. ESC (${escParam.slice(0, 18)})` : '2. ESC 4-en-1 / MOSFETs' },
-                { id: 'soudure', label: '3. Soudures & 3 Phases' },
+                { id: 'lipo', label: '1. LiPo / XT60' },
+                { id: 'esc', label: escParam ? `2. ESC (${escParam.slice(0, 18)})` : '2. ESC / MOSFETs' },
+                { id: 'soudure', label: '3. Soudures / Phases' },
                 { id: 'moteur', label: motorParam ? `4. Moteur (${motorParam})` : '4. Moteur Brushless' },
-                { id: 'fc', label: '5. FC (Signal DShot / PID)' },
+                { id: 'fc', label: '5. FC / Signal DShot' },
               ].map((stage) => {
                 const isBlocked = effectiveSource === stage.id;
                 return (
                   <div
                     key={stage.id}
-                    className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between gap-2 ${
+                    className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between gap-2 transition-opacity ${
                       isBlocked
-                        ? 'bg-amber-50 border-amber-400 text-amber-950 font-bold'
-                        : 'bg-zinc-50 border-zinc-200 text-zinc-600'
+                        ? 'bg-amber-50/90 border-amber-300 text-amber-950 font-bold'
+                        : 'bg-zinc-50/50 border-transparent text-zinc-500 opacity-55 hover:opacity-100'
                     }`}
                   >
                     <span className="truncate">{stage.label}</span>
@@ -591,16 +591,16 @@ function ForumPostDetailContent() {
           </div>
 
           {/* Checklist interactive */}
-          <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-3 shadow-xs">
+          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase font-bold text-black">
+              <span className="text-[11px] font-mono uppercase font-bold text-zinc-800">
                 Check-list atelier
               </span>
-              <span className="text-[10px] font-mono text-zinc-500 font-bold">
+              <span className="text-[10px] font-mono text-zinc-400 font-semibold">
                 {checkedSteps.length}/{checklistItems.length}
               </span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {checklistItems.map((stepText, idx) => {
                 const done = checkedSteps.includes(idx);
                 return (
@@ -608,17 +608,17 @@ function ForumPostDetailContent() {
                     key={idx}
                     type="button"
                     onClick={() => toggleChecklistStep(idx)}
-                    className={`w-full text-left p-2.5 rounded-xl border text-[11px] flex items-start gap-2 transition-colors cursor-pointer ${
+                    className={`w-full text-left p-2 rounded-xl border text-[11px] flex items-start gap-2 transition-all cursor-pointer ${
                       done
-                        ? 'bg-[#cbf3d2]/30 border-emerald-500/50 text-zinc-600 line-through'
-                        : 'bg-zinc-50/70 border-zinc-200 hover:border-black text-zinc-800'
+                        ? 'bg-[#cbf3d2]/25 border-emerald-400/40 text-zinc-400 line-through'
+                        : 'bg-transparent border-zinc-100 hover:border-zinc-300 hover:bg-zinc-50/60 text-zinc-700'
                     }`}
                   >
                     <span
-                      className={`w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5 border text-[10px] font-bold ${
+                      className={`w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5 border text-[10px] font-bold transition-colors ${
                         done
                           ? 'bg-emerald-600 border-emerald-600 text-white'
-                          : 'bg-white border-zinc-400 text-transparent'
+                          : 'bg-white border-zinc-300 text-transparent'
                       }`}
                     >
                       ✓
@@ -631,32 +631,32 @@ function ForumPostDetailContent() {
           </div>
 
           {/* Problèmes les plus probables (Moteur & ESC) */}
-          <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-2.5 shadow-xs">
-            <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
+          <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2">
+            <div className="text-[11px] font-mono uppercase font-bold text-zinc-400">
               Pannes probables (Moteur &amp; ESC)
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {probableMotorAndEscIssues.map((item) => (
                 <Link
                   key={item.id}
                   href={`/forum/post/?id=${encodeURIComponent(item.id)}${motorParam ? `&motor=${encodeURIComponent(motorParam)}` : ''}${escParam ? `&esc=${encodeURIComponent(escParam)}` : ''}`}
-                  className="block p-2 rounded-xl border border-zinc-100 hover:border-black bg-zinc-50/60 hover:bg-white transition-all space-y-0.5"
+                  className="group block p-2 rounded-xl border border-transparent hover:border-zinc-200 hover:bg-zinc-50/80 transition-all space-y-0.5"
                 >
-                  <div className="flex items-center justify-between gap-1.5">
+                  <div className="flex items-center justify-between gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
                     <span
                       className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold ${
                         item.kind === 'ESC'
                           ? 'bg-amber-100 text-amber-900'
-                          : 'bg-zinc-200 text-black'
+                          : 'bg-zinc-200/80 text-zinc-800'
                       }`}
                     >
                       {item.kind}
                     </span>
-                    <span className="text-[9px] font-mono text-zinc-500">
+                    <span className="text-[9px] font-mono text-zinc-400">
                       {item.rarity}/10
                     </span>
                   </div>
-                  <div className="text-[11px] font-bold text-black line-clamp-2 leading-snug">
+                  <div className="text-[11px] font-semibold text-zinc-800 group-hover:text-black line-clamp-2 leading-snug">
                     {item.title}
                   </div>
                 </Link>
@@ -666,21 +666,21 @@ function ForumPostDetailContent() {
 
           {/* Problèmes rencontrés sur ce moteur / ESC */}
           {encounteredHardwarePosts.length > 0 && (
-            <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-2.5 shadow-xs">
-              <div className="text-[11px] font-mono uppercase font-bold text-zinc-500">
+            <div className="bg-white border border-zinc-200/90 rounded-2xl p-4 space-y-2">
+              <div className="text-[11px] font-mono uppercase font-bold text-zinc-400">
                 Cas rencontrés (Moteur / ESC)
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {encounteredHardwarePosts.map((p) => (
                   <Link
                     key={p.id}
                     href={`/forum/post/?id=${encodeURIComponent(p.id)}`}
-                    className="block p-2 rounded-xl border border-zinc-100 hover:border-black bg-zinc-50/60 hover:bg-white transition-all space-y-0.5"
+                    className="group block p-2 rounded-xl border border-transparent hover:border-zinc-200 hover:bg-zinc-50/80 transition-all space-y-0.5"
                   >
-                    <div className="text-[11px] font-bold text-black line-clamp-2 leading-snug">
+                    <div className="text-[11px] font-semibold text-zinc-800 group-hover:text-black line-clamp-2 leading-snug">
                       {p.title}
                     </div>
-                    <div className="text-[10px] font-mono text-zinc-500 truncate">
+                    <div className="text-[10px] font-mono text-zinc-400 group-hover:text-zinc-600 truncate transition-colors">
                       {p.brand} {p.model ? `· ${p.model}` : ''}
                     </div>
                   </Link>
@@ -693,7 +693,7 @@ function ForumPostDetailContent() {
         {/* COLONNE CENTRALE : STREAM DE POSTS */}
         <div className="lg:col-span-6 xl:col-span-7 divide-y divide-zinc-200 bg-white border border-zinc-200 rounded-2xl shadow-xs">
           {/* POST #1 : SUJET ORIGINAL (OP) */}
-          <article id="post-1" className="p-5 sm:p-7">
+          <article id="post-1" className="group p-5 sm:p-7">
             <div className="flex items-start gap-4">
               {/* Avatar gauche */}
               <div
@@ -822,7 +822,7 @@ function ForumPostDetailContent() {
                 )}
 
                 {/* Barre d'actions Discourse du Post #1 */}
-                <div className="pt-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="pt-2 flex flex-wrap items-center justify-between gap-2 opacity-40 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       type="button"
@@ -882,7 +882,7 @@ function ForumPostDetailContent() {
                 </div>
 
                 {/* DISCOURSE TOPIC MAP (STATISTIQUES DU SUJET) */}
-                <div className="mt-4 p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+                <div className="mt-4 px-3.5 py-2.5 rounded-xl bg-zinc-50/70 border border-zinc-200/70 flex flex-wrap items-center justify-between gap-4 text-xs opacity-75 hover:opacity-100 transition-opacity">
                   <div className="flex flex-wrap items-center gap-5">
                     <div>
                       <div className="text-[10px] font-mono uppercase text-zinc-500">Créé</div>
@@ -937,7 +937,7 @@ function ForumPostDetailContent() {
               key={c.id}
               id={`post-${idx + 2}`}
               ref={c.isAcceptedSolution ? solutionRef : undefined}
-              className={`p-5 sm:p-7 transition-colors ${
+              className={`group p-5 sm:p-7 transition-colors ${
                 c.isAcceptedSolution ? 'bg-emerald-50/35' : ''
               }`}
             >
@@ -973,9 +973,9 @@ function ForumPostDetailContent() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono">
+                    <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
                       <span>{c.createdAt}</span>
-                      <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-700 font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 font-bold">
                         #{idx + 2}
                       </span>
                     </div>
@@ -993,7 +993,7 @@ function ForumPostDetailContent() {
                   </p>
 
                   {/* Actions sur chaque réponse */}
-                  <div className="pt-1 flex flex-wrap items-center justify-between gap-2">
+                  <div className="pt-1 flex flex-wrap items-center justify-between gap-2 opacity-30 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"

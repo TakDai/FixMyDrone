@@ -1467,7 +1467,7 @@ export function TroubleshootWizard({
             return (
               <div className="space-y-3">
                 {/* Badge simulation dynamique */}
-                <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 border border-zinc-200 text-[10px] font-mono text-zinc-600">
+                <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1 rounded-xl bg-zinc-50 border border-zinc-200/70 text-[10px] font-mono text-zinc-500 opacity-45 hover:opacity-100 transition-opacity">
                   <span>
                     Simu active · {simulationSummary.totalScenarios} scénarios ({simulationSummary.resolutionPostsCount} posts) · {simulationSummary.synthesizedQuestionsCount} questions générées
                   </span>
@@ -2067,10 +2067,10 @@ export function TroubleshootWizard({
                 <Link
                   key={symptom.id}
                   href={`/forum/post/?id=${encodeURIComponent(symptom.id)}${selectedMotor ? `&motor=${encodeURIComponent(selectedMotor.model)}` : ''}${selectedEscLabel ? `&esc=${encodeURIComponent(selectedEscLabel)}` : ''}&source=${encodeURIComponent(rootCauseChain.blockedStage)}`}
-                  className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
+                  className={`group w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
                     idx === 0
-                      ? 'border-black bg-zinc-50 hover:bg-white shadow-xs'
-                      : 'border-zinc-200 hover:border-black bg-white'
+                      ? 'border-zinc-900 bg-zinc-50/80 hover:bg-white shadow-xs'
+                      : 'border-zinc-200/80 hover:border-black bg-white'
                   }`}
                 >
                   <div className="min-w-0">
@@ -2084,16 +2084,16 @@ export function TroubleshootWizard({
                         {symptom.title}
                       </span>
                     </div>
-                    <p className="text-[11px] text-zinc-600 mt-1 line-clamp-2">
+                    <p className="text-[11px] text-zinc-500 opacity-75 group-hover:opacity-100 mt-1 line-clamp-2 transition-opacity">
                       {symptom.description}
                     </p>
                     {matchReasons.length > 0 && (
-                      <div className="text-[10px] font-mono text-emerald-700 mt-1">
+                      <div className="text-[10px] font-mono text-emerald-700 opacity-70 group-hover:opacity-100 mt-1 transition-opacity">
                         {matchReasons.join(' • ')}
                       </div>
                     )}
                   </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </Link>
               ))}
             </div>
