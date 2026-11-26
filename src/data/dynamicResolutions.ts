@@ -111,75 +111,119 @@ export interface RankedSymptom {
   matchReasons: string[];
 }
 
+const SYNONYM_GROUPS: string[][] = [
+  ['chauffe', 'chaud', 'brulant', 'temperature', 'surchauffe'],
+  ['vibre', 'vibration', 'vibrations', 'jello', 'oscille', 'oscillation'],
+  ['crash', 'choc', 'impact', 'tape', 'tordu', 'voile', 'voilee', 'casse'],
+  ['bruit', 'son', 'crecelle', 'gratte', 'siffle', 'frotte', 'frottement'],
+  ['broute', 'saccade', 'stuttering', 'twitch', 'bloque', 'tourne'],
+  ['bip', 'bips', 'sonnerie', 'demarrage'],
+  ['aimant', 'aimants', 'decolle', 'fendu'],
+  ['roulement', 'roulements', 'jeu', 'axial', '684zz'],
+  ['vis', 'bobinage', 'cuivre', 'stator'],
+  ['desync', 'coupure', 'tonneau', 'roll', 'gaz'],
+];
+
+function expandSynonyms(tokens: string[]): string[] {
+  const expanded = new Set(tokens);
+  for (const t of tokens) {
+    for (const group of SYNONYM_GROUPS) {
+      if (group.some((g) => g.includes(t) || t.includes(g) || (t.length >= 4 && g.startsWith(t.slice(0, 4))))) {
+        for (const g of group) expanded.add(g);
+      }
+    }
+  }
+  return Array.from(expanded);
+}
+
+function tokenMatches(queryToken: string, corpusToken: string): boolean {
+  if (corpusToken.includes(queryToken) || queryToken.includes(corpusToken)) return true;
+  if (queryToken.length >= 4 && corpusToken.length >= 4) {
+    return corpusToken.slice(0, 4) === queryToken.slice(0, 4);
+  }
+  return false;
+}
+
 export function rankSymptomsDynamically(
   symptoms: DiagnosticSymptomOption[],
   ctx: DiagnosticQueryContext
 ): RankedSymptom[] {
-  const promptTokens = tokenize(ctx.promptText);
-  const guidedTokens = (ctx.guidedTokens || []).flatMap(tokenize);
+  const rawPromptTokens = tokenize(ctx.promptText);
+  const promptTokens = expandSynonyms(rawPromptTokens);
+  const guidedTokens = expandSynonyms((ctx.guidedTokens || []).flatMap(tokenize));
   const allQueryTokens = Array.from(new Set([...promptTokens, ...guidedTokens]));
+  const hasPrompt = ctx.promptText.trim().length > 0;
 
-  return symptoms
-    .map((symptom) => {
-      let score = 0;
-      const matchReasons: string[] = [];
+  const scored = symptoms.map((symptom) => {
+    let score = 0;
+    const matchReasons: string[] = [];
+    let keywordHitsCount = 0;
 
-      // 1. Correspondance par famille / catégorie de comportement
-      if (ctx.behaviorFamily && ctx.behaviorFamily !== 'all') {
-        if (symptom.category === ctx.behaviorFamily) {
-          score += 35;
-          matchReasons.push(`Type : ${symptom.category}`);
-        } else {
-          score -= 10;
-        }
+    // 1. Correspondance par famille / catégorie de comportement
+    if (ctx.behaviorFamily && ctx.behaviorFamily !== 'all') {
+      if (symptom.category === ctx.behaviorFamily) {
+        score += 35;
+        matchReasons.push(`Type : ${symptom.category}`);
+      } else {
+        score -= 10;
       }
+    }
 
-      // 2. Correspondance par circonstance (quand est survenu le problème)
-      if (ctx.circumstanceId) {
-        const hay = `${symptom.title} ${symptom.description} ${symptom.likelyCause}`.toLowerCase();
-        if (ctx.circumstanceId === 'after-crash' && /crash|choc|impact|voil|tordu|aimant|roulement/.test(hay)) {
-          score += 20;
-          matchReasons.push('Compatible après crash');
-        } else if (ctx.circumstanceId === 'new-build' && /soudure|vis|montage|neuf|phase|sens|calibr/.test(hay)) {
-          score += 20;
-          matchReasons.push('Compatible premier montage');
-        } else if (ctx.circumstanceId === 'in-flight' && /vol|desync|chaud|coupure|vibr|throttle/.test(hay)) {
-          score += 20;
-          matchReasons.push('Compatible en vol');
-        } else if (ctx.circumstanceId === 'power-on' && /bip|aliment|lipo|court-circuit|demarr|boot/.test(hay)) {
-          score += 20;
-          matchReasons.push('Compatible au branchement');
-        } else if (ctx.circumstanceId === 'gradual' && /usure|roulement|jeu|progress|poussi|vibr/.test(hay)) {
-          score += 20;
-          matchReasons.push('Compatible usure progressive');
-        }
+    // 2. Correspondance par circonstance (quand est survenu le problème)
+    if (ctx.circumstanceId) {
+      const hay = `${symptom.title} ${symptom.description} ${symptom.likelyCause}`.toLowerCase();
+      if (ctx.circumstanceId === 'after-crash' && /crash|choc|impact|voil|tordu|aimant|roulement/.test(hay)) {
+        score += 20;
+        matchReasons.push('Compatible après crash');
+      } else if (ctx.circumstanceId === 'new-build' && /soudure|vis|montage|neuf|phase|sens|calibr/.test(hay)) {
+        score += 20;
+        matchReasons.push('Compatible premier montage');
+      } else if (ctx.circumstanceId === 'in-flight' && /vol|desync|chaud|coupure|vibr|throttle/.test(hay)) {
+        score += 20;
+        matchReasons.push('Compatible en vol');
+      } else if (ctx.circumstanceId === 'power-on' && /bip|aliment|lipo|court-circuit|demarr|boot/.test(hay)) {
+        score += 20;
+        matchReasons.push('Compatible au branchement');
+      } else if (ctx.circumstanceId === 'gradual' && /usure|roulement|jeu|progress|poussi|vibr/.test(hay)) {
+        score += 20;
+        matchReasons.push('Compatible usure progressive');
       }
+    }
 
-      // 3. Correspondance par prompt libre & réponses enchaînées
-      if (allQueryTokens.length > 0) {
-        const symptomCorpus = tokenize(
-          `${symptom.title} ${symptom.description} ${symptom.likelyCause} ${symptom.aiDiagnostic.rootCause} ${symptom.matchingForumQuery.join(' ')}`
-        );
-        const hits = allQueryTokens.filter((t) =>
-          symptomCorpus.some((c) => c.includes(t) || t.includes(c))
-        );
-        if (hits.length > 0) {
-          score += Math.min(70, hits.length * 16);
-          matchReasons.push(`Indices : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
-        }
+    // 3. Correspondance par prompt libre & réponses enchaînées
+    if (allQueryTokens.length > 0) {
+      const symptomCorpus = tokenize(
+        `${symptom.title} ${symptom.description} ${symptom.likelyCause} ${symptom.aiDiagnostic.rootCause} ${symptom.matchingForumQuery.join(' ')}`
+      );
+      const hits = allQueryTokens.filter((t) =>
+        symptomCorpus.some((c) => tokenMatches(t, c))
+      );
+      keywordHitsCount = hits.length;
+      if (hits.length > 0) {
+        score += Math.min(80, hits.length * 18);
+        matchReasons.push(`Correspondance : ${Array.from(new Set(hits)).slice(0, 3).join(', ')}`);
       }
+    }
 
-      // 4. Bonus léger pour les observations cochées
-      if (ctx.selectedObservations.length > 0) {
-        score += Math.min(15, ctx.selectedObservations.length * 5);
-      }
+    // 4. Bonus léger pour les observations cochées
+    if (ctx.selectedObservations.length > 0) {
+      score += Math.min(15, ctx.selectedObservations.length * 5);
+    }
 
-      // Bonus de fréquence de base
-      score += Math.round(symptom.rarityIndex / 2);
+    // Bonus de fréquence de base
+    score += Math.round(symptom.rarityIndex / 2);
 
-      return { symptom, score, matchReasons };
-    })
-    .sort((a, b) => b.score - a.score);
+    return { symptom, score, matchReasons, keywordHitsCount };
+  });
+
+  // Quand l'utilisateur saisit un prompt, ne garder que les résultats qui correspondent réellement
+  const filtered = hasPrompt
+    ? scored.filter((item) => item.keywordHitsCount > 0)
+    : scored;
+
+  return filtered
+    .sort((a, b) => b.score - a.score)
+    .map(({ symptom, score, matchReasons }) => ({ symptom, score, matchReasons }));
 }
 
 export interface RankedDynamicResolution {

@@ -645,9 +645,10 @@ export function TroubleshootWizard({
                     key={rec.questionId}
                     type="button"
                     onClick={() => {
-                      setAnswerRecords((prev) =>
-                        prev.filter((r) => r.questionId !== rec.questionId)
+                      const updated = answerRecords.filter(
+                        (r) => r.questionId !== rec.questionId
                       );
+                      setAnswerRecords(updated);
                       setChainedAnswers((prev) => {
                         const copy = { ...prev };
                         delete copy[rec.questionId];
@@ -660,6 +661,13 @@ export function TroubleshootWizard({
                       if (rec.questionId === 'family') {
                         setBehaviorFamily('all');
                       }
+                      setQuestionHistory((prev) => {
+                        const kept = prev.filter(
+                          (q, qIdx) => qIdx === 0 || updated.some((u) => u.questionId === q.id)
+                        );
+                        return kept.length > 0 ? kept : [MOTOR_STATIC_QUESTIONS[0]];
+                      });
+                      setQuestionIdx(Math.max(0, updated.length));
                       setNoMatchAction('none');
                       if (step === 5) setStep(4);
                     }}
@@ -1179,17 +1187,23 @@ export function TroubleshootWizard({
 
           {/* MODE A : PROMPT LIBRE */}
           {contextMode === 'prompt' && (
-            <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-black">
-                Décrivez votre problème librement :
-              </label>
-              <textarea
-                value={contextPrompt}
-                onChange={(e) => setContextPrompt(e.target.value)}
-                rows={3}
-                placeholder="Ex: Après un crash dans l'herbe, le moteur 3 broute au ralenti et chauffe beaucoup après 20 secondes de vol..."
-                className="w-full p-3 border-[1.5px] border-dashed border-black rounded-2xl text-xs text-black focus:outline-none bg-white"
-              />
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-black">
+                  Décrivez votre problème librement :
+                </label>
+                <textarea
+                  value={contextPrompt}
+                  onChange={(e) => {
+                    setContextPrompt(e.target.value);
+                    setNoMatchAction('none');
+                  }}
+                  rows={3}
+                  placeholder="Ex: Après un crash dans l'herbe, le moteur 3 broute au ralenti et chauffe beaucoup après 20 secondes de vol..."
+                  className="w-full p-3 border-[1.5px] border-dashed border-black rounded-2xl text-xs text-black focus:outline-none bg-white"
+                />
+              </div>
+
               <div className="flex flex-wrap gap-1.5">
                 {[
                   'Moteur qui broute au ralenti',
@@ -1201,13 +1215,68 @@ export function TroubleshootWizard({
                   <button
                     key={chip}
                     type="button"
-                    onClick={() => setContextPrompt(chip)}
+                    onClick={() => {
+                      setContextPrompt(chip);
+                      setNoMatchAction('none');
+                    }}
                     className="px-2.5 py-1 rounded-full bg-zinc-100 hover:bg-black hover:text-white text-[10px] font-mono text-zinc-700 transition-colors cursor-pointer"
                   >
                     + {chip}
                   </button>
                 ))}
               </div>
+
+              {/* Retour d'analyse du prompt en direct */}
+              {contextPrompt.trim().length > 0 && (
+                rankedSymptoms.length > 0 ? (
+                  <div className="p-3 rounded-2xl bg-[#cbf3d2]/30 border border-black/20 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold text-black">
+                      {rankedSymptoms.length} piste{rankedSymptoms.length > 1 ? 's' : ''} trouvée{rankedSymptoms.length > 1 ? 's' : ''} dans la pop-up de droite →
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSymptom(rankedSymptoms[0].symptom);
+                        setStep(5);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black text-white font-bold text-[11px] hover:bg-zinc-800 cursor-pointer"
+                    >
+                      <span>Ouvrir #1 : {rankedSymptoms[0].symptom.title}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-2xl border-[1.5px] border-dashed border-black bg-zinc-50 space-y-3">
+                    <div className="text-xs font-bold text-black">
+                      Aucune panne connue ne correspond à « {contextPrompt.trim()} »
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setNoMatchAction('ai')}
+                        className="p-3 rounded-xl border border-black bg-white hover:bg-black hover:text-white text-left transition-colors cursor-pointer flex items-center gap-2.5"
+                      >
+                        <Bot className="w-4 h-4 shrink-0" />
+                        <span className="font-bold text-xs">Résoudre avec l’IA</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNoMatchAction('forum');
+                          setForumPostTitle(`[${activeBrandLabel}] ${contextPrompt.trim().slice(0, 60)}`);
+                          setForumPostBody(
+                            `Bonjour à tous,\n\nMatériel : ${activeBrandLabel} — ${activeRefLabel}\nDescription : ${contextPrompt.trim()}\n\nMerci d'avance pour vos conseils !`
+                          );
+                        }}
+                        className="p-3 rounded-xl border border-black bg-white hover:bg-black hover:text-white text-left transition-colors cursor-pointer flex items-center gap-2.5"
+                      >
+                        <MessageSquare className="w-4 h-4 shrink-0" />
+                        <span className="font-bold text-xs">Envoyer sur le forum</span>
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
             </div>
           )}
 
@@ -1259,24 +1328,20 @@ export function TroubleshootWizard({
                 return;
               }
 
-              // Si l'utilisateur naviguait dans l'historique et a déjà une question suivante
-              if (questionIdx + 1 < questionHistory.length) {
-                setQuestionIdx(questionIdx + 1);
-                return;
-              }
-
-              // Sinon, simuler quelle question (statique ou générée depuis les posts) sépare le mieux les candidats restants
-              const askedIds = questionHistory.map((q) => q.id);
+              // Toujours re-simuler la meilleure question suivante en fonction des réponses actuelles !
+              const historyUpToHere = questionHistory.slice(0, questionIdx + 1);
+              const askedIds = historyUpToHere.map((q) => q.id);
               if (nextActive.length >= 2) {
                 const nextBestQ = simulateBestNextQuestion(
                   nextActive,
                   dynamicResolutions,
                   askedIds,
-                  questionHistory.length + 1
+                  historyUpToHere.length + 1,
+                  updatedRecords
                 );
                 if (nextBestQ) {
-                  setQuestionHistory((prev) => [...prev, nextBestQ]);
-                  setQuestionIdx(questionHistory.length);
+                  setQuestionHistory([...historyUpToHere, nextBestQ]);
+                  setQuestionIdx(historyUpToHere.length);
                   return;
                 }
               }

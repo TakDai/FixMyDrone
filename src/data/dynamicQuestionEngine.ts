@@ -590,32 +590,106 @@ export function synthesizeQuestionsFromResolutions(
 
 /**
  * Simule quelle question (statique ou générée depuis les posts) sépare le mieux
- * les candidats restants (score de gain d'information).
+ * les candidats restants ET s'adapte dynamiquement aux réponses déjà données.
  */
 export function simulateBestNextQuestion(
   remainingCandidates: ScoredCandidate[],
   dynamicResolutions: DynamicResolution[],
   askedIds: string[],
-  stepNumber: number
+  stepNumber: number,
+  answers: QuestionAnswerRecord[] = []
 ): DiagnosticQuestion | null {
   const pool: DiagnosticQuestion[] = [
     ...MOTOR_STATIC_QUESTIONS.filter((q) => !askedIds.includes(q.id)),
     ...synthesizeQuestionsFromResolutions(dynamicResolutions, askedIds),
   ];
 
-  // Toujours garder la question 'when' en tout premier pour une UX logique
-  if (!askedIds.includes('when')) {
+  // Toujours démarrer par le moment d'apparition si aucune question n'a encore été posée
+  if (!askedIds.includes('when') && answers.length === 0) {
     const whenQ = MOTOR_STATIC_QUESTIONS.find((q) => q.id === 'when');
     if (whenQ) return whenQ;
   }
 
+  // Calcul des affinités contextuelles selon les réponses déjà données par l'utilisateur
+  const pickedOptionIds = new Set(answers.map((a) => `${a.questionId}:${a.optionId}`));
+  const contextualBias = (qId: string): number => {
+    let bias = 0;
+
+    if (pickedOptionIds.has('when:after-crash')) {
+      if (qId === 'hand-spin') bias += 45;
+      if (qId === 'visual-bell') bias += 40;
+      if (qId === 'flight-behavior') bias += 20;
+      if (qId === 'recent-config') bias -= 25;
+    }
+    if (pickedOptionIds.has('when:new-build')) {
+      if (qId === 'screws') bias += 45;
+      if (qId === 'beeps') bias += 40;
+      if (qId === 'visual-winding') bias += 30;
+    }
+    if (pickedOptionIds.has('when:in-flight')) {
+      if (qId === 'flight-behavior') bias += 45;
+      if (qId === 'temp') bias += 35;
+      if (qId === 'recent-config') bias += 25;
+    }
+    if (pickedOptionIds.has('when:power-on')) {
+      if (qId === 'beeps') bias += 50;
+      if (qId === 'betaflight-tab') bias += 40;
+      if (qId === 'visual-winding') bias += 30;
+    }
+    if (pickedOptionIds.has('when:gradual')) {
+      if (qId === 'hand-spin') bias += 45;
+      if (qId === 'temp') bias += 35;
+      if (qId === 'visual-bell') bias += 25;
+    }
+
+    if (pickedOptionIds.has('family:mecanique')) {
+      if (['hand-spin', 'visual-bell', 'screws'].includes(qId)) bias += 45;
+      if (['beeps', 'recent-config', 'betaflight-tab'].includes(qId)) bias -= 40;
+    }
+    if (pickedOptionIds.has('family:electrique')) {
+      if (['beeps', 'betaflight-tab', 'visual-winding', 'temp', 'swap-test'].includes(qId)) bias += 45;
+      if (qId === 'visual-bell') bias -= 35;
+    }
+    if (pickedOptionIds.has('family:vol')) {
+      if (['flight-behavior', 'recent-config', 'temp', 'swap-test'].includes(qId)) bias += 45;
+      if (qId === 'beeps') bias -= 30;
+    }
+
+    if (
+      pickedOptionIds.has('hand-spin:scratch') ||
+      pickedOptionIds.has('hand-spin:play') ||
+      pickedOptionIds.has('hand-spin:blocked')
+    ) {
+      if (qId === 'visual-bell') bias += 55;
+      if (qId === 'screws') bias += 35;
+    }
+    if (pickedOptionIds.has('temp:burning') || pickedOptionIds.has('temp:warm')) {
+      if (qId === 'screws') bias += 55;
+      if (qId === 'visual-winding') bias += 45;
+      if (qId === 'recent-config') bias += 35;
+    }
+    if (pickedOptionIds.has('beeps:no-beeps') || pickedOptionIds.has('beeps:missing-2')) {
+      if (qId === 'swap-test') bias += 60;
+      if (qId === 'betaflight-tab') bias += 40;
+    }
+    if (pickedOptionIds.has('beeps:loop-beeps')) {
+      if (qId === 'visual-winding') bias += 55;
+      if (qId === 'swap-test') bias += 45;
+    }
+
+    return bias;
+  };
+
   let bestQ: DiagnosticQuestion | null = null;
-  let bestScore = -1;
+  let bestScore = -Infinity;
 
   for (const q of pool) {
-    // Simuler chaque option sur remainingCandidates
+    // Simuler chaque option diagnostique sur remainingCandidates
     const branchSizes: number[] = [];
     for (const opt of q.options) {
+      if (opt.isHealthy || opt.id === 'unsure' || opt.id === 'not-tested' || opt.id === 'unknown') {
+        continue;
+      }
       const optTokens = tokenize(opt.boostTokens.join(' '));
       let matches = 0;
       for (const cand of remainingCandidates) {
@@ -632,10 +706,14 @@ export function simulateBestNextQuestion(
       branchSizes.push(matches);
     }
 
-    // Score de séparation : plus les tailles de branches diffèrent (ni tout 100%, ni tout 0%), meilleur est le split
     const nonZero = branchSizes.filter((s) => s > 0 && s < remainingCandidates.length).length;
-    const spread = Math.max(...branchSizes) - Math.min(...branchSizes);
-    const splitScore = nonZero * 10 + spread + (q.isGenerated ? 2 : 0);
+    const spread =
+      branchSizes.length > 0 ? Math.max(...branchSizes) - Math.min(...branchSizes) : 0;
+    const splitScore =
+      nonZero * 12 +
+      spread +
+      contextualBias(q.id) +
+      (q.isGenerated ? 4 : 0);
 
     if (splitScore > bestScore) {
       bestScore = splitScore;
