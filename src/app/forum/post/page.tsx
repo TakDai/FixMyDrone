@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { EcosystemTopNav } from '@/components/EcosystemTopNav';
-import { FORUM_POSTS } from '@/data/forumPosts';
+import { FORUM_POSTS, SEEDED_FORUM_COMMENTS } from '@/data/forumPosts';
 import { loadStoredCommunityFixes } from '@/data/dynamicResolutions';
 import { DIAGNOSTIC_DEFINITIONS } from '@/data/diagnosticKnowledgeBase';
 import {
@@ -192,31 +192,36 @@ function ForumPostDetailContent() {
       if (savedComments) {
         setComments(JSON.parse(savedComments));
       } else {
-        setComments([
-          {
-            id: 'seed-1',
-            author: 'KwadTech_FR',
-            badge: 'Technicien ESC/BLHeli',
-            text:
-              postData.recommendedFix.length > 0
-                ? `Je confirme cette piste : ${postData.recommendedFix[0]} Pensez aussi à vérifier les soudures au multimètre avant de remonter l'hélice.`
-                : 'Solution testée et validée sur banc, pensez à vérifier le serrage des vis cloche/châssis après le premier vol de test.',
-            rating: 5,
-            createdAt: 'il y a 2 jours',
-            likes: 9,
-            isAcceptedSolution: true,
-          },
-          {
-            id: 'seed-2',
-            author: 'Bandit_FPV',
-            badge: 'Pilote Freestyle',
-            text: 'Merci pour la fiche détaillée ! Ça m’a évité de remplacer un ESC pour rien, c’était bien une vis trop longue qui touchait le bobinage.',
-            rating: 5,
-            createdAt: 'il y a 14h',
-            likes: 4,
-            replyTo: 'KwadTech_FR',
-          },
-        ]);
+        const seeded = SEEDED_FORUM_COMMENTS[postData.id];
+        setComments(
+          seeded && seeded.length > 0
+            ? seeded
+            : [
+                {
+                  id: 'seed-1',
+                  author: 'KwadTech_FR',
+                  badge: 'Technicien ESC/BLHeli',
+                  text:
+                    postData.recommendedFix.length > 0
+                      ? `Je confirme cette piste : ${postData.recommendedFix[0]} Pensez aussi à vérifier les soudures au multimètre avant de remonter l'hélice.`
+                      : 'Solution testée et validée sur banc, pensez à vérifier le serrage des vis cloche/châssis après le premier vol de test.',
+                  rating: 5,
+                  createdAt: 'il y a 2 jours',
+                  likes: 9,
+                  isAcceptedSolution: true,
+                },
+                {
+                  id: 'seed-2',
+                  author: 'Bandit_FPV',
+                  badge: 'Pilote Freestyle',
+                  text: 'Merci pour la fiche détaillée ! Ça m’a évité de remplacer un ESC pour rien.',
+                  rating: 5,
+                  createdAt: 'il y a 14h',
+                  likes: 4,
+                  replyTo: 'KwadTech_FR',
+                },
+              ]
+        );
       }
 
       const savedMeta = window.localStorage.getItem(META_KEY_PREFIX + postData.id);
