@@ -492,7 +492,7 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
           </>
         )}
 
-        {/* Pied de pop-up : accès optionnel au forum ou au diagnostic guidé dans la pop-up */}
+        {/* Pied de pop-up : accès optionnel au forum et fermeture */}
         <div className="mt-6 pt-4 border-t-[1.5px] border-dashed border-black/30 flex flex-wrap items-center justify-between gap-3">
           <Link
             href="/forum"
@@ -501,24 +501,13 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
             <MessageSquare className="w-3.5 h-3.5" />
             <span>Voir le forum</span>
           </Link>
-          {selectedIntent !== 'issues' ? (
-            <button
-              type="button"
-              onClick={() => setSelectedIntent('issues')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-            >
-              <span>Lancer le diagnostic guidé</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-bold text-black transition-colors cursor-pointer"
-            >
-              <span>Fermer</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-black/25 hover:border-black text-xs font-bold text-black transition-colors cursor-pointer"
+          >
+            <span>Fermer</span>
+          </button>
         </div>
       </div>
     </div>
