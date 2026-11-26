@@ -141,21 +141,44 @@ function BrandAvatar({
   size?: 'sm' | 'md';
 }) {
   const [imgFailed, setImgFailed] = useState(false);
+  const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const dim = size === 'sm' ? 'w-8 h-8 rounded-lg' : 'w-10 h-10 rounded-xl';
 
   if (logoUrl && !imgFailed) {
     return (
-      <span
-        className={`${dim} bg-white border border-black/15 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-transform duration-200 group-hover:scale-150 group-hover:z-20 group-hover:shadow-md group-hover:border-black`}
-      >
-        <img
-          src={logoUrl}
-          alt={brandName}
-          onError={() => setImgFailed(true)}
-          className="w-full h-full object-contain"
-          loading="lazy"
-        />
-      </span>
+      <>
+        <span
+          onMouseEnter={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = Math.min(window.innerWidth - 180, rect.right + 10);
+            const y = Math.max(12, Math.min(window.innerHeight - 170, rect.top - 24));
+            setPopupPos({ x, y });
+          }}
+          onMouseLeave={() => setPopupPos(null)}
+          className={`${dim} bg-white border border-black/15 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-colors group-hover:border-black`}
+        >
+          <img
+            src={logoUrl}
+            alt={brandName}
+            onError={() => setImgFailed(true)}
+            className="w-full h-full object-contain"
+            loading="lazy"
+          />
+        </span>
+        {popupPos && (
+          <div
+            style={{ left: popupPos.x, top: popupPos.y }}
+            className="fixed z-[120] pointer-events-none bg-white border-[1.5px] border-dashed border-black rounded-2xl p-2.5 shadow-2xl w-40 animate-in fade-in zoom-in-95 duration-100"
+          >
+            <div className="w-full h-24 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-center p-2">
+              <img src={logoUrl} alt={brandName} className="w-full h-full object-contain" />
+            </div>
+            <div className="mt-1.5 text-[10px] font-bold text-black text-center truncate">
+              {brandName}
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -178,6 +201,20 @@ export function TroubleshootWizard({
   const def = useMemo(() => getDiagnosticDefinition(targetId), [targetId]);
 
   const [step, setStep] = useState<WizardStep>(1);
+  const [hoverPreview, setHoverPreview] = useState<{
+    src: string;
+    label: string;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const openHoverPreview = (e: React.MouseEvent, src: string, label: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const preferRight = rect.right + 210 < window.innerWidth;
+    const x = preferRight ? rect.right + 12 : Math.max(12, rect.left - 208);
+    const y = Math.max(12, Math.min(window.innerHeight - 220, rect.top - 20));
+    setHoverPreview({ src, label, x, y });
+  };
 
   // Base de données Multi-Motors dynamique (live CSV si CORS autorisé, sinon JSON synchronisé depuis multi-motors.fr)
   const [motorCatalogue, setMotorCatalogue] = useState<MultiMotorsItem[]>(MULTI_MOTORS_CATALOGUE);
@@ -534,33 +571,64 @@ export function TroubleshootWizard({
             </span>
           </div>
 
-          {/* Marque & Gamme */}
-          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-50 border border-zinc-200">
-            <BrandAvatar
-              brandName={activeBrandLabel}
-              logoUrl={brandLogos[activeBrandLabel.toUpperCase()]}
-              size="sm"
-            />
-            <div className="min-w-0">
-              <div className="text-[10px] font-mono uppercase text-zinc-500">Marque & Gamme</div>
-              <div className="font-bold text-xs text-black truncate">{activeBrandLabel}</div>
-              {(selectedGamme || customGamme) && (
-                <div className="text-[11px] text-zinc-600 truncate">{activeGammeLabel}</div>
-              )}
+          {/* Marque & Gamme (cliquer pour changer de marque) */}
+          <button
+            type="button"
+            onClick={() => {
+              setHoverPreview(null);
+              setStep(1);
+            }}
+            title="Cliquer pour changer de marque"
+            className="group w-full text-left flex items-center justify-between gap-2 p-2.5 rounded-2xl bg-zinc-50 hover:bg-white border border-zinc-200 hover:border-black transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <BrandAvatar
+                brandName={activeBrandLabel}
+                logoUrl={brandLogos[activeBrandLabel.toUpperCase()]}
+                size="sm"
+              />
+              <div className="min-w-0">
+                <div className="text-[10px] font-mono uppercase text-zinc-500">Marque & Gamme</div>
+                <div className="font-bold text-xs text-black truncate">{activeBrandLabel}</div>
+                {(selectedGamme || customGamme) && (
+                  <div className="text-[11px] text-zinc-600 truncate">{activeGammeLabel}</div>
+                )}
+              </div>
             </div>
-          </div>
+            <span className="text-[9px] font-mono text-zinc-400 group-hover:text-black shrink-0">
+              Changer
+            </span>
+          </button>
 
-          {/* Fiche Moteur propre */}
+          {/* Fiche Moteur propre (cliquer pour changer de moteur) */}
           {selectedMotor ? (
-            <div className="p-3.5 rounded-2xl border border-black/25 bg-white space-y-3">
-              <div className="w-full h-28 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center overflow-hidden p-2">
+            <button
+              type="button"
+              onClick={() => {
+                setHoverPreview(null);
+                setStep(3);
+              }}
+              title="Cliquer pour changer de moteur"
+              className="group w-full text-left p-3.5 rounded-2xl border border-black/25 hover:border-black bg-white hover:shadow-md space-y-3 transition-all cursor-pointer"
+            >
+              <div
+                onMouseEnter={(e) =>
+                  openHoverPreview(
+                    e,
+                    selectedMotor.img || '/images/components/motor.svg?v=6',
+                    selectedMotor.fullName
+                  )
+                }
+                onMouseLeave={() => setHoverPreview(null)}
+                className="w-full h-28 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center overflow-hidden p-2"
+              >
                 <img
                   src={selectedMotor.img || '/images/components/motor.svg?v=6'}
                   alt={selectedMotor.fullName}
                   onError={(e) => {
                     e.currentTarget.src = '/images/components/motor.svg?v=6';
                   }}
-                  className="w-full h-full object-contain hover:scale-125 transition-transform duration-200"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
@@ -605,12 +673,26 @@ export function TroubleshootWizard({
                   </div>
                 )}
               </div>
-            </div>
+              <div className="pt-1 border-t border-zinc-100 flex items-center justify-between text-[10px] font-mono text-zinc-500 group-hover:text-black">
+                <span>Cliquer pour changer de moteur</span>
+                <RefreshCw className="w-3 h-3" />
+              </div>
+            </button>
           ) : customRef ? (
-            <div className="p-3 rounded-2xl border border-zinc-200 bg-zinc-50 text-xs">
-              <div className="text-[10px] font-mono uppercase text-zinc-500">Référence saisie</div>
-              <div className="font-bold text-black mt-0.5">{customRef}</div>
-            </div>
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              title="Cliquer pour changer de référence"
+              className="group w-full text-left p-3 rounded-2xl border border-zinc-200 hover:border-black bg-zinc-50 hover:bg-white text-xs flex items-center justify-between gap-2 transition-all cursor-pointer"
+            >
+              <div>
+                <div className="text-[10px] font-mono uppercase text-zinc-500">Référence saisie</div>
+                <div className="font-bold text-black mt-0.5">{customRef}</div>
+              </div>
+              <span className="text-[9px] font-mono text-zinc-400 group-hover:text-black">
+                Changer
+              </span>
+            </button>
           ) : null}
 
           {/* Récapitulatif des réponses au questionnaire (cliquer pour effacer) */}
@@ -1048,13 +1130,24 @@ export function TroubleshootWizard({
                       key={motor.id}
                       type="button"
                       onClick={() => {
+                        setHoverPreview(null);
                         setSelectedMotor(motor);
                         setStep(4);
                       }}
-                      className="group relative hover:z-20 w-full p-2.5 rounded-2xl border border-black/25 hover:border-black bg-zinc-50/70 hover:bg-white transition-all cursor-pointer flex items-center gap-3 text-left"
+                      className="group w-full p-2.5 rounded-2xl border border-black/25 hover:border-black bg-zinc-50/70 hover:bg-white transition-all cursor-pointer flex items-center gap-3 text-left"
                     >
-                      {/* Miniature du moteur issue de Multi-Motors (agrandie au survol) */}
-                      <div className="w-14 h-14 rounded-xl border border-zinc-200 bg-white overflow-hidden shrink-0 flex items-center justify-center transition-transform duration-200 origin-left group-hover:scale-[2] group-hover:z-30 group-hover:shadow-2xl group-hover:border-black">
+                      {/* Miniature du moteur issue de Multi-Motors (pop-up d'agrandissement au survol) */}
+                      <div
+                        onMouseEnter={(e) =>
+                          openHoverPreview(
+                            e,
+                            motor.img || '/images/components/motor.svg?v=6',
+                            motor.fullName
+                          )
+                        }
+                        onMouseLeave={() => setHoverPreview(null)}
+                        className="w-14 h-14 rounded-xl border border-zinc-200 group-hover:border-black bg-white overflow-hidden shrink-0 flex items-center justify-center transition-colors"
+                      >
                         <img
                           src={motor.img || '/images/components/motor.svg?v=6'}
                           alt={motor.fullName}
@@ -1921,6 +2014,25 @@ export function TroubleshootWizard({
             </div>
           )}
         </aside>
+      )}
+
+      {/* PETITE POP-UP D'AGRANDISSEMENT AU SURVOL (MOTEUR) */}
+      {hoverPreview && (
+        <div
+          style={{ left: hoverPreview.x, top: hoverPreview.y }}
+          className="fixed z-[120] pointer-events-none bg-white border-[1.5px] border-dashed border-black rounded-2xl p-3 shadow-2xl w-48 animate-in fade-in zoom-in-95 duration-100"
+        >
+          <div className="w-full h-36 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-center p-2 overflow-hidden">
+            <img
+              src={hoverPreview.src}
+              alt={hoverPreview.label}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="mt-2 text-[11px] font-bold text-black text-center leading-snug line-clamp-2">
+            {hoverPreview.label}
+          </div>
+        </div>
       )}
     </div>
   );
