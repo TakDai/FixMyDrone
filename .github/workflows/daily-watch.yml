@@ -31,6 +31,11 @@ jobs:
       - name: Prune Duplicates & Useless Subjects
         run: node scripts/prune_useless_posts.mjs
 
+      - name: Enrich Real Discussion Threads & Replies
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/enrich_discussions.mjs
+
       - name: Commit & Push Updated Veille Data
         run: |
           git config user.name "FixMyDrone Veille Bot"

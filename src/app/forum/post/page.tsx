@@ -36,6 +36,7 @@ interface PostComment {
   author: string;
   badge?: string;
   text: string;
+  textOriginal?: string;
   rating?: number;
   createdAt: string;
   likes: number;
@@ -123,6 +124,7 @@ function ForumPostDetailContent() {
         recommendedFix: [] as string[],
         toolsNeeded: [] as string[],
         sourceUrl: (fromForum.sourceUrl as string | undefined) || '',
+        comments: (fromForum.comments || []) as PostComment[],
       };
     }
 
@@ -150,6 +152,7 @@ function ForumPostDetailContent() {
         recommendedFix: [] as string[],
         toolsNeeded: [] as string[],
         sourceUrl: '',
+        comments: [] as PostComment[],
       };
     }
 
@@ -180,6 +183,7 @@ function ForumPostDetailContent() {
           recommendedFix: sym.aiDiagnostic.recommendedFix as string[],
           toolsNeeded: sym.aiDiagnostic.toolsNeeded as string[],
           sourceUrl: '',
+          comments: [] as PostComment[],
         };
       }
     }
@@ -248,6 +252,8 @@ function ForumPostDetailContent() {
       const savedComments = window.localStorage.getItem(COMMENTS_KEY_PREFIX + postData.id);
       if (savedComments) {
         setComments(JSON.parse(savedComments));
+      } else if (postData.comments && postData.comments.length > 0) {
+        setComments(postData.comments);
       } else {
         const seeded = SEEDED_FORUM_COMMENTS[postData.id];
         setComments(
@@ -897,7 +903,9 @@ function ForumPostDetailContent() {
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span className="truncate">
                         Validé par <strong>@{acceptedComment.author}</strong> :{' '}
-                        {acceptedComment.text}
+                        {showOriginalLang && acceptedComment.textOriginal
+                          ? acceptedComment.textOriginal
+                          : acceptedComment.text}
                       </span>
                     </div>
                     <button
@@ -1080,7 +1088,7 @@ function ForumPostDetailContent() {
                   )}
 
                   <p className="text-[14px] text-zinc-800 leading-relaxed whitespace-pre-line">
-                    {c.text}
+                    {showOriginalLang && c.textOriginal ? c.textOriginal : c.text}
                   </p>
 
                   {/* Actions sur chaque réponse */}
