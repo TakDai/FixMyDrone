@@ -207,7 +207,7 @@ function SpecsPageContent() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-5 pb-6 border-b border-zinc-200">
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center p-2 shrink-0 overflow-hidden">
             <img
-              src={matchedMotor?.img || component.imagePath || '/images/components/motor.svg?v=6'}
+              src={matchedMotor?.img || `/images/components/${component.id}.svg?v=6`}
               alt={activeModel}
               onError={(e) => {
                 e.currentTarget.src = '/images/components/motor.svg?v=6';
@@ -388,7 +388,7 @@ export default function SpecsPage() {
   return (
     <div className="min-h-screen bg-zinc-50 text-black flex flex-col font-sans">
       <header className="sticky top-0 bg-white/95 backdrop-blur-md border-b-2 border-black z-30">
-        <EcosystemTopNav activeTab="explorer" />
+        <EcosystemTopNav activeTab="catalogue" />
       </header>
       <Suspense
         fallback={
