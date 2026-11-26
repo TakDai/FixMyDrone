@@ -427,7 +427,11 @@ export function ComponentDetailModal({ component, onClose }: ComponentDetailModa
 
                     {targetId === 'motors' && (
                       <a
-                        href={`https://multi-motors.fr/?search=${encodeURIComponent(`${specsBrand} ${specsModel} ${specsSearch}`.trim())}`}
+                        href={
+                          (specsBrand || specsModel || specsSearch) && matchingSpecMotors.length > 0
+                            ? `https://multi-motors.fr/#m/${encodeURIComponent(matchingSpecMotors[0].ref)}`
+                            : 'https://multi-motors.fr/'
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="py-2.5 px-4 rounded-xl bg-[#cbf3d2] hover:bg-[#b5ebc0] border border-black text-black font-bold text-xs inline-flex items-center gap-1.5 transition-colors"

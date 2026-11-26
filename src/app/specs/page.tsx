@@ -103,14 +103,17 @@ function SpecsPageContent() {
       );
       if (byRef) return byRef;
     }
-    if (modelParam) {
-      const q = `${brandParam} ${modelParam}`.trim().toLowerCase();
+    const tokens = `${brandParam} ${modelParam}`
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (tokens.length > 0) {
       return (
-        catalogue.find(
-          (m) =>
-            m.fullName.toLowerCase().includes(q) ||
-            m.model.toLowerCase().includes(modelParam.toLowerCase())
-        ) || null
+        catalogue.find((m) => {
+          const hay = `${m.brand} ${m.gamme} ${m.model} ${m.fullName} ${m.ref} ${m.kv} ${m.classe}`.toLowerCase();
+          return tokens.every((t) => hay.includes(t));
+        }) || null
       );
     }
     return null;
@@ -140,8 +143,8 @@ function SpecsPageContent() {
   const manufacturerInfo = getManufacturerUrl(activeBrand, matchedMotor ? `${matchedMotor.brand} ${matchedMotor.model} ${matchedMotor.kv}KV` : `${brandParam} ${modelParam}`.trim() || component.name);
 
   const multiMotorsUrl = matchedMotor
-    ? `https://multi-motors.fr/?search=${encodeURIComponent(matchedMotor.ref || matchedMotor.fullName)}`
-    : `https://multi-motors.fr/?search=${encodeURIComponent(`${brandParam} ${modelParam}`.trim())}`;
+    ? `https://multi-motors.fr/#m/${encodeURIComponent(matchedMotor.ref)}`
+    : 'https://multi-motors.fr/';
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
